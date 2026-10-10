@@ -99,11 +99,11 @@ const faqs: Faq[] = [
 // The treatments that suit travelling patients best, in this order.
 const travelTreatments = [
   'implants',
-  'crowns-bridges',
+  'full-mouth-rehabilitation',
+  'veneers',
   'smile-design',
-  'invisalign',
-  'dentures',
-  'laser-dentistry',
+  'aligners',
+  'crowns-bridges',
 ]
   .map((slug) => treatments.find((treatment) => treatment.slug === slug))
   .filter((treatment) => treatment !== undefined);

@@ -14,14 +14,20 @@ type Reply = Omit<Message, 'id' | 'from'>;
 
 const has = (text: string, words: string[]) => words.some((word) => text.includes(word));
 
+// Checked in the order of the treatments list; the first match answers.
 const treatmentKeywords: Record<string, string[]> = {
-  invisalign: ['invisalign', 'aligner', 'clear brace', 'straighten'],
+  braces: ['braces', 'brace', 'crooked'],
+  aligners: ['invisalign', 'aligner', 'clear brace', 'straighten'],
   implants: ['implant', 'missing tooth', 'missing teeth', 'replace a tooth', 'replace tooth'],
-  braces: ['braces', 'brace', 'crooked', 'gap'],
-  'crowns-bridges': ['crown', 'bridge', 'cap', 'broken tooth', 'cracked'],
+  veneers: ['veneer', 'laminate', 'chipped', 'gap'],
+  'tooth-coloured-fillings': ['filling', 'cavity', 'cavities', 'decay', 'hole in'],
+  'smile-design': ['smile design', 'makeover', 'smile makeover'],
+  'root-canal': ['root canal', 'rct', 'toothache', 'tooth pain', 'sensitive tooth'],
+  'full-mouth-rehabilitation': ['full mouth', 'rehabilitation', 'worn teeth', 'many teeth'],
   dentures: ['denture', 'false teeth'],
-  'laser-dentistry': ['laser', 'novolase', 'gum', 'ulcer'],
-  'smile-design': ['smile design', 'whitening', 'whiten', 'veneer', 'makeover', 'yellow'],
+  'teeth-cleaning': ['clean', 'scaling', 'tartar', 'gum', 'bad breath', 'polish'],
+  'teeth-whitening': ['whitening', 'whiten', 'yellow', 'stain'],
+  'crowns-bridges': ['crown', 'bridge', 'cap', 'broken tooth', 'cracked'],
 };
 
 const callAction: Action = clinicTelHref
@@ -53,6 +59,16 @@ function answer(raw: string): Reply {
       };
     }
   }
+  if (has(text, ['laser', 'novolase'])) {
+    const doctor = doctors.find((item) => item.fellowship)!;
+    return {
+      text: `The clinic uses the NovoLase Gold dual-wavelength laser for gum and soft-tissue care and healing. ${doctor.name} holds a ${doctor.fellowship}.`,
+      actions: [
+        { label: 'See the laser', to: '/studio' },
+        { label: `Meet ${doctor.name}`, to: `/doctors/${doctor.slug}` },
+      ],
+    };
+  }
   if (has(text, ['brace', 'crooked', 'orthodont', 'pradeep', 'bite'])) {
     const doctor = doctors.find((item) => item.specialty === 'Orthodontics')!;
     return {
@@ -63,7 +79,7 @@ function answer(raw: string): Reply {
   if (has(text, ['crown', 'bridge', 'denture', 'prostho', 'bindu', 'cap'])) {
     const doctor = doctors.find((item) => item.specialty === 'Prosthodontics')!;
     return {
-      text: `${doctor.name} (${doctor.degree}) leads crowns, bridges, implants and dentures.`,
+      text: `${doctor.name} (${doctor.degree}) leads implants, crowns and bridges, dentures, veneers and full mouth rehabilitation.`,
       actions: [{ label: `Meet ${doctor.name}`, to: `/doctors/${doctor.slug}` }],
     };
   }
@@ -106,14 +122,7 @@ function answer(raw: string): Reply {
   };
 }
 
-const quickReplies = [
-  'Treatments',
-  'Invisalign',
-  'Implants',
-  'Our doctors',
-  'Book a visit',
-  'Costs',
-];
+const quickReplies = ['Treatments', 'Aligners', 'Implants', 'Our doctors', 'Book a visit', 'Costs'];
 
 /** Chat panel: messages, quick replies and a text box. Closes itself when a link is followed. */
 export function ChatAssistant() {

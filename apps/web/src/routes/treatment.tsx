@@ -9,7 +9,6 @@ import { OrthoStory } from '@/components/landing/ortho-story';
 import { Reveal } from '@/components/reveal';
 import { FaqSection } from '@/components/sections/faq-section';
 import { FeatureGrid } from '@/components/sections/feature-grid';
-import { LaserSpotlight } from '@/components/sections/laser-spotlight';
 import { Section } from '@/components/sections/section';
 import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
@@ -164,9 +163,8 @@ export default function TreatmentPage() {
         </>
       ) : null}
 
-      {treatment.slug === 'laser-dentistry' ? <LaserSpotlight /> : null}
       {treatment.slug === 'implants' ? <ImplantStory eyebrow="Implants in 3D" /> : null}
-      {treatment.slug === 'invisalign' || treatment.slug === 'braces' ? (
+      {treatment.slug === 'aligners' || treatment.slug === 'braces' ? (
         <OrthoStory eyebrow="Straightening in 3D" />
       ) : null}
 

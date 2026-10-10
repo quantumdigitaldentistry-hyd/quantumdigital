@@ -14,9 +14,9 @@ const HEADLINE = 'Implants, aligners and smile design, planned digitally.';
 
 /** Where each treatment chip floats around the 3D logo (md and up). */
 const chipPlacement: Record<string, { className: string; delay: string }> = {
-  invisalign: { className: '-left-4 top-[10%]', delay: '0s' },
+  braces: { className: '-left-4 top-[10%]', delay: '0s' },
   implants: { className: '-right-2 top-[30%]', delay: '-2s' },
-  'laser-dentistry': { className: 'left-[2%] bottom-[22%]', delay: '-4s' },
+  aligners: { className: 'left-[2%] bottom-[22%]', delay: '-4s' },
   'smile-design': { className: 'right-[6%] bottom-[8%]', delay: '-1s' },
 };
 

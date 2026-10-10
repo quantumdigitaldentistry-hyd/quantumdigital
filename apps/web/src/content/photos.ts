@@ -174,6 +174,26 @@ export const photos = {
     [800, 1000],
     'The Charminar in Hyderabad under a blue sky',
   ),
+  veneers: photo('veneers', [480, 800], [800, 1000], 'Veneers on a dental model being checked'),
+  fillings: photo(
+    'fillings',
+    [480, 800],
+    [800, 1000],
+    'Dentist checking teeth with a mirror and probe',
+  ),
+  xrayTall: photo(
+    'xray-tall',
+    [480, 800],
+    [800, 1000],
+    'Dentist reading dental X-rays on a light box',
+  ),
+  fullMouth: photo('full-mouth', [480, 800], [800, 1000], 'Smiling older woman at home'),
+  teethWhitening: photo(
+    'teeth-whitening',
+    [480, 800],
+    [800, 1000],
+    'Close-up of a bright, white smile',
+  ),
 } satisfies Record<string, Photo>;
 
 /**
@@ -227,6 +247,10 @@ export const illustrations = {
   smileBlue: illustration('smile-blue', 'Illustration of a smile'),
   beam: illustration('beam', 'Illustration of a focused beam of light'),
   smileOrange: illustration('smile-orange', 'Illustration of a bright smile'),
+  smileTeal: illustration('smile-teal', 'Illustration of a smile'),
+  smileGreen: illustration('smile-green', 'Illustration of a full smile'),
+  smilePurple: illustration('smile-purple', 'Illustration of a smile'),
+  tooth: illustration('tooth', 'Illustration of a healthy tooth'),
 } satisfies Record<string, Photo>;
 
 export const photoCredits = [
@@ -248,6 +272,7 @@ export const photoCredits = [
   'Eva Darron',
   'Briana Tozour',
   'Kanishq Kancharla',
+  'Caroline LM',
   'Swipe',
   'Round Icons (illustrations)',
 ];

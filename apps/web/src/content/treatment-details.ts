@@ -32,7 +32,7 @@ export type TreatmentDetails = {
 };
 
 export const treatmentDetails: Record<string, TreatmentDetails> = {
-  invisalign: {
+  aligners: {
     benefits: [
       {
         title: 'Hard to spot',
@@ -386,81 +386,377 @@ export const treatmentDetails: Record<string, TreatmentDetails> = {
     ],
   },
 
-  'laser-dentistry': {
+  veneers: {
     benefits: [
       {
-        title: 'Less bleeding',
-        body: 'The laser seals small blood vessels as it works.',
-        Icon: DropIcon,
+        title: 'Natural-looking',
+        body: 'Shaped and shaded to suit your face and the teeth around them.',
+        Icon: SmileyIcon,
       },
       {
-        title: 'Precise',
-        body: 'Treats only the tissue that needs it, sparing the area around it.',
-        Icon: TargetIcon,
-      },
-      {
-        title: 'Often fewer stitches',
-        body: 'Many soft-tissue procedures heal without sutures.',
+        title: 'Hides chips and stains',
+        body: 'Covers marks and discolouration that whitening cannot lift.',
         Icon: SparkleIcon,
       },
       {
-        title: 'Comfortable recovery',
-        body: 'Many people return to their routine the same or the next day.',
-        Icon: CalendarCheckIcon,
+        title: 'Closes small gaps',
+        body: 'Evens out spacing and uneven edges without braces, where suitable.',
+        Icon: ArrowsInIcon,
+      },
+      {
+        title: 'Planned with you',
+        body: 'You see and approve the shape before the final veneers are made.',
+        Icon: EyeIcon,
       },
     ],
-    // Uses listed for the NovoLase Gold. TODO(clinic): confirm which the doctors offer.
     options: [
       {
-        title: 'Laser gum treatment',
-        body: 'Helps clean infected gum pockets alongside a deep clean, for bleeding gums and gum disease.',
+        title: 'Porcelain veneers (laminates)',
+        body: 'Thin ceramic shells made in a lab; stain-resistant and long-lasting.',
       },
       {
-        title: 'Gum reshaping',
-        body: 'Evens out an uneven or "gummy" smile line, often as part of smile design.',
+        title: 'Composite veneers',
+        body: 'Tooth-coloured resin shaped directly on the tooth, often in one visit.',
       },
       {
-        title: 'Frenectomy',
-        body: 'Releases a tight tongue or lip tie that affects speech, feeding or gum health.',
-      },
-      {
-        title: 'Implant care',
-        body: 'Uncovering implants before the crown is fitted, and treating inflamed gum around existing implants.',
-      },
-      {
-        title: 'Light therapy',
-        body: 'Low-level red light to ease mouth ulcers, soreness after treatment and slow-healing areas.',
-      },
-      {
-        title: 'Root canal disinfection',
-        body: 'Laser energy helps disinfect the canals during root canal treatment.',
+        title: 'Minimal-preparation veneers',
+        body: 'Very thin veneers that need little or no enamel removed, where the case allows.',
       },
     ],
     faqs: [
       {
-        question: 'Which laser do you use?',
+        question: 'What is the difference between veneers and laminates?',
         answer:
-          'The NovoLase Gold, a diode laser that combines two wavelengths: 810 nm for precise soft-tissue work and 650 nm red light for light therapy that supports healing.',
+          'They are the same idea: thin shells bonded to the front of the teeth. "Laminate" is often used for very thin porcelain veneers.',
       },
       {
-        question: 'Is laser dentistry safe?',
+        question: 'Do veneers damage my teeth?',
         answer:
-          'Yes, when used by trained dentists with the right safety steps. You and the team wear protective glasses during treatment.',
+          'Porcelain veneers usually need a thin layer of enamel removed; composite veneers often need little or none. We always aim to remove as little as possible.',
       },
       {
-        question: 'Does it hurt?',
+        question: 'How long do veneers last?',
         answer:
-          'Many people find it more comfortable than conventional methods. Local anaesthesia may still be used, depending on the procedure.',
+          'Porcelain veneers often last ten years or more with good care; composite veneers usually need polishing or repair sooner.',
       },
       {
-        question: 'How quickly will I heal?',
+        question: 'Can veneers stain?',
         answer:
-          'Minor procedures often heal within days. We give you aftercare advice for your specific treatment.',
+          'Porcelain resists staining well. Composite can pick up stains over time, like natural teeth.',
       },
       {
-        question: 'Can a laser replace the drill completely?',
+        question: 'How many visits does it take?',
         answer:
-          'No. Lasers are excellent for gums and soft tissue, and some other uses, but many treatments still need conventional instruments.',
+          'Composite veneers can often be done in one visit. Porcelain veneers usually take two or three visits after planning.',
+      },
+    ],
+  },
+
+  'tooth-coloured-fillings': {
+    benefits: [
+      {
+        title: 'Blends in',
+        body: 'Matched to your tooth shade, so the filling is hard to see.',
+        Icon: PaletteIcon,
+      },
+      {
+        title: 'Keeps more tooth',
+        body: 'The resin bonds to the tooth, so less healthy tooth needs removing.',
+        Icon: ToothIcon,
+      },
+      {
+        title: 'Metal-free',
+        body: 'No silver amalgam, and no dark show-through over time.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Usually one visit',
+        body: 'Most fillings are placed and polished in a single appointment.',
+        Icon: ClockIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'New cavities',
+        body: 'Repairing decay early, before it reaches the nerve.',
+      },
+      {
+        title: 'Replacing old silver fillings',
+        body: 'Swapping worn or broken metal fillings for tooth-coloured ones, where advised.',
+      },
+      {
+        title: 'Chipped or worn edges',
+        body: 'Rebuilding small chips and worn edges on front teeth.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does getting a filling hurt?',
+        answer:
+          'The tooth is usually numbed with local anaesthesia, so you should feel pressure but not pain.',
+      },
+      {
+        question: 'How long do tooth-coloured fillings last?',
+        answer:
+          'Often many years, depending on the size of the filling, your bite and how well you look after your teeth.',
+      },
+      {
+        question: 'Should I replace my old silver fillings?',
+        answer:
+          'Not automatically. If they are sound, they can stay. We suggest replacing them only if they are broken, leaking or you want a more natural look.',
+      },
+      {
+        question: 'Can I eat straight after?',
+        answer:
+          'Yes, the filling is hardened with light before you leave. Wait until the numbness wears off so you do not bite your cheek.',
+      },
+    ],
+  },
+
+  'root-canal': {
+    benefits: [
+      {
+        title: 'Relieves pain',
+        body: 'Removing the infected pulp stops the source of the pain.',
+        Icon: HandHeartIcon,
+      },
+      {
+        title: 'Keeps your own tooth',
+        body: 'Saving the natural tooth avoids the need for an implant or bridge.',
+        Icon: ToothIcon,
+      },
+      {
+        title: 'Stops the infection spreading',
+        body: 'Cleaning and sealing the canals keeps bacteria out of the bone.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Chew normally again',
+        body: 'With a crown on top, the tooth can work like any other.',
+        Icon: ForkKnifeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Single-visit root canal',
+        body: 'For suitable cases, the treatment is completed in one appointment.',
+      },
+      {
+        title: 'Multi-visit root canal',
+        body: 'For infected teeth that need medicine placed between visits.',
+      },
+      {
+        title: 'Laser-assisted disinfection',
+        body: 'Our NovoLase Gold laser can be used to help disinfect the canals.',
+      },
+      {
+        title: 'Crown after root canal',
+        body: 'A crown protects the treated tooth from cracking.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does a root canal hurt?',
+        answer:
+          'It is done under local anaesthesia and usually feels like having a filling. The tooth may be tender for a few days afterwards.',
+      },
+      {
+        question: 'How many visits will I need?',
+        answer: 'Often one or two, depending on the tooth and how much infection there is.',
+      },
+      {
+        question: 'Do I need a crown afterwards?',
+        answer:
+          'Usually, especially for back teeth. A root-canal-treated tooth is more brittle, and a crown helps stop it from cracking.',
+      },
+      {
+        question: 'Is it better to take the tooth out?',
+        answer:
+          'Keeping your own tooth is usually best. An extracted tooth needs replacing with an implant, bridge or denture to avoid other teeth shifting.',
+      },
+    ],
+  },
+
+  'full-mouth-rehabilitation': {
+    benefits: [
+      {
+        title: 'One complete plan',
+        body: 'Every tooth and your bite are planned together, not one problem at a time.',
+        Icon: MagicWandIcon,
+      },
+      {
+        title: 'Comfortable chewing',
+        body: 'Restores an even, stable bite so you can eat what you like.',
+        Icon: ForkKnifeIcon,
+      },
+      {
+        title: 'A confident smile',
+        body: 'Teeth are rebuilt to look natural and suit your face.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'Planned in stages',
+        body: 'Treatment can be spread over visits, with temporary teeth in between.',
+        Icon: CalendarCheckIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Crowns and bridges',
+        body: 'Rebuilding worn or broken teeth and replacing a few missing ones.',
+      },
+      {
+        title: 'Implant-supported teeth',
+        body: 'Fixed teeth on implants where several teeth are missing.',
+      },
+      {
+        title: 'Dentures',
+        body: 'Complete, partial or implant-retained dentures where they suit best.',
+      },
+      {
+        title: 'Bite correction',
+        body: 'Restoring the height and balance of the bite, for worn teeth from grinding.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Who needs full mouth rehabilitation?',
+        answer:
+          'People with many worn, broken or missing teeth, often from grinding, old dental work, decay or gum disease, where fixing one tooth at a time would not work.',
+      },
+      {
+        question: 'How long does it take?',
+        answer:
+          'It depends on the plan. Some cases take a few weeks; those with implants take several months. You get a staged timeline before you start.',
+      },
+      {
+        question: 'Will I be without teeth during treatment?',
+        answer: 'No. Temporary teeth are fitted between stages so you can eat and smile.',
+      },
+      {
+        question: 'Can it be done in stages to spread the cost?',
+        answer:
+          'Often, yes. Your prosthodontist can plan the treatment in phases and explain the cost of each.',
+      },
+    ],
+  },
+
+  'teeth-cleaning': {
+    benefits: [
+      {
+        title: 'Healthier gums',
+        body: 'Removing tartar reduces bleeding and helps prevent gum disease.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Fresher breath',
+        body: 'Clears the build-up that causes persistent bad breath.',
+        Icon: SparkleIcon,
+      },
+      {
+        title: 'Brighter teeth',
+        body: 'Polishing removes surface stains from tea, coffee and tobacco.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'Problems caught early',
+        body: 'A regular check finds decay and gum problems while they are small.',
+        Icon: EyeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Scaling and polishing',
+        body: 'Routine cleaning to remove tartar and stains, usually every six months.',
+      },
+      {
+        title: 'Deep cleaning',
+        body: 'Cleaning below the gum line (root planing) for gum disease.',
+      },
+      {
+        title: 'Laser gum care',
+        body: 'Our NovoLase Gold laser can help disinfect gum pockets alongside a deep clean.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'How often should I have my teeth cleaned?',
+        answer:
+          'Usually every six months. If you have gum disease, your dentist may suggest more often.',
+      },
+      {
+        question: 'Does cleaning hurt?',
+        answer:
+          'Most people feel only mild discomfort. If your gums are sensitive, the area can be numbed.',
+      },
+      {
+        question: 'Will cleaning damage my enamel?',
+        answer: 'No. Professional scaling removes tartar, not enamel.',
+      },
+      {
+        question: 'My gums bled after cleaning. Is that normal?',
+        answer:
+          'A little bleeding is common when gums are inflamed. It usually settles within a few days as the gums heal.',
+      },
+    ],
+  },
+
+  'teeth-whitening': {
+    benefits: [
+      {
+        title: 'Visible result',
+        body: 'Teeth are usually several shades lighter after treatment.',
+        Icon: SparkleIcon,
+      },
+      {
+        title: 'Safe for enamel',
+        body: 'Done by a dentist with your gums protected throughout.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Quick',
+        body: 'In-clinic whitening is usually done in a single visit.',
+        Icon: ClockIcon,
+      },
+      {
+        title: 'Even shade',
+        body: 'Professional gel lightens teeth more evenly than shop-bought kits.',
+        Icon: PaletteIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'In-clinic whitening',
+        body: 'Professional gel, activated in short cycles, in one visit.',
+      },
+      {
+        title: 'Home whitening trays',
+        body: 'Custom trays and gel to use at home over a couple of weeks.',
+      },
+      {
+        title: 'Whitening before veneers or crowns',
+        body: 'Setting the shade of your natural teeth before new work is matched to it.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is teeth whitening safe?',
+        answer:
+          'Yes, when done or supervised by a dentist. Your teeth and gums are checked first and protected during treatment.',
+      },
+      {
+        question: 'Will my teeth be sensitive?',
+        answer: 'Some people feel temporary sensitivity, which usually settles within a few days.',
+      },
+      {
+        question: 'How long do the results last?',
+        answer:
+          'Often one to three years, depending on diet and habits such as tea, coffee and smoking.',
+      },
+      {
+        question: 'Will it whiten my crowns or fillings?',
+        answer:
+          'No. Crowns, veneers and fillings keep their colour, so they may need replacing to match your new shade.',
       },
     ],
   },

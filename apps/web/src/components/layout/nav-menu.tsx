@@ -135,9 +135,12 @@ export function NavMenu({ item }: { item: NavItem }) {
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => {
+        onClick={(event) => {
           window.clearTimeout(timer.current);
-          setOpen((current) => !current);
+          // With a mouse, hovering has usually opened the menu already, so a click
+          // shouldn't close it again. Touch and keyboard (pointerType '') toggle.
+          if ((event.nativeEvent as PointerEvent).pointerType === 'mouse') setOpen(true);
+          else setOpen((current) => !current);
         }}
         className={cx(
           'flex items-center gap-1 rounded-full px-3.5 py-2 text-small font-medium whitespace-nowrap transition-colors',

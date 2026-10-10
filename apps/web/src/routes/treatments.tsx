@@ -8,10 +8,10 @@ export default function TreatmentsPage() {
     <>
       <PageHero
         eyebrow="Treatments"
-        title="Specialist care for every smile"
-        description="Aligners and braces, implants, crowns, dentures, laser dentistry and smile design, planned by specialists."
+        title="All your dental solutions, digitally advanced."
+        description="Your complete smile destination: from fillings and cleaning to braces, implants and full mouth rehabilitation, planned by specialists."
       />
-      <Section title="Our specialities">
+      <Section title="Our treatments">
         <TreatmentGrid />
       </Section>
       <Section title="Coming soon" tinted>

@@ -7,6 +7,7 @@ import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { OrthoStory } from '@/components/landing/ortho-story';
 import { Reveal } from '@/components/reveal';
+import { LaserSpotlight } from '@/components/sections/laser-spotlight';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
@@ -48,6 +49,11 @@ export default function DoctorPage() {
               {doctor.name}
             </h1>
             <p className="text-heading font-semibold">{doctor.degree}</p>
+            {doctor.fellowship ? (
+              <p className="w-fit rounded-full bg-surface/70 px-3 py-1 text-small font-medium text-ink backdrop-blur-sm">
+                {doctor.fellowship}
+              </p>
+            ) : null}
             <p className="max-w-[46ch] text-on-hero-muted">{doctor.focus}.</p>
             <div className="flex flex-wrap gap-3">
               <button type="button" className={buttonClass()} onClick={() => show('book')}>
@@ -127,6 +133,7 @@ export default function DoctorPage() {
       </section>
 
       {isOrtho ? <OrthoStory /> : <ImplantStory eyebrow="Prosthodontics in 3D" />}
+      {doctor.fellowship ? <LaserSpotlight /> : null}
 
       <ClosingCta />
     </>

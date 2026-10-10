@@ -11,6 +11,7 @@ import { Link } from 'react-router';
 import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
+import { doctors } from '@/content/clinic';
 import { laserPhotos } from '@/content/photos';
 
 const PRODUCT_URL = 'https://novolase.in/products/novolase-gold';
@@ -46,15 +47,18 @@ const benefits = [
   },
 ];
 
+// The doctor with laser training (Fellowship in Laser Dentistry).
+const laserDoctor = doctors.find((doctor) => doctor.fellowship)!;
+
 /**
  * The clinic's laser, NovoLase Gold: product photos on a dark stage (they're shot on
  * black), what the two wavelengths do, and what that means for patients. Used on the
- * laser dentistry page and the studio page.
+ * studio page and the laser-trained doctor's page.
  */
 export function LaserSpotlight({
   link = false,
 }: {
-  /** Show a link to the laser page. */ link?: boolean;
+  /** Show a link to the laser-trained doctor's page. */ link?: boolean;
 }) {
   const headingId = useId();
   return (
@@ -102,6 +106,9 @@ export function LaserSpotlight({
               light in a single beam: 810 nm infrared for precise work on gums and soft tissue, and
               650 nm red light for gentle light therapy.
             </p>
+            <p className="text-on-scrim/80">
+              {laserDoctor.name} holds a {laserDoctor.fellowship?.toLowerCase()}.
+            </p>
           </Reveal>
 
           <Reveal step={2}>
@@ -136,11 +143,11 @@ export function LaserSpotlight({
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-on-scrim/10 pt-5">
             {link ? (
               <Link
-                to="/treatments/laser-dentistry"
+                to={`/doctors/${laserDoctor.slug}`}
                 viewTransition
                 className="group inline-flex items-center gap-2 font-semibold text-highlight"
               >
-                Laser dentistry at the clinic
+                Meet {laserDoctor.name}
                 <ArrowRightIcon
                   size={18}
                   aria-hidden

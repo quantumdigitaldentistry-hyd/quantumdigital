@@ -48,7 +48,7 @@ const typeSamples = [
   {
     name: 'heading',
     className: 'font-display text-heading font-semibold',
-    sample: 'Dr Mohana Bindu',
+    sample: 'Dr B Mohana Bindu',
   },
   {
     name: 'body',

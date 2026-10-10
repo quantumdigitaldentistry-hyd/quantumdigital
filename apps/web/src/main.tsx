@@ -8,7 +8,7 @@ import './styles.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, redirect } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 
 import { PageLoader } from '@/components/ui/page-loader';
@@ -31,6 +31,10 @@ const router = createBrowserRouter([
         path: 'treatments',
         lazy: async () => ({ Component: (await import('@/routes/treatments')).default }),
       },
+      // Old addresses: aligners were listed as 'Invisalign provider'; the laser now lives on
+      // the studio page and the laser-trained doctor's page.
+      { path: 'treatments/invisalign', loader: () => redirect('/treatments/aligners') },
+      { path: 'treatments/laser-dentistry', loader: () => redirect('/studio') },
       {
         path: 'treatments/:slug',
         lazy: async () => {

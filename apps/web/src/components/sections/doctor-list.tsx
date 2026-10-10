@@ -51,6 +51,9 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <h3 className="font-display text-heading font-semibold md:text-title">{doctor.name}</h3>
           <p className="text-small font-medium text-brand">{doctor.degree}</p>
+          {doctor.fellowship ? (
+            <p className="text-caption font-medium text-ink-muted">{doctor.fellowship}</p>
+          ) : null}
           <p className="text-small text-ink-muted">{doctor.focus}</p>
         </div>
         <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-soft text-on-brand-soft transition-transform duration-300 ease-out group-hover:rotate-45">

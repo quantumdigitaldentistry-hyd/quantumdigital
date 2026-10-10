@@ -15,7 +15,7 @@ export function SiteFooter() {
         <div className="flex flex-col gap-3">
           <Logo />
           <p className="max-w-xs text-small text-ink-muted">
-            Invisalign provider, implant center, laser dentistry and smile design.
+            Your complete smile destination. All your dental solutions, digitally advanced.
           </p>
         </div>
         <nav aria-label="Footer" className="flex flex-col gap-2">
