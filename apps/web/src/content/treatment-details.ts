@@ -409,7 +409,7 @@ export const treatmentDetails: Record<string, TreatmentDetails> = {
         Icon: CalendarCheckIcon,
       },
     ],
-    // TODO(clinic): confirm which of these the clinic's laser is used for.
+    // Uses listed for the NovoLase Gold. TODO(clinic): confirm which the doctors offer.
     options: [
       {
         title: 'Laser gum treatment',
@@ -424,11 +424,24 @@ export const treatmentDetails: Record<string, TreatmentDetails> = {
         body: 'Releases a tight tongue or lip tie that affects speech, feeding or gum health.',
       },
       {
-        title: 'Gum depigmentation',
-        body: 'Lightens dark patches on the gums for a more even colour.',
+        title: 'Implant care',
+        body: 'Uncovering implants before the crown is fitted, and treating inflamed gum around existing implants.',
+      },
+      {
+        title: 'Light therapy',
+        body: 'Low-level red light to ease mouth ulcers, soreness after treatment and slow-healing areas.',
+      },
+      {
+        title: 'Root canal disinfection',
+        body: 'Laser energy helps disinfect the canals during root canal treatment.',
       },
     ],
     faqs: [
+      {
+        question: 'Which laser do you use?',
+        answer:
+          'The NovoLase Gold, a diode laser that combines two wavelengths: 810 nm for precise soft-tissue work and 650 nm red light for light therapy that supports healing.',
+      },
       {
         question: 'Is laser dentistry safe?',
         answer:

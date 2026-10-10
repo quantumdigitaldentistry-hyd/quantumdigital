@@ -64,7 +64,7 @@ export function ClosingCta({
             {[
               'Invisalign provider and implant center',
               'Specialists in orthodontics and prosthodontics',
-              'Laser dentistry and smile design',
+              'NovoLase Gold laser dentistry and smile design',
             ].map((item) => (
               <li key={item} className="flex items-center gap-2.5">
                 <span className="grid size-6 place-items-center rounded-full bg-highlight text-on-highlight">

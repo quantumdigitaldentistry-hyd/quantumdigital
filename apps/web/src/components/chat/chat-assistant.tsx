@@ -20,7 +20,7 @@ const treatmentKeywords: Record<string, string[]> = {
   braces: ['braces', 'brace', 'crooked', 'gap'],
   'crowns-bridges': ['crown', 'bridge', 'cap', 'broken tooth', 'cracked'],
   dentures: ['denture', 'false teeth'],
-  'laser-dentistry': ['laser', 'gum'],
+  'laser-dentistry': ['laser', 'novolase', 'gum', 'ulcer'],
   'smile-design': ['smile design', 'whitening', 'whiten', 'veneer', 'makeover', 'yellow'],
 };
 

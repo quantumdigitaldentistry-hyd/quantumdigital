@@ -154,14 +154,15 @@ export const treatments: Treatment[] = [
     slug: 'laser-dentistry',
     Icon: LightningIcon,
     name: 'Laser dentistry',
-    menuLine: 'Gentle laser care for gums',
+    menuLine: 'NovoLase Gold dual-wavelength laser',
     featured: true,
-    summary: 'Laser treatment for gums and soft tissue, usually with less bleeding.',
-    highlights: ['Gentle on gums', 'Less bleeding', 'Often quicker healing'],
+    summary:
+      'Gum, soft-tissue and healing treatments with our NovoLase Gold dual-wavelength laser.',
+    highlights: ['NovoLase Gold laser', 'Less bleeding', 'Often quicker healing'],
     illustration: illustrations.beam,
     photo: photos.procedure,
     intro:
-      'Dental lasers use a focused beam of light to treat gums and other soft tissue precisely. For many procedures this means less bleeding, fewer stitches and a more comfortable recovery.',
+      'Dental lasers use a focused beam of light to treat gums and other soft tissue precisely. Our NovoLase Gold combines an 810 nm surgical wavelength with 650 nm red light for light therapy, so one system covers procedures and healing. For many procedures this means less bleeding, fewer stitches and a more comfortable recovery.',
     steps: [
       { title: 'Examination', body: 'The dentist checks whether laser treatment suits your case.' },
       { title: 'Treatment', body: 'The laser reshapes or treats the tissue with high precision.' },

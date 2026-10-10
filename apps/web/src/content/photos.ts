@@ -176,6 +176,22 @@ export const photos = {
   ),
 } satisfies Record<string, Photo>;
 
+/**
+ * The clinic's laser, NovoLase Gold. Product images from the manufacturer (novolase.in),
+ * credited where they appear. TODO(clinic): confirm use with your NovoLase representative,
+ * or replace with photos of the clinic's own unit.
+ */
+export const laserPhotos = {
+  unit: photo(
+    'novolase-gold',
+    [560, 1040],
+    [1040, 1300],
+    'NovoLase Gold dental laser on its stand, with touchscreen and foot pedal',
+  ),
+  screen: photo('novolase-screen', [400, 720], [720, 630], "The laser's 7-inch touchscreen"),
+  pedal: photo('novolase-pedal', [400, 720], [720, 630], "The laser's foot pedal"),
+} satisfies Record<string, Photo>;
+
 /** Photos for the studio page's "Take a look around" gallery. */
 export const studioPhotos: Photo[] = [
   photos.receptionLounge,

@@ -9,6 +9,7 @@ import {
 import { PhotoGallery } from '@/components/gallery/photo-gallery';
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { FeatureGrid, type Feature } from '@/components/sections/feature-grid';
+import { LaserSpotlight } from '@/components/sections/laser-spotlight';
 import { MediaHero } from '@/components/sections/media-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
@@ -34,8 +35,8 @@ const spaces: Feature[] = [
   },
 ];
 
-// Only what the clinic's signage states. TODO(clinic): list the actual equipment
-// (scanner, imaging, laser model) once confirmed.
+// From the clinic's signage, plus the NovoLase Gold laser. TODO(clinic): add other
+// equipment (scanner, imaging) once confirmed.
 const capabilities: Feature[] = [
   {
     title: 'Invisalign provider',
@@ -49,7 +50,7 @@ const capabilities: Feature[] = [
   },
   {
     title: 'Laser dentistry',
-    body: 'Laser treatment for suitable gum and soft-tissue procedures, often with less bleeding and quicker healing.',
+    body: 'Gum and soft-tissue care with our NovoLase Gold dual-wavelength laser, often with less bleeding and quicker healing.',
     Icon: LightningIcon,
   },
   {
@@ -92,6 +93,8 @@ export default function StudioPage() {
       >
         <FeatureGrid features={capabilities} columns={4} />
       </Section>
+
+      <LaserSpotlight link />
 
       <Section
         eyebrow="Take a look around"
