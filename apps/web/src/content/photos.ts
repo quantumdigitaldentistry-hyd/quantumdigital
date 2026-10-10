@@ -98,18 +98,19 @@ export const photos = {
     'Close-up of a smile with white, even teeth',
   ),
   // Placeholders until the clinic provides real portraits (always shown with a visible label).
-  // Stand-ins until the doctors' own portraits arrive (transparent illustrations).
+  // Stand-ins until the doctors' own portraits arrive: unDraw's "Doctors" (free for
+  // commercial use, no attribution required), split into two portraits, brand blue accent.
   doctorPradeep: photo(
     'doctor-pradeep-illustration',
     [480, 960],
-    [960, 960],
-    'Illustration of a male dentist treating a patient',
+    [960, 1467],
+    'Illustration of a male doctor in a white coat with a stethoscope and clipboard',
   ),
   doctorBindu: photo(
     'doctor-bindu-illustration',
     [480, 960],
-    [960, 960],
-    'Illustration of a female doctor beside an X-ray',
+    [960, 1672],
+    'Illustration of a female doctor in a white coat with a stethoscope',
   ),
   scan: photo(
     'scan',
@@ -277,5 +278,5 @@ export const photoCredits = [
   'Caroline LM',
   'Swipe',
   'Round Icons (illustrations)',
-  'muhammad noor ridho (doctor illustrations)',
+  'unDraw (doctor illustrations)',
 ];

@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { Reveal } from '@/components/reveal';
 import { Photo } from '@/components/ui/photo';
 import { doctors, specialtyIllustration, type Doctor } from '@/content/clinic';
+import { cx } from '@/lib/cx';
 import { vtNames } from '@/lib/transition-names';
 
 /**
@@ -33,14 +34,14 @@ export function DoctorPortrait({
     );
   }
   return (
-    <div className="size-full bg-linear-to-br from-aqua-soft via-surface to-brand-soft p-[6%]">
+    <div className="size-full bg-linear-to-br from-aqua-soft via-surface to-brand-soft px-[6%] pt-[6%]">
       <Photo
         photo={doctor.portrait}
         sizes={sizes}
         priority={priority}
         fit="contain"
         className="block size-full"
-        imgClassName={imgClassName}
+        imgClassName={cx('object-bottom', imgClassName)}
       />
     </div>
   );
