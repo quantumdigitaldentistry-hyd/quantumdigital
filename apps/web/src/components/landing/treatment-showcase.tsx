@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
-import { treatments } from '@/content/clinic';
+import { featuredTreatments } from '@/content/clinic';
 import { useScrollScene } from '@/lib/gsap';
 import { vtNames } from '@/lib/transition-names';
 
@@ -69,7 +69,7 @@ export function TreatmentShowcase() {
         </div>
 
         <ol className="flex flex-col gap-6">
-          {treatments.map((treatment, index) => (
+          {featuredTreatments.map((treatment, index) => (
             <li
               key={treatment.slug}
               data-stack-card
@@ -105,7 +105,7 @@ export function TreatmentShowcase() {
                     </span>
                     <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
                       {String(index + 1).padStart(2, '0')} /{' '}
-                      {String(treatments.length).padStart(2, '0')}
+                      {String(featuredTreatments.length).padStart(2, '0')}
                     </span>
                   </div>
                   <div className="flex flex-col gap-3 p-5 md:p-7">

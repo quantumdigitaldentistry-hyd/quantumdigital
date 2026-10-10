@@ -37,11 +37,11 @@ export function TreatmentCard({ treatment }: { treatment: Treatment }) {
   );
 }
 
-/** One column on phones, two on tablets, four on desktop. */
-export function TreatmentGrid() {
+/** One column on phones, two on tablets, four on desktop. Shows every treatment unless given a list. */
+export function TreatmentGrid({ items = treatments }: { items?: Treatment[] }) {
   return (
     <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {treatments.map((treatment, index) => (
+      {items.map((treatment, index) => (
         <li key={treatment.slug}>
           <Reveal step={index} className="h-full">
             <TreatmentCard treatment={treatment} />

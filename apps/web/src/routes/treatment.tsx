@@ -7,10 +7,11 @@ import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { OrthoStory } from '@/components/landing/ortho-story';
 import { Reveal } from '@/components/reveal';
+import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
-import { resultCases, treatments } from '@/content/clinic';
+import { leadDoctor, resultCases, treatments } from '@/content/clinic';
 import { useQuickActions } from '@/lib/quick-actions';
 import { vtNames } from '@/lib/transition-names';
 
@@ -28,6 +29,7 @@ export default function TreatmentPage() {
   const treatment = treatments.find((item) => item.slug === slug)!;
   const cases = resultCases.filter((item) => item.treatment === treatment.slug);
   const others = treatments.filter((item) => item.slug !== treatment.slug);
+  const doctor = leadDoctor(treatment);
 
   return (
     <>
@@ -106,30 +108,37 @@ export default function TreatmentPage() {
               What to expect.
             </h2>
             <p className="text-ink-muted md:text-heading md:font-normal">{treatment.intro}</p>
-          </Reveal>
-          <ol className="flex flex-col gap-4">
-            {treatment.steps.map((step, index) => (
-              <li key={step.title}>
-                <Reveal
-                  step={index}
-                  className="flex gap-4 rounded-container border border-line bg-canvas p-5"
-                >
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-small font-medium text-on-brand">
-                    {String(index + 1).padStart(2, '0')}
+            {doctor ? (
+              <Link
+                to={`/doctors/${doctor.slug}`}
+                viewTransition
+                className="group flex w-fit items-center gap-3 rounded-full border border-line bg-canvas py-1.5 pr-4 pl-1.5 transition-colors hover:border-aqua"
+              >
+                <span className="grid size-10 place-items-center rounded-full bg-brand font-display text-small font-semibold text-on-brand">
+                  {doctor.initials}
+                </span>
+                <span className="flex flex-col">
+                  <span className="text-caption text-ink-muted">
+                    Led by our {doctor.specialty.toLowerCase()} specialist
                   </span>
-                  <div className="flex flex-col gap-1">
-                    <h3 className="font-display text-heading font-semibold">{step.title}</h3>
-                    <p className="text-ink-muted">{step.body}</p>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
+                  <span className="font-medium">{doctor.name}</span>
+                </span>
+                <ArrowUpRightIcon
+                  size={16}
+                  aria-hidden
+                  className="text-brand transition-transform duration-300 group-hover:rotate-45"
+                />
+              </Link>
+            ) : null}
+          </Reveal>
+          <StepList steps={treatment.steps} />
         </Container>
       </section>
 
       {treatment.slug === 'implants' ? <ImplantStory eyebrow="Implants in 3D" /> : null}
-      {treatment.slug === 'invisalign' ? <OrthoStory eyebrow="Straightening in 3D" /> : null}
+      {treatment.slug === 'invisalign' || treatment.slug === 'braces' ? (
+        <OrthoStory eyebrow="Straightening in 3D" />
+      ) : null}
 
       {cases.length ? (
         <section aria-labelledby="cases-title" className="bg-canvas">

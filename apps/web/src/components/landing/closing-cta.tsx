@@ -26,7 +26,13 @@ function FormPlaceholder() {
  * Closing section over a clinic photo: why to book, the phone and call-back options, and
  * the appointment request form.
  */
-export function ClosingCta() {
+export function ClosingCta({
+  title = 'Your smile, planned with care.',
+  body = 'Tell us what you need and when suits you. Prefer to talk? Call the clinic or ask for a call back.',
+}: {
+  title?: string;
+  body?: string;
+}) {
   const show = useQuickActions((s) => s.show);
   const section = useRef<HTMLElement>(null);
   const near = useNearViewport(section);
@@ -51,12 +57,9 @@ export function ClosingCta() {
             id="closing-title"
             className="max-w-3xl font-display text-[clamp(2.2rem,6vw,4rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance"
           >
-            Your smile, planned with care.
+            {title}
           </h2>
-          <p className="max-w-[44ch] text-body opacity-90 md:text-heading md:font-normal">
-            Tell us what you need and when suits you. Prefer to talk? Call the clinic or ask for a
-            call back.
-          </p>
+          <p className="max-w-[44ch] text-body opacity-90 md:text-heading md:font-normal">{body}</p>
           <ul className="flex flex-col gap-2.5">
             {[
               'Invisalign provider and implant center',

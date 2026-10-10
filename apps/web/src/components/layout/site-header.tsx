@@ -6,12 +6,15 @@ import { Logo } from '@/components/brand/logo';
 import { ContactOptions } from '@/components/contact/contact-options';
 import { PhoneLink } from '@/components/contact/phone-link';
 import { SocialLinks } from '@/components/contact/social-links';
+import { AccordionItem } from '@/components/ui/accordion';
 import { Container } from '@/components/ui/container';
 import { Dialog } from '@/components/ui/dialog';
 import { IconButton } from '@/components/ui/icon-button';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { navItems } from '@/config/site';
 import { cx } from '@/lib/cx';
+
+import { MobileMenuGroup, NavMenu } from './nav-menu';
 
 /** Inline links from lg up (five links need the room); a menu drawer below that. */
 export function SiteHeader() {
@@ -30,22 +33,26 @@ export function SiteHeader() {
         </Link>
 
         <nav aria-label="Main" className="ml-auto hidden items-center gap-1 lg:flex">
-          {navItems.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === '/'}
-              viewTransition
-              className={({ isActive }) =>
-                cx(
-                  'rounded-full px-3.5 py-2 text-small font-medium whitespace-nowrap transition-colors',
-                  isActive ? 'bg-brand-soft text-on-brand-soft' : 'text-ink-muted hover:text-ink',
-                )
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
+          {navItems.map((item) => {
+            const { to, label } = item;
+            if (item.menu) return <NavMenu key={to} item={item} />;
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === '/'}
+                viewTransition
+                className={({ isActive }) =>
+                  cx(
+                    'rounded-full px-3.5 py-2 text-small font-medium whitespace-nowrap transition-colors',
+                    isActive ? 'bg-brand-soft text-on-brand-soft' : 'text-ink-muted hover:text-ink',
+                  )
+                }
+              >
+                {label}
+              </NavLink>
+            );
+          })}
         </nav>
         {/* Wrapper owns visibility: the switcher sets its own display. */}
         <div className="ml-2 hidden lg:block">
@@ -66,29 +73,49 @@ export function SiteHeader() {
       <Dialog open={menuOpen} onClose={closeMenu} title="Menu" variant="drawer">
         <nav aria-label="Main">
           <ul className="flex flex-col gap-1">
-            {navItems.map(({ to, label, Icon }) => (
-              <li key={to}>
-                <NavLink
-                  to={to}
-                  end={to === '/'}
-                  viewTransition
-                  onClick={closeMenu}
-                  className={({ isActive }) =>
-                    cx(
-                      'flex min-h-12 items-center gap-3 rounded-control px-3 font-medium transition-colors',
-                      isActive ? 'bg-brand-soft text-on-brand-soft' : 'text-ink hover:bg-sunken',
-                    )
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <Icon size={22} weight={isActive ? 'fill' : 'regular'} aria-hidden />
-                      {label}
-                    </>
-                  )}
-                </NavLink>
-              </li>
-            ))}
+            {navItems.map((item) => {
+              const { to, label, Icon } = item;
+              if (item.menu) {
+                return (
+                  <li key={to}>
+                    <AccordionItem
+                      variant="plain"
+                      title={
+                        <span className="flex items-center gap-3">
+                          <Icon size={22} aria-hidden />
+                          {label}
+                        </span>
+                      }
+                    >
+                      <MobileMenuGroup item={item} onNavigate={closeMenu} />
+                    </AccordionItem>
+                  </li>
+                );
+              }
+              return (
+                <li key={to}>
+                  <NavLink
+                    to={to}
+                    end={to === '/'}
+                    viewTransition
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                      cx(
+                        'flex min-h-12 items-center gap-3 rounded-control px-3 font-medium transition-colors',
+                        isActive ? 'bg-brand-soft text-on-brand-soft' : 'text-ink hover:bg-sunken',
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <Icon size={22} weight={isActive ? 'fill' : 'regular'} aria-hidden />
+                        {label}
+                      </>
+                    )}
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </nav>
         <div className="flex flex-col gap-4 border-t border-line pt-5">

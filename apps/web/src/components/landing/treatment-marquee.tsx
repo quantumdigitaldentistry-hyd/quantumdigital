@@ -1,12 +1,17 @@
 import { SparkleIcon } from '@phosphor-icons/react';
 import type { CSSProperties } from 'react';
 
-import { treatments } from '@/content/clinic';
+import { featuredTreatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 
 function Row({ reverse = false, outline = false }: { reverse?: boolean; outline?: boolean }) {
   // Two identical halves, so translating by -50% loops seamlessly.
-  const items = [...treatments, ...treatments, ...treatments, ...treatments];
+  const items = [
+    ...featuredTreatments,
+    ...featuredTreatments,
+    ...featuredTreatments,
+    ...featuredTreatments,
+  ];
   return (
     <div className="flex overflow-hidden">
       <div

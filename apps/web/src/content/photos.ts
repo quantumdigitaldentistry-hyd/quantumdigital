@@ -116,7 +116,75 @@ export const photos = {
     [960, 640],
     'Gloved hand pointing at a digital dental scan on a tablet',
   ),
+  // Studio (Unsplash stand-ins until the clinic's own photos are added).
+  waitingArea: photo(
+    'waiting-area',
+    [640, 1200],
+    [1200, 900],
+    'Waiting area with red chairs by a window',
+  ),
+  receptionLounge: photo(
+    'reception-lounge',
+    [640, 1200],
+    [1200, 900],
+    'Reception and lounge with teal sofas',
+  ),
+  treatmentRoom: photo(
+    'treatment-room',
+    [640, 1200],
+    [1200, 900],
+    'Treatment room with a dental chair and monitor',
+  ),
+  // Treatments.
+  dentures: photo('dentures', [480, 800], [800, 1000], 'Model of a full upper denture'),
+  crownModel: photo(
+    'crown-model',
+    [480, 800],
+    [800, 1000],
+    'Dentist holding a dental model with crowns',
+  ),
+  // Dental tourism.
+  videoConsult: photo(
+    'video-consult',
+    [640, 1200],
+    [1200, 900],
+    'Doctor on a video consultation with a patient',
+  ),
+  planeWindow: photo(
+    'plane-window',
+    [640, 1200],
+    [1200, 900],
+    'View from a plane window at sunset',
+  ),
+  airport: photo(
+    'airport',
+    [640, 1200],
+    [1200, 900],
+    'Travellers walking through a sunlit airport',
+  ),
+  charminarCity: photo(
+    'charminar-city',
+    [960, 1600],
+    [1600, 900],
+    'The Charminar in Hyderabad above a busy street',
+  ),
+  charminar: photo(
+    'charminar',
+    [480, 800],
+    [800, 1000],
+    'The Charminar in Hyderabad under a blue sky',
+  ),
 } satisfies Record<string, Photo>;
+
+/** Photos for the studio page's "Take a look around" gallery. */
+export const studioPhotos: Photo[] = [
+  photos.receptionLounge,
+  photos.waitingArea,
+  photos.treatmentRoom,
+  photos.clinic,
+  photos.scan,
+  photos.consult,
+];
 
 /** Gallery photos keep their natural shape for the masonry grid. */
 export const galleryPhotos: Photo[] = [
@@ -159,5 +227,11 @@ export const photoCredits = [
   'Connor Wilkins',
   'Diana Polekhina',
   'Kamal Hoseinianzade',
+  'Adhitya Sibikumar',
+  'Vitaly Gariev',
+  'Eva Darron',
+  'Briana Tozour',
+  'Kanishq Kancharla',
+  'Swipe',
   'Round Icons (illustrations)',
 ];

@@ -246,6 +246,28 @@
   }
 }
 
+/* Accordion (components/ui/accordion.tsx): animate <details> height where supported. */
+@layer components {
+  .accordion {
+    interpolate-size: allow-keywords;
+  }
+  .accordion::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 320ms var(--ease-out),
+      content-visibility 320ms allow-discrete;
+  }
+  .accordion[open]::details-content {
+    block-size: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .accordion::details-content {
+    transition: none;
+  }
+}
+
 /* Keep the page still behind an open dialog. */
 html:has(dialog[open]) {
   overflow: hidden;

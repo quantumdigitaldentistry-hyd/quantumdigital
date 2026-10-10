@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import { HeroVisual } from '@/components/three/hero-visual';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
-import { treatments } from '@/content/clinic';
+import { featuredTreatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
 import { vtNames } from '@/lib/transition-names';
@@ -98,7 +98,7 @@ export function LandingHero() {
         <div className="hero-exit relative mx-auto w-full max-w-[min(100%,30rem)] md:max-w-none">
           <HeroVisual />
           {/* Desktop: chips float around the logo. */}
-          {treatments.map(({ slug, name }) => {
+          {featuredTreatments.map(({ slug, name }) => {
             const place = chipPlacement[slug];
             return (
               <div
@@ -116,7 +116,7 @@ export function LandingHero() {
           aria-label="Treatments"
           className="-mt-2 flex flex-wrap justify-center gap-2 md:hidden"
         >
-          {treatments.map(({ slug, name }) => (
+          {featuredTreatments.map(({ slug, name }) => (
             <TreatmentChip key={slug} slug={slug} name={name} />
           ))}
         </nav>

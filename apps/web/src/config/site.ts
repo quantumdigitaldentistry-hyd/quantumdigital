@@ -1,5 +1,9 @@
 import {
+  AirplaneTiltIcon,
   BookOpenTextIcon,
+  BuildingsIcon,
+  GraduationCapIcon,
+  ImagesIcon,
   FacebookLogoIcon,
   GoogleLogoIcon,
   HouseIcon,
@@ -42,13 +46,42 @@ export const socialLinks: SocialLink[] = [
   { id: 'google', label: 'Google reviews', Icon: GoogleLogoIcon, href: null },
 ];
 
-export type NavItem = { to: string; label: string; Icon: Icon };
+export type NavLinkItem = { to: string; label: string; description: string; Icon: Icon };
+
+export type NavItem = {
+  to: string;
+  label: string;
+  Icon: Icon;
+  /**
+   * Dropdown on hover/focus (desktop) and an expandable group in the phone menu.
+   * 'treatments' lists every treatment from content/clinic.ts.
+   */
+  menu?: 'treatments' | NavLinkItem[];
+};
+
+/** Guides and extras, grouped under Learn. */
+export const learnLinks: NavLinkItem[] = [
+  {
+    to: '/patient-safety',
+    label: 'Patient safety',
+    description: 'How every visit is kept safe',
+    Icon: ShieldCheckIcon,
+  },
+  {
+    to: '/dental-knowledge',
+    label: 'Dental knowledge',
+    description: 'Clear answers about your teeth',
+    Icon: BookOpenTextIcon,
+  },
+  { to: '/gallery', label: 'Gallery', description: 'Inside modern dentistry', Icon: ImagesIcon },
+];
 
 /** Main navigation, in menu order. Home is the dashboard. */
 export const navItems: NavItem[] = [
   { to: '/', label: 'Home', Icon: HouseIcon },
-  { to: '/treatments', label: 'Treatments', Icon: ToothIcon },
-  { to: '/patient-safety', label: 'Patient safety', Icon: ShieldCheckIcon },
-  { to: '/dental-knowledge', label: 'Dental knowledge', Icon: BookOpenTextIcon },
+  { to: '/treatments', label: 'Treatments', Icon: ToothIcon, menu: 'treatments' },
+  { to: '/studio', label: 'Studio', Icon: BuildingsIcon },
+  { to: '/dental-tourism', label: 'Dental tourism', Icon: AirplaneTiltIcon },
+  { to: '/dental-knowledge', label: 'Learn', Icon: GraduationCapIcon, menu: learnLinks },
   { to: '/contact-us', label: 'Contact us', Icon: MapPinIcon },
 ];

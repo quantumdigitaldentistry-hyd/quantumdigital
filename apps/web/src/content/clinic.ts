@@ -15,6 +15,12 @@ export type Treatment = {
   Icon: Icon;
   name: string;
   summary: string;
+  /** One line under the name in the treatments menu. */
+  menuLine: string;
+  /** The four specialities on the clinic signage: shown on the home page and hero. */
+  featured: boolean;
+  /** Which speciality leads it (links the treatment to that doctor). */
+  ledBy?: 'Orthodontics' | 'Prosthodontics';
   /** Short benefit chips. General information, to be reviewed by the clinic. */
   highlights: string[];
   illustration: Photo;
@@ -30,6 +36,9 @@ export const treatments: Treatment[] = [
     slug: 'invisalign',
     Icon: SmileyIcon,
     name: 'Invisalign provider',
+    menuLine: 'Clear, removable aligners',
+    featured: true,
+    ledBy: 'Orthodontics',
     summary: 'Clear, removable aligners that straighten teeth without brackets or wires.',
     highlights: ['Nearly invisible', 'Removable to eat', 'Digitally planned'],
     illustration: illustrations.smileBlue,
@@ -47,6 +56,9 @@ export const treatments: Treatment[] = [
     slug: 'implants',
     Icon: ToothIcon,
     name: 'Implant center',
+    menuLine: 'Single, multiple and full-arch implants',
+    featured: true,
+    ledBy: 'Prosthodontics',
     summary: 'Fixed replacements for missing teeth, anchored in the jaw like a natural root.',
     highlights: [
       'Fixed, not removable',
@@ -68,9 +80,78 @@ export const treatments: Treatment[] = [
     ],
   },
   {
+    slug: 'braces',
+    Icon: SmileyIcon,
+    name: 'Braces',
+    menuLine: 'Metal and ceramic braces',
+    featured: false,
+    ledBy: 'Orthodontics',
+    summary: 'Fixed braces that move teeth steadily into line, for children and adults.',
+    highlights: ['Metal or tooth-coloured', 'Suits complex cases', 'Regular adjustments'],
+    illustration: illustrations.braces,
+    photo: photos.bracesModels,
+    intro:
+      'Braces use small brackets bonded to the teeth and a wire that is adjusted over time. They can correct crowding, gaps and bite problems, including cases that aligners cannot treat as well.',
+    steps: [
+      { title: 'Records', body: 'Photos, scans and X-rays show how your teeth and bite line up.' },
+      { title: 'Fitting', body: 'Brackets are bonded to the teeth and the first wire is placed.' },
+      { title: 'Adjustments', body: 'Short visits every few weeks move the teeth step by step.' },
+      { title: 'Retainer', body: 'A retainer keeps the new position once braces come off.' },
+    ],
+  },
+  {
+    slug: 'crowns-bridges',
+    Icon: ToothIcon,
+    name: 'Crowns and bridges',
+    menuLine: 'Rebuild or replace damaged teeth',
+    featured: false,
+    ledBy: 'Prosthodontics',
+    summary: 'Crowns protect weak or broken teeth; bridges replace a missing tooth.',
+    highlights: ['Matched to your shade', 'Fixed in place', 'Restores chewing'],
+    illustration: illustrations.crown,
+    photo: photos.crownModel,
+    intro:
+      'A crown covers and protects a tooth that is cracked, heavily filled or root-canal treated. A bridge replaces a missing tooth by attaching a new tooth to the neighbouring ones.',
+    steps: [
+      {
+        title: 'Preparation',
+        body: 'The tooth is shaped and a precise scan or impression is taken.',
+      },
+      { title: 'Temporary', body: 'A temporary crown protects the tooth while yours is made.' },
+      {
+        title: 'Fitting',
+        body: 'The final crown or bridge is checked for fit and bite, then fixed.',
+      },
+    ],
+  },
+  {
+    slug: 'dentures',
+    Icon: SparkleIcon,
+    name: 'Dentures',
+    menuLine: 'Complete and partial dentures',
+    featured: false,
+    ledBy: 'Prosthodontics',
+    summary: 'Removable replacements for several or all teeth, made to fit comfortably.',
+    highlights: ['Complete or partial', 'Natural-looking', 'Implant-supported options'],
+    illustration: illustrations.smileOrange,
+    photo: photos.dentures,
+    intro:
+      'Dentures replace missing teeth with a removable plate. Complete dentures replace a full arch; partial dentures fill gaps between natural teeth. Implants can be added to hold a denture more firmly.',
+    steps: [
+      { title: 'Impressions', body: 'Detailed impressions record your gums and bite.' },
+      {
+        title: 'Try-in',
+        body: 'You check the look and fit of the teeth before they are finished.',
+      },
+      { title: 'Fitting', body: 'The finished denture is fitted and adjusted for comfort.' },
+    ],
+  },
+  {
     slug: 'laser-dentistry',
     Icon: LightningIcon,
     name: 'Laser dentistry',
+    menuLine: 'Gentle laser care for gums',
+    featured: true,
     summary: 'Laser treatment for gums and soft tissue, usually with less bleeding.',
     highlights: ['Gentle on gums', 'Less bleeding', 'Often quicker healing'],
     illustration: illustrations.beam,
@@ -87,6 +168,9 @@ export const treatments: Treatment[] = [
     slug: 'smile-design',
     Icon: SparkleIcon,
     name: 'Smile design',
+    menuLine: 'Whitening, veneers, smile makeovers',
+    featured: true,
+    ledBy: 'Prosthodontics',
     summary: 'A planned set of treatments for the shape, shade and line of your smile.',
     highlights: ['Shape and shade', 'Planned before treatment', 'Combines treatments'],
     illustration: illustrations.smileOrange,
@@ -158,6 +242,13 @@ export const doctors: Doctor[] = [
     portraitIsPlaceholder: true,
   },
 ];
+
+/** Treatments shown on the home page (the signage specialities). */
+export const featuredTreatments = treatments.filter((treatment) => treatment.featured);
+
+/** The doctor whose speciality leads a treatment, if any. */
+export const leadDoctor = (treatment: Treatment) =>
+  treatment.ledBy ? doctors.find((doctor) => doctor.specialty === treatment.ledBy) : undefined;
 
 /** The speciality illustration for a doctor. */
 export const specialtyIllustration = (doctor: Doctor) =>

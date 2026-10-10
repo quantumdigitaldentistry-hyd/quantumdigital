@@ -168,36 +168,37 @@ Soft and friendly, with one rule:
 
 ## Components (`apps/web/src/components/ui`)
 
-| Component       | Notes                                                                                              |
-| --------------- | -------------------------------------------------------------------------------------------------- |
-| `Button`        | `primary`, `secondary`, `ghost`, `danger`, `festive` (offer CTAs only). Pill, flat fill, `loading` |
-| `buttonClass()` | Button styles for links: `<Link className={buttonClass('secondary')}>`                             |
-| `Badge`         | `neutral`, `brand`, `success`, `warning`, `danger`, `highlight`, `festive`                         |
-| `Card`          | Surface plus border                                                                                |
-| `OfferBanner`   | Festival offer: greeting, big offer number, title, validity, action slot                           |
-| `FestiveDots`   | Decorative rangoli dot row, hidden from screen readers                                             |
-| `ThemeSwitcher` | Device / light / dark, remembered per browser                                                      |
-| `PageLoader`    | Brand kit Fill loader for whole pages                                                              |
-| `DotsLoader`    | Brand kit Dots loader for buttons and inline waits                                                 |
-| `Reveal`        | Scroll-in fade (`components/reveal.tsx`)                                                           |
-| `HeroVisual`    | The brand kit's interactive 3D logo on a dark stage (`components/three`); logo poster until loaded |
-| `ScrollStory`   | Pinned, scroll-scrubbed 3D explainer with captions (`components/landing/scroll-story.tsx`)         |
-| `PhotoGallery`  | Masonry grid plus full-screen lightbox (arrows, swipe, Esc) (`components/gallery`)                 |
-| `BeforeAfter`   | Draggable comparison on a native range input: mouse, touch and keyboard (`components/gallery`)     |
-| `Photo`         | Responsive AVIF/WebP image; `fit="contain"` for illustrations                                      |
+| Component       | Notes                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| `Button`        | `primary`, `secondary`, `ghost`, `danger`, `festive` (offer CTAs only). Pill, flat fill, `loading`   |
+| `buttonClass()` | Button styles for links: `<Link className={buttonClass('secondary')}>`                               |
+| `Badge`         | `neutral`, `brand`, `success`, `warning`, `danger`, `highlight`, `festive`                           |
+| `Card`          | Surface plus border                                                                                  |
+| `OfferBanner`   | Festival offer: greeting, big offer number, title, validity, action slot                             |
+| `FestiveDots`   | Decorative rangoli dot row, hidden from screen readers                                               |
+| `ThemeSwitcher` | Device / light / dark, remembered per browser                                                        |
+| `PageLoader`    | Brand kit Fill loader for whole pages                                                                |
+| `DotsLoader`    | Brand kit Dots loader for buttons and inline waits                                                   |
+| `Reveal`        | Scroll-in fade (`components/reveal.tsx`)                                                             |
+| `HeroVisual`    | The brand kit's interactive 3D logo on a dark stage (`components/three`); logo poster until loaded   |
+| `ScrollStory`   | Pinned, scroll-scrubbed 3D explainer with captions (`components/landing/scroll-story.tsx`)           |
+| `PhotoGallery`  | Masonry grid plus full-screen lightbox (arrows, swipe, Esc) (`components/gallery`)                   |
+| `BeforeAfter`   | Draggable comparison on a native range input: mouse, touch and keyboard (`components/gallery`)       |
+| `Photo`         | Responsive AVIF/WebP image; `fit="contain"` for illustrations                                        |
+| `AccordionItem` | `<details>`-based disclosure; same `group` = only one open; height animates. `card` (FAQ) or `plain` |
 
 Icons come from Phosphor (`@phosphor-icons/react`). Use the `*Icon` names (`SunIcon`, not the deprecated `Sun`), `weight="duotone"` for feature icons and `regular` in controls, and always `aria-hidden` next to a text label.
 
 ## Layout shell (every page)
 
-| Piece                   | File                                     | Behaviour                                                                                                                                                       |
-| ----------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Top contact bar         | `components/layout/top-bar.tsx`          | Phone number and the yellow **Instant call back** pill on every size; social icons from `md` up                                                                 |
-| Navigation              | `components/layout/site-header.tsx`      | Sticky. Inline links from `lg` up; below that a menu drawer with links, phone, call back, socials and theme                                                     |
-| Floating actions        | `components/layout/floating-actions.tsx` | Right side, bottom up: **Book** (brand blue, opens the appointment form), **Call** (yellow). Labels on hover from `md`                                          |
-| Chat bubble             | `components/chat/chat-bubble.tsx`        | Draggable anywhere (mouse, touch, arrow keys); tap opens the assistant; position remembered. Rule-based answers from site content until a real assistant exists |
-| Book / Call back / Chat | `components/actions/*`                   | One set of dialogs for the whole site, opened with `useQuickActions().show('book' \| 'callback' \| 'chat')`. Loaded lazily                                      |
-| Footer                  | `components/layout/site-footer.tsx`      | Logo, links, phone, socials. Extra bottom padding on phones so the floating actions never cover it                                                              |
+| Piece                   | File                                     | Behaviour                                                                                                                                                                                      |
+| ----------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Top contact bar         | `components/layout/top-bar.tsx`          | Phone number and the yellow **Instant call back** pill on every size; social icons from `md` up                                                                                                |
+| Navigation              | `components/layout/site-header.tsx`      | Sticky. Inline links from `lg` up; **Treatments** and **Learn** open a dropdown (`nav-menu.tsx`) on hover, click or keyboard; Esc closes. Below `lg` a drawer where those menus are accordions |
+| Floating actions        | `components/layout/floating-actions.tsx` | Right side, bottom up: **Book** (brand blue, opens the appointment form), **Call** (yellow). Labels on hover from `md`                                                                         |
+| Chat bubble             | `components/chat/chat-bubble.tsx`        | Draggable anywhere (mouse, touch, arrow keys); tap opens the assistant; position remembered. Rule-based answers from site content until a real assistant exists                                |
+| Book / Call back / Chat | `components/actions/*`                   | One set of dialogs for the whole site, opened with `useQuickActions().show('book' \| 'callback' \| 'chat')`. Loaded lazily                                                                     |
+| Footer                  | `components/layout/site-footer.tsx`      | Logo, links, phone, socials. Extra bottom padding on phones so the floating actions never cover it                                                                                             |
 
 Contact details, social links and the menu live in **one file**, [`apps/web/src/config/site.ts`](../apps/web/src/config/site.ts). The phone number is a placeholder until `clinic.phone` is filled in: until then it shows as text, and the Call button offers a call back instead of dialling. Each social icon becomes a link as soon as its `href` is set.
 
@@ -205,7 +206,7 @@ Every detail page has a `BackButton`: it returns to the previous page at the exa
 
 Page transitions use the View Transitions API (`styles.css`): the old page sinks back and softens, the new one rises in; the header, floating actions and chat bubble hold still. Matching `view-transition-name`s (`lib/transition-names.ts`) morph a hero chip into the treatment title, a treatment card photo into the treatment hero, and a doctor card photo into the doctor hero.
 
-Reusable building blocks: `Dialog` (bottom sheet on phones, centred from `md`, or a side `drawer`), `IconButton`, `Container`, `Field`, `Logo` / `LogoMark`, `PageHero`, `Section`, `TreatmentGrid`, `DoctorList` and `PlannedContent` (the "coming soon" outline for pages not built yet). Page copy for treatments and doctors lives in `src/content/clinic.ts`.
+Reusable building blocks: `Dialog` (bottom sheet on phones, centred from `md`, or a side `drawer`), `IconButton`, `Container`, `Field`, `Logo` / `LogoMark`, `PageHero`, `MediaHero` (split hero with a photo and an overlapping inset), `Section`, `FeatureGrid` (photo or icon cards), `StepList` (numbered steps), `TreatmentGrid` (all treatments, or pass `items`), `ClosingCta` (takes `title` / `body`), `DoctorList` and `PlannedContent` (the "coming soon" outline for pages not built yet). Page copy for treatments and doctors lives in `src/content/clinic.ts`.
 
 ## Loaders
 

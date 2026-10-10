@@ -17,6 +17,9 @@ const has = (text: string, words: string[]) => words.some((word) => text.include
 const treatmentKeywords: Record<string, string[]> = {
   invisalign: ['invisalign', 'aligner', 'clear brace', 'straighten'],
   implants: ['implant', 'missing tooth', 'missing teeth', 'replace a tooth', 'replace tooth'],
+  braces: ['braces', 'brace', 'crooked', 'gap'],
+  'crowns-bridges': ['crown', 'bridge', 'cap', 'broken tooth', 'cracked'],
+  dentures: ['denture', 'false teeth'],
   'laser-dentistry': ['laser', 'gum'],
   'smile-design': ['smile design', 'whitening', 'whiten', 'veneer', 'makeover', 'yellow'],
 };
@@ -33,7 +36,7 @@ const callAction: Action = clinicTelHref
 function answer(raw: string): Reply {
   const text = raw.toLowerCase();
 
-  if (has(text, ['emergency', 'severe pain', 'swelling', 'bleeding', 'accident', 'broken tooth'])) {
+  if (has(text, ['emergency', 'severe pain', 'swelling', 'bleeding', 'accident', 'knocked out'])) {
     return {
       text: "I'm sorry you're dealing with that. For dental pain or swelling, please call the clinic now so a dentist can advise you. If it's a medical emergency (trouble breathing or swallowing, or a serious injury), call 108.",
       actions: [callAction],
