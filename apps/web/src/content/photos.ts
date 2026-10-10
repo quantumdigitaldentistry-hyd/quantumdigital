@@ -1,8 +1,8 @@
 /**
  * Photos and illustrations used on the site, as responsive AVIF + WebP sets
  * (src/assets/photos, src/assets/illustrations). All from Unsplash under the Unsplash
- * License (free for commercial use, no permission needed); credits are shown in the footer
- * anyway. Replace with the clinic's own photos when ready: keep the names, re-run the
+ * License (free for commercial use, no permission or credit required); photographers are
+ * listed in photoCredits for the record. Replace with the clinic's own photos when ready: keep the names, re-run the
  * conversion, done.
  */
 
@@ -253,6 +253,7 @@ export const illustrations = {
   tooth: illustration('tooth', 'Illustration of a healthy tooth'),
 } satisfies Record<string, Photo>;
 
+/** Unsplash photographers whose photos are used (not shown on the site). */
 export const photoCredits = [
   'Candid',
   'Jonathan Borba',

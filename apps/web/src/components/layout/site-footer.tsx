@@ -5,7 +5,6 @@ import { PhoneLink } from '@/components/contact/phone-link';
 import { SocialLinks } from '@/components/contact/social-links';
 import { Container } from '@/components/ui/container';
 import { clinic, navItems } from '@/config/site';
-import { photoCredits } from '@/content/photos';
 
 export function SiteFooter() {
   return (
@@ -41,20 +40,17 @@ export function SiteFooter() {
           © {new Date().getFullYear()} {clinic.name}
         </p>
         <p>
-          Photos on{' '}
+          Developed by{' '}
           <a
-            href="https://unsplash.com"
+            href="https://www.linkedin.com/in/gandhodijayanth/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-brand"
+            className="font-medium text-ink underline-offset-2 hover:text-brand hover:underline"
           >
-            Unsplash
+            Jayanth
+            <span className="sr-only"> (LinkedIn, opens in a new tab)</span>
           </a>
-          : {photoCredits.join(', ')}
         </p>
-        <Link to="/design" className="hover:text-brand">
-          Design system
-        </Link>
       </Container>
     </footer>
   );

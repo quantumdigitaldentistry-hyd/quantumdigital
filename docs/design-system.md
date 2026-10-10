@@ -242,7 +242,7 @@ Three layers, cheapest first. Reach for the next one only when the previous can'
 
 ### Photos
 
-Photos come from [`src/content/photos.ts`](../apps/web/src/content/photos.ts) through `<Photo>`: AVIF with a WebP fallback, two widths each, lazy unless `priority`, with fixed aspect ratios so nothing shifts. They're Unsplash photos (free for commercial use; credited in the footer) until the clinic's own photos replace them: keep the names, convert them the same way, done. Text over a photo always sits on a `bg-scrim` overlay and uses `text-on-scrim`.
+Photos come from [`src/content/photos.ts`](../apps/web/src/content/photos.ts) through `<Photo>`: AVIF with a WebP fallback, two widths each, lazy unless `priority`, with fixed aspect ratios so nothing shifts. They're Unsplash photos (free for commercial use, no credit required; photographers listed in `photoCredits`) until the clinic's own photos replace them: keep the names, convert them the same way, done. Text over a photo always sits on a `bg-scrim` overlay and uses `text-on-scrim`.
 
 Illustrations come from **one family** (Round Icons on Unsplash: tooth with crown, braces, toothbrush, calendar, tooth with plus). Mixing illustration styles is the fastest way to look templated, so add new ones only from the same set.
 
