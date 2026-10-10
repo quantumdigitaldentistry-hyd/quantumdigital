@@ -6,12 +6,43 @@ import { Photo } from '@/components/ui/photo';
 import { doctors, specialtyIllustration, type Doctor } from '@/content/clinic';
 import { vtNames } from '@/lib/transition-names';
 
-/** Label shown on placeholder photos so they're never mistaken for the doctor. */
-export function PlaceholderPhotoTag() {
+/**
+ * A doctor's portrait filling its frame. Illustrations (stand-ins until real portraits
+ * arrive) are drawn whole on a soft brand-tinted panel instead of being cropped.
+ */
+export function DoctorPortrait({
+  doctor,
+  sizes,
+  priority,
+  imgClassName,
+}: {
+  doctor: Doctor;
+  sizes: string;
+  priority?: boolean;
+  imgClassName?: string;
+}) {
+  if (!doctor.portraitIsIllustration) {
+    return (
+      <Photo
+        photo={doctor.portrait}
+        sizes={sizes}
+        priority={priority}
+        className="block size-full"
+        imgClassName={imgClassName}
+      />
+    );
+  }
   return (
-    <span className="absolute top-3 right-3 rounded-full bg-scrim/70 px-2.5 py-1 text-caption font-medium text-on-scrim backdrop-blur-sm">
-      Placeholder photo
-    </span>
+    <div className="size-full bg-linear-to-br from-aqua-soft via-surface to-brand-soft p-[6%]">
+      <Photo
+        photo={doctor.portrait}
+        sizes={sizes}
+        priority={priority}
+        fit="contain"
+        className="block size-full"
+        imgClassName={imgClassName}
+      />
+    </div>
   );
 }
 
@@ -27,14 +58,12 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
           className="aspect-4/3 overflow-hidden"
           style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
         >
-          <Photo
-            photo={doctor.portrait}
+          <DoctorPortrait
+            doctor={doctor}
             sizes="(min-width: 768px) 36rem, 92vw"
-            className="block size-full"
             imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </div>
-        {doctor.portraitIsPlaceholder ? <PlaceholderPhotoTag /> : null}
         <span className="absolute top-3 left-3 rounded-full bg-surface/85 px-3 py-1 text-label font-semibold text-brand backdrop-blur-sm">
           {doctor.specialty}
         </span>

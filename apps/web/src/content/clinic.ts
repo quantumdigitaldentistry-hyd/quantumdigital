@@ -314,9 +314,10 @@ export type Doctor = {
   specialtyIntro: string;
   /** Treatments this speciality covers. */
   treats: string[];
-  /** TODO(clinic): replace with the doctor's real portrait and set portraitIsPlaceholder: false. */
+  /** TODO(clinic): replace with the doctor's real portrait and set portraitIsIllustration: false. */
   portrait: Photo;
-  portraitIsPlaceholder: boolean;
+  /** Illustrations are drawn whole on a tinted panel; photos fill the frame. */
+  portraitIsIllustration: boolean;
 };
 
 // Order on the page: Dr Pradeep on the left, Dr B Mohana Bindu on the right.
@@ -337,8 +338,8 @@ export const doctors: Doctor[] = [
       'Overbite, underbite and crossbite',
       'Retainers after treatment',
     ],
-    portrait: photos.doctorPlaceholderA,
-    portraitIsPlaceholder: true,
+    portrait: photos.doctorPradeep,
+    portraitIsIllustration: true,
   },
   {
     slug: 'dr-mohana-bindu',
@@ -358,8 +359,8 @@ export const doctors: Doctor[] = [
       'Full mouth rehabilitation',
       'Laser-assisted gum and soft-tissue care',
     ],
-    portrait: photos.doctorPlaceholderB,
-    portraitIsPlaceholder: true,
+    portrait: photos.doctorBindu,
+    portraitIsIllustration: true,
   },
 ];
 

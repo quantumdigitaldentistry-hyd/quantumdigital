@@ -98,17 +98,18 @@ export const photos = {
     'Close-up of a smile with white, even teeth',
   ),
   // Placeholders until the clinic provides real portraits (always shown with a visible label).
-  doctorPlaceholderA: photo(
-    'doctor-placeholder-a',
-    [480, 800],
-    [800, 1000],
-    'Dentist in a mask treating a patient',
+  // Stand-ins until the doctors' own portraits arrive (transparent illustrations).
+  doctorPradeep: photo(
+    'doctor-pradeep-illustration',
+    [480, 960],
+    [960, 960],
+    'Illustration of a male dentist treating a patient',
   ),
-  doctorPlaceholderB: photo(
-    'doctor-placeholder-b',
-    [480, 800],
-    [800, 1000],
-    'Dentist in a mask examining a patient',
+  doctorBindu: photo(
+    'doctor-bindu-illustration',
+    [480, 960],
+    [960, 960],
+    'Illustration of a female doctor beside an X-ray',
   ),
   scan: photo(
     'scan',
@@ -276,4 +277,5 @@ export const photoCredits = [
   'Caroline LM',
   'Swipe',
   'Round Icons (illustrations)',
+  'muhammad noor ridho (doctor illustrations)',
 ];

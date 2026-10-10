@@ -13,7 +13,7 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { doctors, specialtyIllustration } from '@/content/clinic';
 import { photos } from '@/content/photos';
-import { PlaceholderPhotoTag } from '@/components/sections/doctor-list';
+import { DoctorPortrait } from '@/components/sections/doctor-list';
 import { useQuickActions } from '@/lib/quick-actions';
 import { vtNames } from '@/lib/transition-names';
 
@@ -68,13 +68,7 @@ export default function DoctorPage() {
               className="relative aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
               style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
             >
-              <Photo
-                photo={doctor.portrait}
-                sizes="(min-width: 768px) 28rem, 90vw"
-                priority
-                className="block size-full"
-              />
-              {doctor.portraitIsPlaceholder ? <PlaceholderPhotoTag /> : null}
+              <DoctorPortrait doctor={doctor} sizes="(min-width: 768px) 28rem, 90vw" priority />
             </div>
             {/* Speciality illustration floats over the corner, with the doctor's initials. */}
             <div className="float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40">
