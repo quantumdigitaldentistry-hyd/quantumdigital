@@ -17,7 +17,8 @@
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:types": "supabase gen types typescript --linked > packages/supabase/src/database.types.ts"
+    "db:types": "supabase gen types typescript --linked > packages/supabase/src/database.types.ts",
+    "check:contrast": "pnpm --filter @quantam/ui check:contrast"
   },
   "devDependencies": {
     "prettier": "^3.9.9",

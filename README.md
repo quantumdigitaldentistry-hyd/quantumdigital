@@ -30,12 +30,14 @@ One React Native codebase ships as:
 apps/
   dental/            Expo app → web + Android + iOS
 packages/
-  ui/                Shared components (Button, Card, Screen) styled with Tailwind
+  ui/                Shared components (Text, Button, Badge, Card, HeroBand, OfferBanner) + festival themes
   shared/            zod schemas, constants (appointment statuses, reminder channels)
   supabase/          createSupabaseClient() + generated Database types
   config/            Shared tsconfig base
 supabase/            Supabase CLI project: config.toml, migrations/, functions/
 ```
+
+**Design system:** "Clinic Sky", built from the clinic signage, with light/dark themes and Indian festival themes for offers. See [docs/design-system.md](docs/design-system.md), run the app and open `/design` to see it live, and run `pnpm check:contrast` after any colour change.
 
 Packages export TypeScript source directly (`"main": "src/index.ts"`), so Metro compiles them along with the app with no build step. To use Tailwind classes in a new package, add an `@source` line to `apps/dental/src/global.css`.
 

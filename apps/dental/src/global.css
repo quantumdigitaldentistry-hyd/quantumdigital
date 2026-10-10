@@ -4,8 +4,172 @@
 /* Tailwind only scans next to this file by default; include shared packages. */
 @source '../../../packages/ui/src';
 
+/*
+ * Quantam Dental design tokens: "Clinic Sky".
+ * Taken from the clinic signage: aqua sky, the royal-blue tooth mark, sunshine-yellow
+ * pills with plum lettering. Docs and usage rules: docs/design-system.md.
+ * Use these tokens, never raw hex in components. Every text/background pair below is
+ * checked for WCAG AA (4.5:1) in both themes: run `pnpm check:contrast` after editing.
+ */
+@layer theme {
+  :root {
+    @variant light {
+      /* Backgrounds: cool white with a faint aqua cast */
+      --color-canvas: #f4f8fa; /* app background */
+      --color-surface: #ffffff; /* cards, sheets, list rows */
+      --color-sunken: #e8f0f4; /* input wells, table headers, skeletons */
+      --color-line: #d5e2e9; /* hairlines and default borders */
+      --color-line-strong: #a9bdc8; /* input borders, dividers that must be seen */
+      --color-logo-tile: #ffffff; /* behind logo art with a baked-in white background (GIF loaders) */
+
+      /* Text: deep navy ink, never pure black */
+      --color-ink: #0d1b2a;
+      --color-ink-muted: #46586a;
+      --color-ink-subtle: #5d6e7e; /* placeholders, meta (4.5:1 even on sunken) */
+
+      /* Brand blue (the tooth mark): buttons, links, focus, selection */
+      --color-brand: #1a5bc4;
+      --color-brand-strong: #13469b; /* pressed / hover */
+      --color-on-brand: #ffffff;
+      --color-brand-soft: #e3eefb;
+      --color-on-brand-soft: #13469b;
+
+      /* Aqua (the signage sky): brand atmosphere, never a button colour */
+      --color-aqua: #6dd3e6;
+      --color-on-aqua: #0d1b2a;
+      --color-aqua-soft: #ddf5fa; /* tinted sections */
+      --color-on-aqua-soft: #0b4f5c;
+
+      /* Hero gradient (the signage sky) for hero bands and headers. on-hero passes on both stops. */
+      --color-hero-from: #a9e7f2;
+      --color-hero-to: #6dd3e6;
+      --color-on-hero: #0d1b2a;
+      --color-on-hero-muted: #1f3a4d;
+
+      /* Sunshine highlight (the yellow pills): new, featured, offers */
+      --color-highlight: #ffe419;
+      --color-on-highlight: #4a1d6b; /* plum, as on the signage */
+      --color-highlight-soft: #fff8c7;
+      --color-on-highlight-soft: #4a1d6b;
+
+      /* Status */
+      --color-success: #1c7a4a;
+      --color-success-soft: #e0f3e8;
+      --color-warning: #8a5300;
+      --color-warning-soft: #fcefd6;
+      --color-danger: #b3261e;
+      --color-on-danger: #ffffff;
+      --color-danger-soft: #fbe5e2;
+
+      /*
+       * Festive overlay. These are the everyday ("clinic") values. A running festival
+       * campaign replaces them at runtime (packages/ui/src/festive-themes.ts).
+       */
+      --color-festive: #ffe419;
+      --color-festive-end: #ffd60a;
+      --color-on-festive: #4a1d6b;
+      --color-festive-soft: #fff8c7;
+      --color-on-festive-soft: #4a1d6b;
+      --color-festive-accent: #6dd3e6;
+    }
+
+    @variant dark {
+      --color-canvas: #0a121a;
+      --color-surface: #111c26;
+      --color-sunken: #070d13;
+      --color-line: #1f2e3b;
+      --color-line-strong: #33475a;
+      --color-logo-tile: #ffffff; /* stays white: the GIFs are not transparent */
+
+      --color-ink: #e6eef4;
+      --color-ink-muted: #9db0c0;
+      --color-ink-subtle: #7f93a5;
+
+      --color-brand: #7fb2ff;
+      --color-brand-strong: #a3c8ff;
+      --color-on-brand: #06162e;
+      --color-brand-soft: #13284a;
+      --color-on-brand-soft: #b7d3ff;
+
+      --color-aqua: #5cc8dc;
+      --color-on-aqua: #04141a;
+      --color-aqua-soft: #0e2a33;
+      --color-on-aqua-soft: #a8e9f5;
+
+      --color-hero-from: #12394a;
+      --color-hero-to: #0b2533;
+      --color-on-hero: #e6eef4;
+      --color-on-hero-muted: #b5ccd8;
+
+      --color-highlight: #ffe419;
+      --color-on-highlight: #3a1556;
+      --color-highlight-soft: #2e2a0b;
+      --color-on-highlight-soft: #ffe97a;
+
+      --color-success: #5fd49a;
+      --color-success-soft: #0f2e20;
+      --color-warning: #f5be5c;
+      --color-warning-soft: #33260c;
+      --color-danger: #ff9580;
+      --color-on-danger: #2b0804;
+      --color-danger-soft: #3a1913;
+
+      --color-festive: #ffe419;
+      --color-festive-end: #ffc93c;
+      --color-on-festive: #3a1556;
+      --color-festive-soft: #2e2a0b;
+      --color-on-festive-soft: #ffe97a;
+      --color-festive-accent: #5cc8dc;
+    }
+
+    /*
+     * Fonts: one family name per weight file. Android cannot synthesise weights from a
+     * single family, so weight lives in the family name. Names are registered in
+     * src/theme/fonts.ts and are identical on web, iOS and Android.
+     *   display: Sora, a geometric face that echoes the QUANTUM wordmark (headings only)
+     *   sans:    Instrument Sans for interface and body text
+     *   mono:    IBM Plex Mono for data (times, phones, IDs, money)
+     */
+    --font-display: 'Sora-SemiBold';
+    --font-display-bold: 'Sora-Bold';
+    --font-sans: 'InstrumentSans-Regular';
+    --font-sans-medium: 'InstrumentSans-Medium';
+    --font-sans-semibold: 'InstrumentSans-SemiBold';
+    --font-sans-bold: 'InstrumentSans-Bold';
+    --font-mono: 'IBMPlexMono-Regular';
+    --font-mono-medium: 'IBMPlexMono-Medium';
+
+    @variant web {
+      --font-display: 'Sora-SemiBold', system-ui, sans-serif;
+      --font-display-bold: 'Sora-Bold', system-ui, sans-serif;
+      --font-sans: 'InstrumentSans-Regular', system-ui, sans-serif;
+      --font-sans-medium: 'InstrumentSans-Medium', system-ui, sans-serif;
+      --font-sans-semibold: 'InstrumentSans-SemiBold', system-ui, sans-serif;
+      --font-sans-bold: 'InstrumentSans-Bold', system-ui, sans-serif;
+      --font-mono: 'IBMPlexMono-Regular', ui-monospace, monospace;
+      --font-mono-medium: 'IBMPlexMono-Medium', ui-monospace, monospace;
+    }
+  }
+}
+
 @theme {
-  --color-primary: #0e7490;
-  --color-primary-dark: #155e75;
-  --color-accent: #f59e0b;
+  /*
+   * Registers the font utilities (font-display, font-sans-medium, ...). Tailwind only
+   * generates utilities for names declared here; the per-platform values above still apply.
+   */
+  --font-display: 'Sora-SemiBold';
+  --font-display-bold: 'Sora-Bold';
+  --font-sans-medium: 'InstrumentSans-Medium';
+  --font-sans-semibold: 'InstrumentSans-SemiBold';
+  --font-sans-bold: 'InstrumentSans-Bold';
+  --font-mono-medium: 'IBMPlexMono-Medium';
+
+  /*
+   * Shape: soft and friendly, one rule used everywhere.
+   *   buttons, badges, chips, avatars              = full pill (like the signage pills)
+   *   fields (inputs, selects, segmented controls) = 12px
+   *   containers (cards, sheets, banners, dialogs) = 20px
+   */
+  --radius-control: 12px;
+  --radius-container: 20px;
 }

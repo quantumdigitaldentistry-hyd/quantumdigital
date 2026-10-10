@@ -9,7 +9,7 @@ const SafeAreaView = withUniwind(RNSafeAreaView);
 /** Page wrapper: safe areas on native, centered max-width column on wide web screens. */
 export function Screen({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-950">
+    <SafeAreaView className="flex-1 bg-canvas">
       <ScrollView contentContainerClassName="grow">
         <View className={`w-full max-w-3xl self-center gap-4 px-4 py-6 ${className}`}>
           {children}
