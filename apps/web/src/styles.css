@@ -23,6 +23,8 @@
   --color-line-strong: #a9bdc8; /* input borders, visible dividers */
   --color-logo-tile: #ffffff; /* behind art with a baked-in white background */
   --color-elevation: #0d1b2a; /* shadow colour for floating elements (use with opacity) */
+  --color-scrim: #070d13; /* dark overlay on photos (use at 70%+ opacity) */
+  --color-on-scrim: #ffffff; /* text on scrim-covered photos */
 
   /* Text: deep navy ink, never pure black */
   --color-ink: #0d1b2a;
@@ -118,6 +120,8 @@
   --color-line-strong: #33475a;
   --color-logo-tile: #ffffff;
   --color-elevation: #000000;
+  --color-scrim: #070d13;
+  --color-on-scrim: #ffffff;
 
   --color-ink: #e6eef4;
   --color-ink-muted: #9db0c0;
@@ -283,6 +287,113 @@ html:has(dialog[open]) {
   from {
     opacity: 0;
     transform: translateY(20px);
+  }
+}
+
+/*
+ * Landing effects. Time-based ones are plain CSS animations; scroll-linked ones use
+ * scroll timelines (no JavaScript). Every effect degrades to static, fully visible
+ * content without support, and is off for reduced motion.
+ */
+
+/* Headline words rise in one after another (`--i` = word index). */
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em) rotate(2deg);
+    filter: blur(6px);
+  }
+}
+.word-reveal > span {
+  display: inline-block;
+  animation: word-rise 900ms var(--ease-out) both;
+  animation-delay: calc(120ms + var(--i, 0) * 70ms);
+}
+
+/* Gentle hover-in-place for the floating chips around the 3D tooth. */
+@keyframes float-y {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.float-y {
+  animation: float-y 6s var(--ease-in-out) infinite;
+}
+
+/* Endless ticker; the track holds the content twice, so -50% loops seamlessly. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-track[data-direction='reverse'] {
+  animation-direction: reverse;
+}
+
+/* Scroll cue: a dot travelling down a short line. */
+@keyframes cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The hero art sinks back and fades as the hero scrolls away. */
+    .hero-exit {
+      animation: hero-exit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    /* Image drifts inside its frame while the frame crosses the viewport. */
+    .parallax-img {
+      animation: parallax linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    /* Vertical progress line that fills while its section scrolls through. */
+    .line-fill {
+      transform-origin: top;
+      animation: line-fill linear both;
+      animation-timeline: --journey;
+      animation-range: cover 15% cover 75%;
+    }
+    .journey-timeline {
+      view-timeline: --journey block;
+    }
+  }
+}
+@keyframes hero-exit {
+  to {
+    opacity: 0;
+    transform: translateY(18%) scale(0.88);
+  }
+}
+@keyframes parallax {
+  from {
+    transform: translateY(-8%) scale(1.16);
+  }
+  to {
+    transform: translateY(8%) scale(1.16);
+  }
+}
+@keyframes line-fill {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-reveal > span,
+  .float-y,
+  .marquee-track {
+    animation: none;
   }
 }
 

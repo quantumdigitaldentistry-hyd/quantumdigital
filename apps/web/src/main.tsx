@@ -2,6 +2,7 @@ import '@fontsource-variable/sora/wght.css';
 import '@fontsource-variable/instrument-sans/wght.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
+import 'lenis/dist/lenis.css';
 import './styles.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

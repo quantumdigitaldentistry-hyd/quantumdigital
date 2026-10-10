@@ -85,3 +85,6 @@ desktop.ini
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+
+# Playwright MCP session output (snapshots, console logs)
+.playwright-mcp/

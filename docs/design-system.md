@@ -215,11 +215,20 @@ The original brand kit (logo, icons, all six GIFs, `Brand Kit.dc.html`) is kept 
 
 ## Motion and 3D
 
-- **Page transitions:** the browser's View Transitions API (`<Link viewTransition>`): a 160ms fade out and a 280ms fade up. No JavaScript animation library is shipped.
-- **Scroll reveals:** CSS scroll-driven animations (`.reveal`). Content is never hidden waiting for a script; browsers without support show it immediately.
-- **Micro-interactions:** buttons press to 97%, cards lift 4px and their icon tilts on hover. Use `duration-150` for presses, `duration-300` for hovers and `--ease-out` for entrances.
-- **3D hero:** plain three.js with named imports, so only the classes used are bundled. The tooth is generated from lathe profiles (no model to download) and reflections come from three's `RoomEnvironment` (no HDR file).
-- **Reduced motion** (`prefers-reduced-motion`) turns every animation into an instant change, freezes the 3D scene on one frame and stills the loaders.
+Three layers, cheapest first. Reach for the next one only when the previous can't do it.
+
+1. **CSS (no JavaScript):** page transitions (View Transitions API, `<Link viewTransition>`), the hero word reveal (`.word-reveal`), floating chips (`.float-y`), the treatment ticker (`.marquee-track`), and scroll-linked effects on scroll timelines: reveals (`.reveal`), the hero sinking away (`.hero-exit`), photo parallax (`.parallax-img`) and the journey line (`.line-fill`). Without scroll-timeline support (currently Firefox) these simply show static, fully visible content.
+2. **GSAP + ScrollTrigger** (`lib/gsap.ts`, loaded lazily): only for scroll scenes CSS can't express. Today that's the implant story (scroll progress drives the 3D model and captions) and the desktop treatment row (pinned, moves sideways). Use `useScrollScene`, which scopes and reverts everything on unmount and skips reduced motion.
+3. **three.js** (plain, named imports): the hero tooth and the implant model, both built from lathe profiles, so there are no model files. They share one lazily loaded three.js chunk. The implant scene has no animation loop; it renders only when scroll progress or size changes.
+
+- **Smooth scrolling:** Lenis, for mouse and trackpad only. Touch devices keep native scrolling, reduced motion disables it, and it never scrolls the page behind an open dialog.
+- **Micro-interactions:** buttons press to 97%, cards lift 4px, icons tilt, photos zoom 5% on hover. Use `duration-150` for presses, `duration-300` for hovers, `duration-500`–`700` for photo zooms, and `--ease-out` for entrances.
+- **Static fallbacks:** reduced motion, no WebGL2, data saver or under 4 GB memory give the implant story as a photo plus three numbered steps, and the hero as the logo. Same content, no 3D.
+- **Reduced motion** (`prefers-reduced-motion`) turns every animation into an instant change and stills the loaders.
+
+### Photos
+
+Photos come from [`src/content/photos.ts`](../apps/web/src/content/photos.ts) through `<Photo>`: AVIF with a WebP fallback, two widths each, lazy unless `priority`, with fixed aspect ratios so nothing shifts. They're Unsplash photos (free for commercial use; credited in the footer) until the clinic's own photos replace them: keep the names, convert them the same way, done. Text over a photo always sits on a `bg-scrim` overlay and uses `text-on-scrim`.
 
 ## Performance budget
 

@@ -5,6 +5,7 @@ import { PhoneLink } from '@/components/contact/phone-link';
 import { SocialLinks } from '@/components/contact/social-links';
 import { Container } from '@/components/ui/container';
 import { clinic, navItems } from '@/config/site';
+import { photoCredits } from '@/content/photos';
 
 export function SiteFooter() {
   return (
@@ -38,6 +39,18 @@ export function SiteFooter() {
       <Container className="flex flex-col gap-2 border-t border-line py-5 text-caption text-ink-muted sm:flex-row sm:justify-between">
         <p>
           © {new Date().getFullYear()} {clinic.name}
+        </p>
+        <p>
+          Photos on{' '}
+          <a
+            href="https://unsplash.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-brand"
+          >
+            Unsplash
+          </a>
+          : {photoCredits.map((credit) => credit.name).join(', ')}
         </p>
         <Link to="/design" className="hover:text-brand">
           Design system

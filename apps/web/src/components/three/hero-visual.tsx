@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } fro
 import logoAvif from '@/assets/brand/logo-mark.avif';
 import logoWebp from '@/assets/brand/logo-mark.webp';
 import { cx } from '@/lib/cx';
+import { canRender3D } from '@/lib/device';
 
 import type { SceneColours } from './tooth-scene';
 
@@ -18,24 +19,6 @@ const useReducedMotion = () =>
     },
     () => reducedMotionQuery.matches,
   );
-
-/**
- * Skip 3D where it would hurt: no WebGL, data saver on, or a low-memory device.
- * Those visitors keep the logo poster, which is the same brand moment at a fraction of the cost.
- */
-function canRender3D() {
-  const nav = navigator as Navigator & {
-    connection?: { saveData?: boolean };
-    deviceMemory?: number;
-  };
-  if (nav.connection?.saveData) return false;
-  if (nav.deviceMemory !== undefined && nav.deviceMemory < 4) return false;
-  try {
-    return !!document.createElement('canvas').getContext('webgl2');
-  } catch {
-    return false;
-  }
-}
 
 const readColours = (): SceneColours => {
   const css = getComputedStyle(document.documentElement);

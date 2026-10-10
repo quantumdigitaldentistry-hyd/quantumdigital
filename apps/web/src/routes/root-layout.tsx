@@ -5,6 +5,7 @@ import { FloatingActions } from '@/components/layout/floating-actions';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { TopBar } from '@/components/layout/top-bar';
+import { SmoothScroll } from '@/components/smooth-scroll';
 import { cx } from '@/lib/cx';
 import { useFestival } from '@/lib/festival';
 import { useFestiveTheme } from '@/lib/festive-themes';
@@ -47,6 +48,7 @@ export function RootLayout() {
       <SiteFooter />
       <FloatingActions />
       <QuickActionsHost />
+      <SmoothScroll />
       <ScrollRestoration />
     </div>
   );
