@@ -17,7 +17,7 @@ function FormPlaceholder() {
   return (
     <div
       aria-hidden
-      className="h-136 rounded-4xl border border-line bg-surface/90 shadow-2xl shadow-elevation/30 sm:h-116"
+      className="h-288 rounded-4xl border border-line bg-surface/90 shadow-2xl shadow-elevation/30 sm:h-242"
     />
   );
 }

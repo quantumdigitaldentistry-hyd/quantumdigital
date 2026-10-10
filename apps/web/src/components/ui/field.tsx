@@ -59,7 +59,7 @@ const controlBox = (invalid: boolean) =>
     invalid ? 'border-danger' : 'border-line-strong',
   );
 
-export type FieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> &
+export type FieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'prefix'> &
   ShellProps & {
     /** Fixed text before the input, e.g. "+91". */
     prefix?: ReactNode;

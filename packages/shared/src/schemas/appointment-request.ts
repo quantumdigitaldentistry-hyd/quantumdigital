@@ -16,6 +16,8 @@ export const appointmentRequestSchema = z.object({
     .refine((value) => !value || value >= new Date().toISOString().slice(0, 10), {
       message: 'Choose today or a later date',
     }),
+  /** Part of the day that suits the visitor best. */
+  preferredTime: z.enum(['morning', 'afternoon', 'evening']).optional(),
   message: z.string().trim().max(500, 'Please keep it under 500 characters').optional(),
 });
 

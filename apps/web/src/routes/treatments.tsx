@@ -14,14 +14,12 @@ export default function TreatmentsPage() {
       <Section title="Our specialities">
         <TreatmentGrid />
       </Section>
-      <Section title="More on each treatment" tinted>
+      <Section title="Coming soon" tinted>
         <PlannedContent
           items={[
-            'A page for each treatment: who it suits, the steps and the timeline',
-            'Before-and-after cases',
+            'Real before-and-after cases, shared with patient consent',
             'Costs and payment options',
-            'Aftercare',
-            'Frequently asked questions',
+            'Aftercare guides to download',
           ]}
         />
       </Section>

@@ -14,6 +14,8 @@ export type Treatment = {
   slug: string;
   Icon: Icon;
   name: string;
+  /** Shorter label for chips and tight spaces (defaults to name). */
+  shortName?: string;
   summary: string;
   /** One line under the name in the treatments menu. */
   menuLine: string;
@@ -36,6 +38,7 @@ export const treatments: Treatment[] = [
     slug: 'invisalign',
     Icon: SmileyIcon,
     name: 'Invisalign provider',
+    shortName: 'Invisalign',
     menuLine: 'Clear, removable aligners',
     featured: true,
     ledBy: 'Orthodontics',
@@ -56,6 +59,7 @@ export const treatments: Treatment[] = [
     slug: 'implants',
     Icon: ToothIcon,
     name: 'Implant center',
+    shortName: 'Implants',
     menuLine: 'Single, multiple and full-arch implants',
     featured: true,
     ledBy: 'Prosthodontics',

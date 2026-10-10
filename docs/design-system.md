@@ -168,24 +168,25 @@ Soft and friendly, with one rule:
 
 ## Components (`apps/web/src/components/ui`)
 
-| Component       | Notes                                                                                                |
-| --------------- | ---------------------------------------------------------------------------------------------------- |
-| `Button`        | `primary`, `secondary`, `ghost`, `danger`, `festive` (offer CTAs only). Pill, flat fill, `loading`   |
-| `buttonClass()` | Button styles for links: `<Link className={buttonClass('secondary')}>`                               |
-| `Badge`         | `neutral`, `brand`, `success`, `warning`, `danger`, `highlight`, `festive`                           |
-| `Card`          | Surface plus border                                                                                  |
-| `OfferBanner`   | Festival offer: greeting, big offer number, title, validity, action slot                             |
-| `FestiveDots`   | Decorative rangoli dot row, hidden from screen readers                                               |
-| `ThemeSwitcher` | Device / light / dark, remembered per browser                                                        |
-| `PageLoader`    | Brand kit Fill loader for whole pages                                                                |
-| `DotsLoader`    | Brand kit Dots loader for buttons and inline waits                                                   |
-| `Reveal`        | Scroll-in fade (`components/reveal.tsx`)                                                             |
-| `HeroVisual`    | The brand kit's interactive 3D logo on a dark stage (`components/three`); logo poster until loaded   |
-| `ScrollStory`   | Pinned, scroll-scrubbed 3D explainer with captions (`components/landing/scroll-story.tsx`)           |
-| `PhotoGallery`  | Masonry grid plus full-screen lightbox (arrows, swipe, Esc) (`components/gallery`)                   |
-| `BeforeAfter`   | Draggable comparison on a native range input: mouse, touch and keyboard (`components/gallery`)       |
-| `Photo`         | Responsive AVIF/WebP image; `fit="contain"` for illustrations                                        |
-| `AccordionItem` | `<details>`-based disclosure; same `group` = only one open; height animates. `card` (FAQ) or `plain` |
+| Component       | Notes                                                                                                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `Button`        | `primary`, `secondary`, `ghost`, `danger`, `festive` (offer CTAs only). Pill, flat fill, `loading`                          |
+| `buttonClass()` | Button styles for links: `<Link className={buttonClass('secondary')}>`                                                      |
+| `Badge`         | `neutral`, `brand`, `success`, `warning`, `danger`, `highlight`, `festive`                                                  |
+| `Card`          | Surface plus border                                                                                                         |
+| `OfferBanner`   | Festival offer: greeting, big offer number, title, validity, action slot                                                    |
+| `FestiveDots`   | Decorative rangoli dot row, hidden from screen readers                                                                      |
+| `ThemeSwitcher` | Device / light / dark, remembered per browser                                                                               |
+| `PageLoader`    | Brand kit Fill loader for whole pages                                                                                       |
+| `DotsLoader`    | Brand kit Dots loader for buttons and inline waits                                                                          |
+| `Reveal`        | Scroll-in fade (`components/reveal.tsx`)                                                                                    |
+| `HeroVisual`    | The brand kit's interactive 3D logo on a dark stage (`components/three`); logo poster until loaded                          |
+| `ScrollStory`   | Pinned, scroll-scrubbed 3D explainer with captions (`components/landing/scroll-story.tsx`)                                  |
+| `PhotoGallery`  | Masonry grid plus full-screen lightbox (arrows, swipe, Esc) (`components/gallery`)                                          |
+| `BeforeAfter`   | Draggable comparison on a native range input: mouse, touch and keyboard (`components/gallery`)                              |
+| `Photo`         | Responsive AVIF/WebP image; `fit="contain"` for illustrations                                                               |
+| `AccordionItem` | `<details>`-based disclosure; same `group` = only one open; height animates. `card` (FAQ) or `plain`                        |
+| `ChoiceChips`   | Single-choice radio pills (or equal `tiles`) under a visible legend; used for treatment and time of day in the booking form |
 
 Icons come from Phosphor (`@phosphor-icons/react`). Use the `*Icon` names (`SunIcon`, not the deprecated `Sun`), `weight="duotone"` for feature icons and `regular` in controls, and always `aria-hidden` next to a text label.
 
@@ -206,7 +207,7 @@ Every detail page has a `BackButton`: it returns to the previous page at the exa
 
 Page transitions use the View Transitions API (`styles.css`): the old page sinks back and softens, the new one rises in; the header, floating actions and chat bubble hold still. Matching `view-transition-name`s (`lib/transition-names.ts`) morph a hero chip into the treatment title, a treatment card photo into the treatment hero, and a doctor card photo into the doctor hero.
 
-Reusable building blocks: `Dialog` (bottom sheet on phones, centred from `md`, or a side `drawer`), `IconButton`, `Container`, `Field`, `Logo` / `LogoMark`, `PageHero`, `MediaHero` (split hero with a photo and an overlapping inset), `Section`, `FeatureGrid` (photo or icon cards), `StepList` (numbered steps), `TreatmentGrid` (all treatments, or pass `items`), `ClosingCta` (takes `title` / `body`), `DoctorList` and `PlannedContent` (the "coming soon" outline for pages not built yet). Page copy for treatments and doctors lives in `src/content/clinic.ts`.
+Reusable building blocks: `Dialog` (bottom sheet on phones, centred from `md`, or a side `drawer`), `IconButton`, `Container`, `Field`, `Logo` / `LogoMark`, `PageHero`, `MediaHero` (split hero with a photo and an overlapping inset), `Section`, `FeatureGrid` (photo or icon cards), `StepList` (numbered steps), `TreatmentGrid` (photo cards; all treatments, or pass `items`), `FaqSection` (sticky heading plus exclusive accordion), `ClosingCta` (takes `title` / `body`), `DoctorList` and `PlannedContent` (the "coming soon" outline for pages not built yet). Page copy for treatments and doctors lives in `src/content/clinic.ts`; the longer treatment-page content (benefits, options, FAQs) in `src/content/treatment-details.ts`. Card grids (`TreatmentGrid`, `FeatureGrid`) give every card in a row the same height and centre a short last row.
 
 ## Loaders
 

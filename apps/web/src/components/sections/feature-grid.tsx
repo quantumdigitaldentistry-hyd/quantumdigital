@@ -11,11 +11,20 @@ export type Feature = {
   /** A photo header, or an icon when there's no photo. */
   photo?: PhotoData;
   Icon?: Icon;
+  /** Small label above the title, e.g. "01". */
+  kicker?: string;
+};
+
+const widths = {
+  2: 'sm:w-[calc((100%-1rem)/2)]',
+  3: 'sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]',
+  4: 'sm:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-3rem)/4)]',
 };
 
 /**
  * Cards for features, spaces or reasons. With photos they get an image header that
- * zooms on hover; with icons they're compact. One column on phones, then 2 or 3.
+ * zooms on hover; with icons they're compact. One column on phones, then 2, 3 or 4.
+ * Cards in a row share a height, and a short last row is centred.
  */
 export function FeatureGrid({
   features,
@@ -27,17 +36,10 @@ export function FeatureGrid({
   className?: string;
 }) {
   return (
-    <ul
-      className={cx(
-        'grid gap-4 sm:grid-cols-2',
-        columns === 3 && 'lg:grid-cols-3',
-        columns === 4 && 'lg:grid-cols-4',
-        className,
-      )}
-    >
-      {features.map(({ title, body, photo, Icon }, index) => (
-        <li key={title}>
-          <Reveal step={index} className="h-full">
+    <ul className={cx('flex flex-wrap justify-center gap-4', className)}>
+      {features.map(({ title, body, photo, Icon, kicker }, index) => (
+        <li key={title} className={cx('w-full', widths[columns])}>
+          <Reveal step={index % columns} className="h-full">
             <article className="group flex h-full flex-col overflow-hidden rounded-container border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua">
               {photo ? (
                 <div className="aspect-4/3 overflow-hidden">
@@ -51,9 +53,12 @@ export function FeatureGrid({
               ) : null}
               <div className="flex flex-1 flex-col gap-2 p-5 md:p-6">
                 {Icon && !photo ? (
-                  <span className="mb-1 grid size-12 place-items-center rounded-control bg-aqua-soft text-on-aqua-soft transition-transform duration-300 group-hover:-rotate-6">
+                  <span className="mb-1 grid size-12 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 group-hover:-rotate-6">
                     <Icon size={24} weight="duotone" aria-hidden />
                   </span>
+                ) : null}
+                {kicker ? (
+                  <span className="font-mono text-caption font-medium text-brand">{kicker}</span>
                 ) : null}
                 <h3 className="font-display text-heading font-semibold">{title}</h3>
                 <p className="text-small text-ink-muted">{body}</p>

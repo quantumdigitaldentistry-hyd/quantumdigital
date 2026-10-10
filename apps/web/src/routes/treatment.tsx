@@ -7,11 +7,15 @@ import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { OrthoStory } from '@/components/landing/ortho-story';
 import { Reveal } from '@/components/reveal';
+import { FaqSection } from '@/components/sections/faq-section';
+import { FeatureGrid } from '@/components/sections/feature-grid';
+import { Section } from '@/components/sections/section';
 import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { leadDoctor, resultCases, treatments } from '@/content/clinic';
+import { treatmentDetails } from '@/content/treatment-details';
 import { useQuickActions } from '@/lib/quick-actions';
 import { vtNames } from '@/lib/transition-names';
 
@@ -30,6 +34,8 @@ export default function TreatmentPage() {
   const cases = resultCases.filter((item) => item.treatment === treatment.slug);
   const others = treatments.filter((item) => item.slug !== treatment.slug);
   const doctor = leadDoctor(treatment);
+  const details = treatmentDetails[treatment.slug];
+  const label = treatment.shortName ?? treatment.name;
 
   return (
     <>
@@ -135,6 +141,28 @@ export default function TreatmentPage() {
         </Container>
       </section>
 
+      {details ? (
+        <>
+          <Section eyebrow="Why choose it" title={`${label}: why patients choose it.`}>
+            <FeatureGrid features={details.benefits} columns={4} />
+          </Section>
+          <Section
+            eyebrow="Treatment options"
+            title="What we offer."
+            intro="Your specialist recommends the option that suits your teeth, health and goals."
+            tinted
+          >
+            <FeatureGrid
+              features={details.options.map((option, index) => ({
+                ...option,
+                kicker: String(index + 1).padStart(2, '0'),
+              }))}
+              columns={details.options.length === 4 ? 4 : 3}
+            />
+          </Section>
+        </>
+      ) : null}
+
       {treatment.slug === 'implants' ? <ImplantStory eyebrow="Implants in 3D" /> : null}
       {treatment.slug === 'invisalign' || treatment.slug === 'braces' ? (
         <OrthoStory eyebrow="Straightening in 3D" />
@@ -163,6 +191,14 @@ export default function TreatmentPage() {
             </Reveal>
           </Container>
         </section>
+      ) : null}
+
+      {details ? (
+        <FaqSection
+          title={`${label}: your questions, answered.`}
+          intro="General information. Your specialist will advise on your own case."
+          faqs={details.faqs}
+        />
       ) : null}
 
       <section aria-labelledby="others-title" className="border-t border-line bg-surface">

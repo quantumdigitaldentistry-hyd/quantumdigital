@@ -8,12 +8,12 @@ import {
 
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { Reveal } from '@/components/reveal';
+import { FaqSection, type Faq } from '@/components/sections/faq-section';
 import { FeatureGrid, type Feature } from '@/components/sections/feature-grid';
 import { MediaHero } from '@/components/sections/media-hero';
 import { Section } from '@/components/sections/section';
 import { StepList, type Step } from '@/components/sections/step-list';
 import { TreatmentGrid } from '@/components/sections/treatment-grid';
-import { Accordion, AccordionItem } from '@/components/ui/accordion';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
@@ -68,7 +68,7 @@ const steps: Step[] = [
   },
 ];
 
-const faqs = [
+const faqs: Faq[] = [
   {
     question: 'How much will my treatment cost?',
     answer:
@@ -199,34 +199,16 @@ export default function DentalTourismPage() {
         <TreatmentGrid items={travelTreatments} />
       </Section>
 
-      <section aria-labelledby="faq-title">
-        <Container className="grid gap-10 py-14 md:grid-cols-[0.8fr_1.2fr] md:gap-14 md:py-24">
-          <Reveal className="flex flex-col gap-4 md:sticky md:top-28 md:self-start">
-            <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">FAQ</p>
-            <h2
-              id="faq-title"
-              className="font-display text-title font-bold text-balance md:text-display"
-            >
-              Planning your trip.
-            </h2>
-            <p className="text-ink-muted">
-              Something else on your mind? Ask our assistant, or call the clinic.
-            </p>
-            <div className="hidden overflow-hidden rounded-4xl md:block">
-              <Photo photo={photos.airport} sizes="35vw" className="block aspect-4/3" />
-            </div>
-          </Reveal>
-          <Accordion>
-            {faqs.map((faq, index) => (
-              <Reveal key={faq.question} step={index}>
-                <AccordionItem title={faq.question} group="trip-faq" defaultOpen={index === 0}>
-                  <p className="text-ink-muted">{faq.answer}</p>
-                </AccordionItem>
-              </Reveal>
-            ))}
-          </Accordion>
-        </Container>
-      </section>
+      <FaqSection
+        title="Planning your trip."
+        intro="Something else on your mind? Ask our assistant, or call the clinic."
+        faqs={faqs}
+        aside={
+          <div className="overflow-hidden rounded-4xl">
+            <Photo photo={photos.airport} sizes="35vw" className="block aspect-4/3" />
+          </div>
+        }
+      />
 
       <ClosingCta
         title="Start with a conversation."
