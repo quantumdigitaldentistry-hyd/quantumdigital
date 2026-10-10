@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 
 import { Photo } from '@/components/ui/photo';
 import { treatments, type ResultCase } from '@/content/clinic';
@@ -11,13 +12,49 @@ const treatmentName = (slug: string) =>
 
 /**
  * Several before/after cases: thumbnail tabs choose the case, the comparison cross-fades
- * in. Tabs scroll sideways on phones. Every case is marked as a demo until real,
+ * in. The tab strip scrolls sideways (swipe, trackpad or shift + wheel), with previous /
+ * next buttons either side and arrow keys on the tabs; the chosen tab is kept in view. Every case is marked as a demo until real,
  * consented cases replace them.
  */
 export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; className?: string }) {
   const [active, setActive] = useState(0);
+  const strip = useRef<HTMLDivElement>(null);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const moved = useRef(false);
+
+  // Keep the chosen tab in view, scrolling only the strip (never the page).
+  useEffect(() => {
+    const container = strip.current;
+    const tab = tabs.current[active];
+    if (!container || !tab || !moved.current) return;
+    const left = tab.offsetLeft - (container.clientWidth - tab.offsetWidth) / 2;
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    container.scrollTo({ left, behavior: smooth ? 'smooth' : 'auto' });
+  }, [active]);
+
   const current = cases[active] ?? cases[0];
   if (!current) return null;
+
+  const go = (index: number, focus = false) => {
+    const next = (index + cases.length) % cases.length;
+    moved.current = true;
+    setActive(next);
+    if (focus) tabs.current[next]?.focus({ preventScroll: true });
+  };
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const moves: Record<string, number> = {
+      ArrowRight: active + 1,
+      ArrowLeft: active - 1,
+      Home: 0,
+      End: cases.length - 1,
+    };
+    const target = moves[event.key];
+    if (target === undefined) return;
+    event.preventDefault();
+    go(target, true);
+  };
+  const arrow =
+    'grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink shadow-sm transition-[background-color,border-color,scale] duration-150 hover:border-brand hover:text-brand active:scale-95';
 
   return (
     <div className={cx('flex flex-col gap-4', className)}>
@@ -42,34 +79,64 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
       </div>
 
       {cases.length > 1 ? (
-        <div
-          role="tablist"
-          aria-label="Before and after cases"
-          className="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]"
-        >
-          {cases.map((item, index) => {
-            const selected = index === active;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setActive(index)}
-                className={cx(
-                  'group flex shrink-0 snap-start items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-1.5 text-left transition-colors',
-                  selected
-                    ? 'border-brand bg-brand-soft text-on-brand-soft'
-                    : 'border-line bg-surface text-ink-muted hover:text-ink',
-                )}
-              >
-                <span className="size-9 shrink-0 overflow-hidden rounded-full">
-                  <Photo photo={item.photo} sizes="40px" className="block size-full" />
-                </span>
-                <span className="text-small font-medium whitespace-nowrap">{item.title}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Previous case"
+            onClick={() => go(active - 1)}
+            className={arrow}
+          >
+            <CaretLeftIcon size={18} weight="bold" aria-hidden />
+          </button>
+          <div
+            ref={strip}
+            role="tablist"
+            aria-label="Before and after cases"
+            onKeyDown={onKeyDown}
+            className="flex min-w-0 flex-1 snap-x gap-2 overflow-x-auto scroll-smooth px-3 py-1 [mask-image:linear-gradient(to_right,transparent,black_14px,black_calc(100%-14px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {cases.map((item, index) => {
+              const selected = index === active;
+              return (
+                <button
+                  key={item.id}
+                  ref={(element) => {
+                    tabs.current[index] = element;
+                  }}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => go(index)}
+                  className={cx(
+                    'group flex shrink-0 snap-center items-center gap-2.5 rounded-full border py-1.5 pr-4 pl-1.5 text-left transition-colors',
+                    selected
+                      ? 'border-brand bg-brand-soft text-on-brand-soft'
+                      : 'border-line bg-surface text-ink-muted hover:text-ink',
+                  )}
+                >
+                  <span className="size-9 shrink-0 overflow-hidden rounded-full">
+                    <Photo photo={item.photo} sizes="40px" className="block size-full" />
+                  </span>
+                  <span className="text-small font-medium whitespace-nowrap">{item.title}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button
+            type="button"
+            aria-label="Next case"
+            onClick={() => go(active + 1)}
+            className={arrow}
+          >
+            <CaretRightIcon size={18} weight="bold" aria-hidden />
+          </button>
+          <span
+            aria-live="polite"
+            className="hidden w-12 shrink-0 text-center font-mono text-small text-ink-muted sm:block"
+          >
+            {active + 1} / {cases.length}
+          </span>
         </div>
       ) : null}
     </div>
