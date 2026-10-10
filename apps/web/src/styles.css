@@ -22,6 +22,7 @@
   --color-line: #d5e2e9; /* hairlines, card borders */
   --color-line-strong: #a9bdc8; /* input borders, visible dividers */
   --color-logo-tile: #ffffff; /* behind art with a baked-in white background */
+  --color-elevation: #0d1b2a; /* shadow colour for floating elements (use with opacity) */
 
   /* Text: deep navy ink, never pure black */
   --color-ink: #0d1b2a;
@@ -40,6 +41,10 @@
   --color-on-aqua: #0d1b2a;
   --color-aqua-soft: #ddf5fa;
   --color-on-aqua-soft: #0b4f5c;
+
+  /* Top contact bar: deep brand blue strip above the nav */
+  --color-topbar: #13469b;
+  --color-on-topbar: #ffffff;
 
   /* Hero gradient. on-hero passes on both stops. */
   --color-hero-from: #a9e7f2;
@@ -112,6 +117,7 @@
   --color-line: #1f2e3b;
   --color-line-strong: #33475a;
   --color-logo-tile: #ffffff;
+  --color-elevation: #000000;
 
   --color-ink: #e6eef4;
   --color-ink-muted: #9db0c0;
@@ -127,6 +133,9 @@
   --color-on-aqua: #04141a;
   --color-aqua-soft: #0e2a33;
   --color-on-aqua-soft: #a8e9f5;
+
+  --color-topbar: #070d13;
+  --color-on-topbar: #e6eef4;
 
   --color-hero-from: #12394a;
   --color-hero-to: #0b2533;
@@ -176,6 +185,70 @@
 
   ::selection {
     @apply bg-brand-soft text-on-brand-soft;
+  }
+}
+
+/*
+ * Dialogs (components/ui/dialog.tsx) use the native <dialog> element: focus trap, Esc and
+ * the top layer for free. Entry/exit are CSS transitions via @starting-style.
+ * Sheets rise from the bottom on phones; drawers slide in from the right.
+ */
+@layer components {
+  .dialog {
+    opacity: 0;
+    transition:
+      opacity 200ms var(--ease-out),
+      translate 280ms var(--ease-out),
+      overlay 280ms allow-discrete,
+      display 280ms allow-discrete;
+  }
+  .dialog[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .dialog-sheet {
+    translate: 0 32px;
+  }
+  .dialog-drawer {
+    translate: 100% 0;
+  }
+  @starting-style {
+    .dialog-sheet[open] {
+      opacity: 0;
+      translate: 0 32px;
+    }
+    .dialog-drawer[open] {
+      opacity: 0;
+      translate: 100% 0;
+    }
+  }
+  .dialog::backdrop {
+    background: rgb(7 13 19 / 0);
+    transition:
+      background 280ms var(--ease-out),
+      overlay 280ms allow-discrete,
+      display 280ms allow-discrete;
+  }
+  .dialog[open]::backdrop {
+    background: rgb(7 13 19 / 0.5);
+  }
+  @starting-style {
+    .dialog[open]::backdrop {
+      background: rgb(7 13 19 / 0);
+    }
+  }
+}
+
+/* Keep the page still behind an open dialog. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Floating actions pop in once, just after the page settles. */
+@keyframes fab-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
   }
 }
 

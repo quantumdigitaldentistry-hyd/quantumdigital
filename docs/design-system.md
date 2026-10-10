@@ -184,6 +184,20 @@ Soft and friendly, with one rule:
 
 Icons come from Phosphor (`@phosphor-icons/react`). Use the `*Icon` names (`SunIcon`, not the deprecated `Sun`), `weight="duotone"` for feature icons and `regular` in controls, and always `aria-hidden` next to a text label.
 
+## Layout shell (every page)
+
+| Piece                   | File                                     | Behaviour                                                                                                                  |
+| ----------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Top contact bar         | `components/layout/top-bar.tsx`          | Phone number and the yellow **Instant call back** pill on every size; social icons from `md` up                            |
+| Navigation              | `components/layout/site-header.tsx`      | Sticky. Inline links from `lg` up; below that a menu drawer with links, phone, call back, socials and theme                |
+| Floating actions        | `components/layout/floating-actions.tsx` | Right side, bottom up: **Book** (brand blue), **Call** (yellow), **Chat** (outline). Labels on hover from `md`             |
+| Book / Call back / Chat | `components/actions/*`                   | One set of dialogs for the whole site, opened with `useQuickActions().show('book' \| 'callback' \| 'chat')`. Loaded lazily |
+| Footer                  | `components/layout/site-footer.tsx`      | Logo, links, phone, socials. Extra bottom padding on phones so the floating actions never cover it                         |
+
+Contact details, social links and the menu live in **one file**, [`apps/web/src/config/site.ts`](../apps/web/src/config/site.ts). The phone number is a placeholder until `clinic.phone` is filled in: until then it shows as text, and the Call button offers a call back instead of dialling. Each social icon becomes a link as soon as its `href` is set.
+
+Reusable building blocks: `Dialog` (bottom sheet on phones, centred from `md`, or a side `drawer`), `IconButton`, `Container`, `Field`, `Logo` / `LogoMark`, `PageHero`, `Section`, `TreatmentGrid`, `DoctorList` and `PlannedContent` (the "coming soon" outline for pages not built yet). Page copy for treatments and doctors lives in `src/content/clinic.ts`.
+
 ## Loaders
 
 The original brand kit (logo, icons, all six GIFs, `Brand Kit.dc.html`) is kept in [`docs/brand/kit`](brand/kit). The web app ships optimised copies from `apps/web/src/assets`.

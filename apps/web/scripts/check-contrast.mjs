@@ -36,6 +36,7 @@ const corePairs = [
   ['on-aqua', 'aqua'],
   ['on-aqua-soft', 'aqua-soft'],
   ['ink', 'aqua-soft'],
+  ['on-topbar', 'topbar'],
   ['on-hero', 'hero-from'],
   ['on-hero', 'hero-to'],
   ['on-hero-muted', 'hero-from'],

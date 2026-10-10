@@ -27,6 +27,22 @@ const router = createBrowserRouter([
         lazy: async () => ({ Component: (await import('@/routes/home')).default }),
       },
       {
+        path: 'treatments',
+        lazy: async () => ({ Component: (await import('@/routes/treatments')).default }),
+      },
+      {
+        path: 'patient-safety',
+        lazy: async () => ({ Component: (await import('@/routes/patient-safety')).default }),
+      },
+      {
+        path: 'dental-knowledge',
+        lazy: async () => ({ Component: (await import('@/routes/dental-knowledge')).default }),
+      },
+      {
+        path: 'contact-us',
+        lazy: async () => ({ Component: (await import('@/routes/contact-us')).default }),
+      },
+      {
         path: 'design',
         lazy: async () => ({ Component: (await import('@/routes/design')).default }),
       },
