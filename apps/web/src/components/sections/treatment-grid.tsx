@@ -27,7 +27,10 @@ export function TreatmentCard({ treatment }: { treatment: Treatment }) {
             imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </div>
-        <span className="absolute bottom-3 left-3 grid size-14 place-items-center rounded-full bg-surface/95 shadow-lg shadow-elevation/15 transition-transform duration-300 ease-out group-hover:-rotate-6">
+        <span
+          className="absolute bottom-3 left-3 grid size-14 place-items-center rounded-full bg-surface/95 shadow-lg shadow-elevation/15 transition-transform duration-300 ease-out group-hover:-rotate-6"
+          style={{ viewTransitionName: vtNames.treatmentIllustration(slug) }}
+        >
           <Photo photo={illustration} sizes="56px" fit="contain" className="block size-[66%]" />
         </span>
       </div>
@@ -65,7 +68,7 @@ export function TreatmentGrid({ items = treatments }: { items?: Treatment[] }) {
           key={treatment.slug}
           className="w-full sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
         >
-          <Reveal step={index % 3} className="h-full">
+          <Reveal step={index % 3} className="h-full" variant="tilt">
             <TreatmentCard treatment={treatment} />
           </Reveal>
         </li>

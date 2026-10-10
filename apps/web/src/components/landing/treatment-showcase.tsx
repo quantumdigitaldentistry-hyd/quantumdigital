@@ -4,12 +4,12 @@ import { Link } from 'react-router';
 
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
-import { featuredTreatments } from '@/content/clinic';
+import { treatments } from '@/content/clinic';
 import { useScrollScene } from '@/lib/gsap';
 import { vtNames } from '@/lib/transition-names';
 
 /**
- * Treatments as a stack of large cards. Each card sticks a little lower than the one
+ * All of the clinic's treatments, in its own order, as a stack of cards. Each card sticks a little lower than the one
  * before, so they pile up as you scroll; a card eases back and dims as the next one
  * covers it. Without scripts (or with reduced motion) the cards still stack, just
  * without the recede.
@@ -69,12 +69,12 @@ export function TreatmentShowcase() {
         </div>
 
         <ol className="flex flex-col gap-6">
-          {featuredTreatments.map((treatment, index) => (
+          {treatments.map((treatment, index) => (
             <li
               key={treatment.slug}
               data-stack-card
               className="sticky top-(--stack-top)"
-              style={{ '--stack-top': `${5.5 + index * 1.25}rem` } as CSSProperties}
+              style={{ '--stack-top': `${5.5 + index * 0.6}rem` } as CSSProperties}
             >
               <article
                 data-stack-inner
@@ -86,7 +86,7 @@ export function TreatmentShowcase() {
                   className="block focus-visible:outline-offset-[-4px]"
                 >
                   <div
-                    className="relative aspect-16/10 overflow-hidden"
+                    className="relative aspect-2/1 overflow-hidden"
                     style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
                   >
                     <Photo
@@ -95,7 +95,10 @@ export function TreatmentShowcase() {
                       className="block size-full"
                       imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
                     />
-                    <span className="float-y absolute right-4 -bottom-1 grid size-20 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20 md:size-24">
+                    <span
+                      className="float-y absolute right-4 -bottom-1 grid size-20 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20 md:size-24"
+                      style={{ viewTransitionName: vtNames.treatmentIllustration(treatment.slug) }}
+                    >
                       <Photo
                         photo={treatment.illustration}
                         sizes="96px"
@@ -105,10 +108,10 @@ export function TreatmentShowcase() {
                     </span>
                     <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
                       {String(index + 1).padStart(2, '0')} /{' '}
-                      {String(featuredTreatments.length).padStart(2, '0')}
+                      {String(treatments.length).padStart(2, '0')}
                     </span>
                   </div>
-                  <div className="flex flex-col gap-3 p-5 md:p-7">
+                  <div className="flex flex-col gap-2.5 p-5 md:p-6">
                     <div className="flex items-start justify-between gap-4">
                       <h3 className="font-display text-title font-bold">{treatment.name}</h3>
                       <span className="grid size-11 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
@@ -116,7 +119,7 @@ export function TreatmentShowcase() {
                       </span>
                     </div>
                     <p className="text-ink-muted">{treatment.summary}</p>
-                    <ul className="flex flex-wrap gap-2 pt-1">
+                    <ul className="hidden flex-wrap gap-2 pt-1 sm:flex">
                       {treatment.highlights.map((item) => (
                         <li
                           key={item}

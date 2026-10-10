@@ -431,6 +431,99 @@ html:has(dialog[open]) {
     }
   }
 }
+/*
+ * Treatment pages. Same rules: scroll-linked with no JavaScript, static without support
+ * or with reduced motion.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Thin reading-progress bar across the top of the page. */
+    .read-progress {
+      transform-origin: left;
+      animation: grow-x linear both;
+      animation-timeline: scroll(root block);
+    }
+    /* The connector between numbered steps draws down as the list scrolls through. */
+    .steps-timeline {
+      view-timeline: --steps block;
+    }
+    .steps-line {
+      transform-origin: top;
+      animation: line-fill linear both;
+      animation-timeline: --steps;
+      animation-range: cover 20% cover 70%;
+    }
+    /* Step numbers pop in as they arrive. */
+    .step-pop {
+      animation: step-pop linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 70%;
+    }
+    /* Cards tilt up into place (stagger with --reveal-start, as for .reveal). */
+    .tilt-in {
+      animation: tilt-in linear both;
+      animation-timeline: view();
+      animation-range: entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 55%);
+    }
+    /* Slide in from the reading-start or reading-end side. */
+    .slide-in-start,
+    .slide-in-end {
+      animation: slide-in-start linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    .slide-in-end {
+      animation-name: slide-in-end;
+    }
+  }
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes step-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes tilt-in {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(16deg) translateY(40px) scale(0.96);
+  }
+}
+@keyframes slide-in-start {
+  from {
+    opacity: 0;
+    transform: translateX(-56px);
+  }
+}
+@keyframes slide-in-end {
+  from {
+    opacity: 0;
+    transform: translateX(56px);
+  }
+}
+
+/* Load-time cascade for hero content: set --d (0, 1, 2…) for the order. */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+.enter {
+  animation: enter-up 700ms var(--ease-out) both;
+  animation-delay: calc(80ms + var(--d, 0) * 90ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
+  }
+}
+
 @keyframes gallery-in {
   from {
     opacity: 0;

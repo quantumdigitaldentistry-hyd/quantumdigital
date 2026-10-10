@@ -39,7 +39,7 @@ export function FeatureGrid({
     <ul className={cx('flex flex-wrap justify-center gap-4', className)}>
       {features.map(({ title, body, photo, Icon, kicker }, index) => (
         <li key={title} className={cx('w-full', widths[columns])}>
-          <Reveal step={index % columns} className="h-full">
+          <Reveal step={index % columns} className="h-full" variant="tilt">
             <article className="group flex h-full flex-col overflow-hidden rounded-container border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua">
               {photo ? (
                 <div className="aspect-4/3 overflow-hidden">

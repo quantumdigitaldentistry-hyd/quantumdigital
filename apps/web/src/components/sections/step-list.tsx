@@ -15,7 +15,14 @@ export function StepList({
   tone?: 'canvas' | 'surface';
 }) {
   return (
-    <ol className={cx('flex flex-col gap-4', className)}>
+    <ol className={cx('steps-timeline relative flex flex-col gap-4', className)}>
+      {/* Connector between the numbers; fills as the list scrolls through. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute top-10 bottom-10 left-[39px] w-0.5 overflow-hidden rounded-full bg-line"
+      >
+        <span className="steps-line block size-full bg-brand" />
+      </span>
       {steps.map((step, index) => (
         <li key={step.title}>
           <Reveal
@@ -25,7 +32,7 @@ export function StepList({
               tone === 'canvas' ? 'bg-canvas' : 'bg-surface',
             )}
           >
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-small font-medium text-on-brand">
+            <span className="step-pop grid size-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-small font-medium text-on-brand">
               {String(index + 1).padStart(2, '0')}
             </span>
             <div className="flex flex-col gap-1">

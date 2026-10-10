@@ -6,5 +6,6 @@
 export const vtNames = {
   treatmentTitle: (slug: string) => `treatment-title-${slug}`,
   treatmentPhoto: (slug: string) => `treatment-photo-${slug}`,
+  treatmentIllustration: (slug: string) => `treatment-illustration-${slug}`,
   doctorPhoto: (slug: string) => `doctor-photo-${slug}`,
 };

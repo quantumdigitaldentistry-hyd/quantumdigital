@@ -10,16 +10,19 @@ import { cx } from '@/lib/cx';
 export function Reveal({
   children,
   step = 0,
+  variant = 'rise',
   className,
 }: {
   children: ReactNode;
   /** Position among siblings (0, 1, 2…) for a slight stagger. */
   step?: number;
+  /** rise: fade up. tilt: tilt up into place (cards). */
+  variant?: 'rise' | 'tilt';
   className?: string;
 }) {
   return (
     <div
-      className={cx('reveal', className)}
+      className={cx(variant === 'tilt' ? 'tilt-in' : 'reveal', className)}
       style={{ '--reveal-start': `${step * 6}%` } as CSSProperties}
     >
       {children}

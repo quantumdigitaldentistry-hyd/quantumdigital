@@ -1,4 +1,5 @@
 import { ArrowUpRightIcon, CalendarPlusIcon, CheckIcon, InfoIcon } from '@phosphor-icons/react';
+import type { CSSProperties } from 'react';
 import { Link, useParams, type LoaderFunctionArgs } from 'react-router';
 
 import { BackButton } from '@/components/back-button';
@@ -39,11 +40,18 @@ export default function TreatmentPage() {
 
   return (
     <>
+      <div
+        aria-hidden
+        className="read-progress pointer-events-none fixed inset-x-0 top-0 z-50 h-1 bg-brand"
+      />
       <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
         <Container className="grid items-center gap-10 py-8 md:grid-cols-[1.05fr_1fr] md:py-16">
-          <div className="flex flex-col gap-5">
+          <div className="hero-exit flex flex-col gap-5">
             <BackButton fallback="/treatments" />
-            <p className="text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase">
+            <p
+              className="enter text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase"
+              style={{ '--d': 0 } as CSSProperties}
+            >
               Treatment
             </p>
             <h1
@@ -52,10 +60,13 @@ export default function TreatmentPage() {
             >
               {treatment.name}
             </h1>
-            <p className="max-w-[46ch] text-on-hero-muted md:text-heading md:font-normal">
+            <p
+              className="enter max-w-[46ch] text-on-hero-muted md:text-heading md:font-normal"
+              style={{ '--d': 1 } as CSSProperties}
+            >
               {treatment.summary}
             </p>
-            <ul className="flex flex-wrap gap-2">
+            <ul className="enter flex flex-wrap gap-2" style={{ '--d': 2 } as CSSProperties}>
               {treatment.highlights.map((item) => (
                 <li
                   key={item}
@@ -68,7 +79,8 @@ export default function TreatmentPage() {
             </ul>
             <button
               type="button"
-              className={buttonClass('primary', 'w-fit')}
+              className={buttonClass('primary', 'enter w-fit')}
+              style={{ '--d': 3 } as CSSProperties}
               onClick={() => show('book')}
             >
               <CalendarPlusIcon size={20} aria-hidden />
@@ -76,7 +88,7 @@ export default function TreatmentPage() {
             </button>
           </div>
 
-          <div className="relative mx-auto w-full max-w-md">
+          <div className="hero-exit relative mx-auto w-full max-w-md">
             <div
               style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
               className="aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
@@ -86,10 +98,14 @@ export default function TreatmentPage() {
                 sizes="(min-width: 768px) 28rem, 90vw"
                 priority
                 className="block size-full"
+                imgClassName="parallax-img"
               />
             </div>
             {/* The treatment's illustration floats over the photo's corner. */}
-            <div className="float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40">
+            <div
+              className="float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40"
+              style={{ viewTransitionName: vtNames.treatmentIllustration(treatment.slug) }}
+            >
               <Photo
                 photo={treatment.illustration}
                 sizes="160px"
@@ -207,14 +223,17 @@ export default function TreatmentPage() {
             Other treatments
           </h2>
           <ul className="grid gap-4 sm:grid-cols-3">
-            {others.map((item) => (
-              <li key={item.slug}>
+            {others.map((item, index) => (
+              <li key={item.slug} className={index % 2 ? 'slide-in-end' : 'slide-in-start'}>
                 <Link
                   to={`/treatments/${item.slug}`}
                   viewTransition
                   className="group flex items-center gap-3 rounded-container border border-line bg-canvas p-4 transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-aqua"
                 >
-                  <span className="grid size-14 shrink-0 place-items-center rounded-full bg-aqua-soft">
+                  <span
+                    className="grid size-14 shrink-0 place-items-center rounded-full bg-aqua-soft"
+                    style={{ viewTransitionName: vtNames.treatmentIllustration(item.slug) }}
+                  >
                     <Photo
                       photo={item.illustration}
                       sizes="56px"

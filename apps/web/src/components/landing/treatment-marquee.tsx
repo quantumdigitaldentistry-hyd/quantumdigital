@@ -1,23 +1,18 @@
 import { SparkleIcon } from '@phosphor-icons/react';
 import type { CSSProperties } from 'react';
 
-import { featuredTreatments } from '@/content/clinic';
+import { treatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 
 function Row({ reverse = false, outline = false }: { reverse?: boolean; outline?: boolean }) {
   // Two identical halves, so translating by -50% loops seamlessly.
-  const items = [
-    ...featuredTreatments,
-    ...featuredTreatments,
-    ...featuredTreatments,
-    ...featuredTreatments,
-  ];
+  const items = [...treatments, ...treatments];
   return (
     <div className="flex overflow-hidden">
       <div
         className="marquee-track flex shrink-0 items-center gap-8 pr-8 md:gap-12 md:pr-12"
         data-direction={reverse ? 'reverse' : undefined}
-        style={{ '--marquee-duration': reverse ? '48s' : '40s' } as CSSProperties}
+        style={{ '--marquee-duration': reverse ? '78s' : '66s' } as CSSProperties}
       >
         {items.map((treatment, index) => (
           <span key={index} className="flex items-center gap-8 md:gap-12">
@@ -29,7 +24,7 @@ function Row({ reverse = false, outline = false }: { reverse?: boolean; outline?
                   : 'text-ink',
               )}
             >
-              {treatment.name}
+              {treatment.shortName ?? treatment.name}
             </span>
             <SparkleIcon size={28} weight="fill" className="shrink-0 text-aqua" />
           </span>
