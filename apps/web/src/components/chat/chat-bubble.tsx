@@ -76,7 +76,12 @@ export function ChatBubble() {
     setPosition(clamp({ x: state.origin.x + dx, y: state.origin.y + dy }));
   };
 
-  const onPointerUp = () => {
+  const open = (button: HTMLButtonElement) => {
+    const { x, y, width, height } = button.getBoundingClientRect();
+    show('chat', { x, y, width, height });
+  };
+
+  const onPointerUp = (event: PointerEvent<HTMLButtonElement>) => {
     const state = drag.current;
     drag.current = null;
     if (!state) return;
@@ -88,7 +93,7 @@ export function ChatBubble() {
         return settled;
       });
     } else {
-      show('chat');
+      open(event.currentTarget);
     }
   };
 
@@ -120,27 +125,33 @@ export function ChatBubble() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       onKeyDown={onKeyDown}
+      // Enter / Space (a click with no pointer: detail 0). Taps are handled on pointer up.
+      onClick={(event) => event.detail === 0 && open(event.currentTarget)}
+      // Position with `translate`, not `transform`: the hover/drag `scale` is applied
+      // after a `transform`, so it would also scale the offset and slide the bubble out
+      // from under the cursor (hover on, off, on: flicker). `translate` comes first.
       // Named so page transitions leave the bubble where it is.
       style={{
-        transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+        translate: `${position.x}px ${position.y}px`,
         viewTransitionName: 'chat-bubble',
       }}
       className={cx(
-        'group fixed top-0 left-0 z-30 grid size-15 touch-none place-items-center rounded-full bg-linear-to-br from-brand to-brand-strong text-on-brand shadow-xl shadow-elevation/30 select-none',
+        'group fixed top-0 left-0 z-30 grid size-15 touch-none place-items-center rounded-full bg-linear-to-br from-brand to-brand-strong text-on-brand shadow-xl shadow-elevation/30 will-change-transform select-none',
         dragging
           ? 'scale-110 cursor-grabbing shadow-2xl'
-          : 'cursor-grab transition-[transform,scale,box-shadow] duration-300 ease-out hover:scale-105',
+          : 'cursor-grab transition-[scale,box-shadow] duration-300 ease-out hover:scale-105',
       )}
     >
-      {/* Gentle attention ring, a few times after load. */}
+      {/* Gentle attention ring, a few times after load. It must not catch the pointer:
+          as it grows past the button it would toggle :hover on and off (flicker). */}
       <span
         aria-hidden
-        className="absolute inset-0 animate-[chat-ping_2.4s_var(--ease-out)_3] rounded-full border-2 border-brand motion-reduce:hidden"
+        className="pointer-events-none absolute inset-0 animate-[chat-ping_2.4s_var(--ease-out)_3] rounded-full border-2 border-brand motion-reduce:hidden"
       />
       <ChatCircleDotsIcon size={28} weight="fill" aria-hidden />
       <span
         aria-hidden
-        className="absolute -top-0.5 -right-0.5 size-4 rounded-full border-2 border-surface bg-highlight"
+        className="pointer-events-none absolute -top-0.5 -right-0.5 size-4 rounded-full border-2 border-surface bg-highlight"
       />
     </button>
   );

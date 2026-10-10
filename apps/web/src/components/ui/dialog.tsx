@@ -1,7 +1,8 @@
 import { XIcon } from '@phosphor-icons/react';
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useId, useLayoutEffect, useRef, type ReactNode } from 'react';
 
 import { cx } from '@/lib/cx';
+import type { ActionOrigin } from '@/lib/quick-actions';
 
 import { IconButton } from './icon-button';
 
@@ -15,12 +16,60 @@ const variants = {
   drawer: 'dialog-drawer my-0 mr-0 ml-auto h-dvh max-h-none w-[min(22rem,88vw)] max-w-none',
 };
 
+const GAP = 12;
+const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const EASE_IN = 'cubic-bezier(0.5, 0, 0.75, 0)';
+
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * From md up, sit the panel beside the button it came from (above it when the button is
+ * in the lower half of the screen, below otherwise), kept inside the viewport. Phones
+ * keep the bottom sheet.
+ */
+function placeBeside(dialog: HTMLDialogElement, origin: ActionOrigin | null | undefined) {
+  const style = dialog.style;
+  if (!origin || !window.matchMedia('(min-width: 768px)').matches) {
+    style.removeProperty('inset');
+    style.removeProperty('left');
+    style.removeProperty('top');
+    style.removeProperty('margin');
+    return;
+  }
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const width = dialog.offsetWidth;
+  const height = dialog.offsetHeight;
+  const left = origin.x < vw / 2 ? origin.x : origin.x + origin.width - width;
+  const top = origin.y > vh / 2 ? origin.y - GAP - height : origin.y + origin.height + GAP;
+  style.inset = 'auto';
+  style.margin = '0';
+  style.left = `${Math.min(Math.max(GAP, left), vw - width - GAP)}px`;
+  style.top = `${Math.min(Math.max(GAP, top), vh - height - GAP)}px`;
+}
+
+/** Grow the panel out of (or shrink it back into) the button it was opened from. */
+function morph(dialog: HTMLDialogElement, origin: ActionOrigin, direction: 'in' | 'out') {
+  const box = dialog.getBoundingClientRect();
+  dialog.style.transformOrigin = `${origin.x + origin.width / 2 - box.left}px ${
+    origin.y + origin.height / 2 - box.top
+  }px`;
+  const radius = getComputedStyle(dialog).borderRadius;
+  const small = { scale: '0.1', opacity: 0, borderRadius: '9999px' };
+  const full = { scale: '1', opacity: 1, borderRadius: radius };
+  return direction === 'in'
+    ? dialog.animate([small, full], { duration: 420, easing: EASE_OUT })
+    : dialog.animate([full, small], { duration: 240, easing: EASE_IN, fill: 'forwards' });
+}
+
 export type DialogProps = {
   open: boolean;
   onClose: () => void;
   title: string;
   description?: string;
   variant?: keyof typeof variants;
+  /** The button it was opened from: the panel grows out of it and sits beside it. */
+  origin?: ActionOrigin | null;
   children?: ReactNode;
   className?: string;
 };
@@ -35,19 +84,36 @@ export function Dialog({
   title,
   description,
   variant = 'sheet',
+  origin,
   children,
   className,
 }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const exit = useRef<Animation | null>(null);
   const titleId = useId();
   const descriptionId = useId();
 
-  useEffect(() => {
+  // Layout effect: placement and the first animation frame land before the first paint.
+  useLayoutEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
+    const animate = !!origin && !reducedMotion();
+    if (open && !dialog.open) {
+      exit.current?.cancel();
+      exit.current = null;
+      dialog.showModal();
+      placeBeside(dialog, origin);
+      if (animate) morph(dialog, origin, 'in');
+    } else if (!open && dialog.open) {
+      if (animate) {
+        const animation = morph(dialog, origin, 'out');
+        exit.current = animation;
+        animation.finished.then(() => dialog.close()).catch(() => {});
+      } else {
+        dialog.close();
+      }
+    }
+  }, [open, origin]);
 
   return (
     <dialog
@@ -55,11 +121,18 @@ export function Dialog({
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
       onClose={onClose}
+      // Esc: close through state, so the panel can shrink back into its button first.
+      onCancel={(event) => {
+        if (!origin) return;
+        event.preventDefault();
+        onClose();
+      }}
       // The dialog element itself is only "hit" outside the content box: the backdrop.
       onClick={(event) => event.target === event.currentTarget && onClose()}
       className={cx(
         'dialog max-h-[92dvh] overflow-y-auto border-0 bg-surface p-0 text-ink',
         variants[variant],
+        origin && 'dialog-origin md:max-h-[min(42rem,calc(100dvh-1.5rem))]! md:w-[24rem]!',
         className,
       )}
     >

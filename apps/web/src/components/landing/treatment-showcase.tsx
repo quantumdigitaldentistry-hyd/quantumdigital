@@ -48,7 +48,7 @@ export function TreatmentShowcase() {
             id="treatments-title"
             className="font-display text-title font-bold text-balance md:text-display"
           >
-            Four specialities, one roof.
+            Your complete smile destination.
           </h2>
           <p className="max-w-[40ch] text-ink-muted">
             Each treatment is led by a specialist and planned with digital records before anything

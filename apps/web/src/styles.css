@@ -229,6 +229,17 @@
       translate: 100% 0;
     }
   }
+  /* Panels that grow out of their button (see Dialog's origin): no slide, the scale
+     animation does the work, and the measured position stays true. */
+  .dialog-origin,
+  .dialog-origin[open] {
+    translate: none;
+  }
+  @starting-style {
+    .dialog-origin[open] {
+      translate: none;
+    }
+  }
   .dialog::backdrop {
     background: rgb(7 13 19 / 0);
     transition:

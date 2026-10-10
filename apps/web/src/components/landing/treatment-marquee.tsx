@@ -39,10 +39,16 @@ function Row({ reverse = false, outline = false }: { reverse?: boolean; outline?
   );
 }
 
-/** Two counter-moving rows of treatment names. Decorative: the same list is in the page. */
+/**
+ * Two counter-moving rows of treatment names. Decorative: the same list is in the page.
+ * Hidden on phones, where the hero runs straight into the implant story.
+ */
 export function TreatmentMarquee() {
   return (
-    <div aria-hidden className="flex flex-col gap-3 border-y border-line bg-surface py-6 md:py-10">
+    <div
+      aria-hidden
+      className="hidden flex-col gap-3 border-y border-line bg-surface py-6 md:flex md:py-10"
+    >
       <Row />
       <Row reverse outline />
     </div>

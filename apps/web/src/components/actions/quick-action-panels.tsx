@@ -82,7 +82,7 @@ function CallbackForm() {
 
 /** Book / call back / chat panels, mounted once in the root layout. */
 export function QuickActionPanels() {
-  const { open, close } = useQuickActions();
+  const { open, origin, close } = useQuickActions();
 
   return (
     <>
@@ -109,7 +109,7 @@ export function QuickActionPanels() {
         ) : null}
       </Dialog>
 
-      <Dialog open={open === 'chat'} onClose={close} title="Chat assistant">
+      <Dialog open={open === 'chat'} onClose={close} origin={origin} title="Chat assistant">
         {open === 'chat' ? <ChatAssistant /> : null}
       </Dialog>
     </>
