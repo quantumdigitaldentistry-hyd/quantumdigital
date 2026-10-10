@@ -1,0 +1,27 @@
+{
+  "name": "quantam-dental",
+  "private": true,
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "pnpm --filter dental start",
+    "web": "pnpm --filter dental web",
+    "android": "pnpm --filter dental android",
+    "ios": "pnpm --filter dental ios",
+    "build:web": "turbo run build:web",
+    "build:apk": "pnpm --filter dental build:apk",
+    "build:ipa": "pnpm --filter dental build:ipa",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:types": "supabase gen types typescript --linked > packages/supabase/src/database.types.ts"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.9",
+    "supabase": "^2.120.0",
+    "turbo": "^2.11.7"
+  }
+}

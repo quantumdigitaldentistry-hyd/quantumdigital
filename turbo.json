@@ -1,0 +1,12 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build:web": {
+      "dependsOn": ["^build:web"],
+      "env": ["EXPO_PUBLIC_*"],
+      "outputs": ["dist/**"]
+    },
+    "lint": {},
+    "typecheck": {}
+  }
+}

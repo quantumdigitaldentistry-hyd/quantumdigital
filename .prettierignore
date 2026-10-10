@@ -1,0 +1,9 @@
+node_modules
+dist
+.expo
+.turbo
+pnpm-lock.yaml
+.agents
+.claude
+skills-lock.json
+**/uniwind-types.d.ts

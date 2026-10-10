@@ -1,0 +1,24 @@
+{
+  "name": "@quantam/supabase",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
+    "react-native-url-polyfill": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@quantam/config": "workspace:*",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "react-native": "0.86.3",
+    "typescript": "~6.0.3"
+  }
+}

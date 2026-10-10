@@ -1,0 +1,4 @@
+{
+  "extends": "@quantam/config/tsconfig.base.json",
+  "include": ["src"]
+}
