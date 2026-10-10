@@ -18,6 +18,11 @@ export default defineConfig([
     languageOptions: { ecmaVersion: 2022, globals: globals.browser },
   },
   {
+    // Route modules may export a data loader next to the page component.
+    files: ['src/routes/**/*.tsx'],
+    rules: { 'react-refresh/only-export-components': ['error', { allowExportNames: ['loader'] }] },
+  },
+  {
     files: ['**/*.{js,mjs}'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },

@@ -50,7 +50,7 @@ export function SiteFooter() {
           >
             Unsplash
           </a>
-          : {photoCredits.map((credit) => credit.name).join(', ')}
+          : {photoCredits.join(', ')}
         </p>
         <Link to="/design" className="hover:text-brand">
           Design system

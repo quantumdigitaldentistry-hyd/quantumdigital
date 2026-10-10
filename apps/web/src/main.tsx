@@ -44,6 +44,17 @@ const router = createBrowserRouter([
         lazy: async () => ({ Component: (await import('@/routes/contact-us')).default }),
       },
       {
+        path: 'gallery',
+        lazy: async () => ({ Component: (await import('@/routes/gallery')).default }),
+      },
+      {
+        path: 'doctors/:slug',
+        lazy: async () => {
+          const page = await import('@/routes/doctor');
+          return { Component: page.default, loader: page.loader };
+        },
+      },
+      {
         path: 'design',
         lazy: async () => ({ Component: (await import('@/routes/design')).default }),
       },

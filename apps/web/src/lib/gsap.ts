@@ -13,6 +13,8 @@ export function loadGsap() {
   loading ??= Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
     ([{ gsap }, { ScrollTrigger }]) => {
       gsap.registerPlugin(ScrollTrigger);
+      // Mobile address bars resize the viewport while scrolling; re-measuring then causes jumps.
+      ScrollTrigger.config({ ignoreMobileResize: true });
       return { gsap, ScrollTrigger };
     },
   );

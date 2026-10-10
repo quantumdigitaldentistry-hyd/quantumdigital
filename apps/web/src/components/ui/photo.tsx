@@ -9,6 +9,7 @@ export function Photo({
   photo,
   sizes,
   priority = false,
+  fit = 'cover',
   className,
   imgClassName,
 }: {
@@ -16,6 +17,8 @@ export function Photo({
   /** e.g. "(min-width: 1024px) 30vw, 80vw" */
   sizes: string;
   priority?: boolean;
+  /** contain for illustrations (never crop them). */
+  fit?: 'cover' | 'contain';
   className?: string;
   imgClassName?: string;
 }) {
@@ -31,7 +34,11 @@ export function Photo({
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={priority ? 'high' : undefined}
-        className={cx('size-full object-cover', imgClassName)}
+        className={cx(
+          'size-full',
+          fit === 'cover' ? 'object-cover' : 'object-contain',
+          imgClassName,
+        )}
       />
     </picture>
   );

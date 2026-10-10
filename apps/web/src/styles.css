@@ -248,6 +248,14 @@ html:has(dialog[open]) {
   overflow: hidden;
 }
 
+/* Lightbox photo swap. */
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
 /* Floating actions pop in once, just after the page settles. */
 @keyframes fab-in {
   from {

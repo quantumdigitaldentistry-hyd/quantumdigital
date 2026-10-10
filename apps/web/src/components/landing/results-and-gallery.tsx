@@ -1,0 +1,86 @@
+import { ArrowUpRightIcon, InfoIcon } from '@phosphor-icons/react';
+import { Link } from 'react-router';
+
+import { BeforeAfter } from '@/components/gallery/before-after';
+import { PhotoGallery } from '@/components/gallery/photo-gallery';
+import { Reveal } from '@/components/reveal';
+import { Container } from '@/components/ui/container';
+import { galleryPhotos, photos } from '@/content/photos';
+
+/**
+ * Smile results (before/after slider) and a gallery preview.
+ *
+ * The slider shows a DEMO until the clinic adds real patient cases with consent: the
+ * same photo, with a filter standing in for "before". It is labelled as such, so no
+ * result is ever implied that didn't happen.
+ */
+export function SmileResults() {
+  return (
+    <section aria-labelledby="results-title" className="bg-canvas">
+      <Container className="grid gap-10 py-16 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 md:py-24">
+        <Reveal className="flex flex-col gap-4">
+          <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
+            04 · Results
+          </p>
+          <h2
+            id="results-title"
+            className="font-display text-title font-bold text-balance md:text-display"
+          >
+            See the difference.
+          </h2>
+          <p className="max-w-[42ch] text-ink-muted">
+            Drag the handle to compare before and after. Real cases from the clinic will appear
+            here, shared with each patient&apos;s consent.
+          </p>
+          <p className="flex max-w-[44ch] items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
+            <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+            Demo only: the same photo with a filter, to show how the comparison works.
+          </p>
+        </Reveal>
+        <Reveal step={1}>
+          <BeforeAfter
+            before={photos.smileJoy}
+            after={photos.smileJoy}
+            beforeClassName="[filter:sepia(0.45)_saturate(0.6)_brightness(0.9)_contrast(0.95)]"
+            label="Compare before and after (demo)"
+          />
+        </Reveal>
+      </Container>
+    </section>
+  );
+}
+
+export function GalleryPreview() {
+  return (
+    <section aria-labelledby="gallery-title" className="border-y border-line bg-surface">
+      <Container className="flex flex-col gap-8 py-16 md:py-24">
+        <Reveal className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-2">
+            <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
+              05 · Gallery
+            </p>
+            <h2
+              id="gallery-title"
+              className="font-display text-title font-bold text-balance md:text-display"
+            >
+              Inside modern dentistry.
+            </h2>
+          </div>
+          <Link
+            to="/gallery"
+            viewTransition
+            className="group inline-flex w-fit items-center gap-2 font-medium text-brand hover:underline"
+          >
+            Open the gallery
+            <ArrowUpRightIcon
+              size={18}
+              aria-hidden
+              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
+        </Reveal>
+        <PhotoGallery items={galleryPhotos.slice(0, 6)} />
+      </Container>
+    </section>
+  );
+}

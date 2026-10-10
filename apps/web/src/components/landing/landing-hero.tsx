@@ -30,7 +30,11 @@ export function LandingHero() {
       {/* Soft light behind the tooth: decorative. */}
       <div
         aria-hidden
-        className="absolute top-1/3 right-[-20%] -z-10 size-[70vmax] rounded-full bg-surface/30 blur-3xl md:right-[-10%] md:size-[48vmax]"
+        className="absolute top-1/4 right-[-25%] -z-10 size-[80vmax] md:right-[-12%] md:size-[56vmax]"
+        style={{
+          backgroundImage: 'radial-gradient(closest-side, var(--color-surface), transparent)',
+          opacity: 0.45,
+        }}
       />
       <Container className="grid min-h-[calc(100svh-7rem)] items-center gap-2 pt-10 pb-4 md:grid-cols-[1.2fr_1fr] md:gap-8 md:py-16">
         <div className="flex flex-col gap-6">

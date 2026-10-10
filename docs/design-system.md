@@ -180,7 +180,11 @@ Soft and friendly, with one rule:
 | `PageLoader`    | Brand kit Fill loader for whole pages                                                              |
 | `DotsLoader`    | Brand kit Dots loader for buttons and inline waits                                                 |
 | `Reveal`        | Scroll-in fade (`components/reveal.tsx`)                                                           |
-| `HeroVisual`    | Logo poster, upgraded to the 3D tooth when it's cheap enough (`components/three`)                  |
+| `HeroVisual`    | The brand kit's interactive 3D logo on a dark stage (`components/three`); logo poster until loaded |
+| `ScrollStory`   | Pinned, scroll-scrubbed 3D explainer with captions (`components/landing/scroll-story.tsx`)         |
+| `PhotoGallery`  | Masonry grid plus full-screen lightbox (arrows, swipe, Esc) (`components/gallery`)                 |
+| `BeforeAfter`   | Draggable comparison on a native range input: mouse, touch and keyboard (`components/gallery`)     |
+| `Photo`         | Responsive AVIF/WebP image; `fit="contain"` for illustrations                                      |
 
 Icons come from Phosphor (`@phosphor-icons/react`). Use the `*Icon` names (`SunIcon`, not the deprecated `Sun`), `weight="duotone"` for feature icons and `regular` in controls, and always `aria-hidden` next to a text label.
 
@@ -218,10 +222,13 @@ The original brand kit (logo, icons, all six GIFs, `Brand Kit.dc.html`) is kept 
 Three layers, cheapest first. Reach for the next one only when the previous can't do it.
 
 1. **CSS (no JavaScript):** page transitions (View Transitions API, `<Link viewTransition>`), the hero word reveal (`.word-reveal`), floating chips (`.float-y`), the treatment ticker (`.marquee-track`), and scroll-linked effects on scroll timelines: reveals (`.reveal`), the hero sinking away (`.hero-exit`), photo parallax (`.parallax-img`) and the journey line (`.line-fill`). Without scroll-timeline support (currently Firefox) these simply show static, fully visible content.
-2. **GSAP + ScrollTrigger** (`lib/gsap.ts`, loaded lazily): only for scroll scenes CSS can't express. Today that's the implant story (scroll progress drives the 3D model and captions) and the desktop treatment row (pinned, moves sideways). Use `useScrollScene`, which scopes and reverts everything on unmount and skips reduced motion.
-3. **three.js** (plain, named imports): the hero tooth and the implant model, both built from lathe profiles, so there are no model files. They share one lazily loaded three.js chunk. The implant scene has no animation loop; it renders only when scroll progress or size changes.
+2. **GSAP + ScrollTrigger** (`lib/gsap.ts`, loaded lazily): only for scroll scenes CSS can't express: the scroll stories (progress drives the 3D model and captions) and the stacked treatment cards (a covered card eases back and dims). Use `useScrollScene`, which scopes and reverts everything on unmount and skips reduced motion.
+3. **three.js** (plain, named imports, one shared lazy chunk):
+   - **Hero logo** (`logo-scene.tsx`): ported from the brand kit's `qdd-logo-3d` web component (original in `docs/brand/kit/dashboard3d`). The logo is stacked 44 layers deep, with rings, halo and dust. It tilts toward the pointer, drag spins it with inertia, and a tap pulses it. Its stage colours follow the festival theme. The loop pauses off-screen.
+   - **Implant story** and **orthodontics story** (`implant-scene.tsx`, `ortho-scene.tsx`): built from lathe and tube geometry, with no model files. They have no animation loop: they draw only when scroll progress changes, at most once per frame.
 
-- **Smooth scrolling:** Lenis, for mouse and trackpad only. Touch devices keep native scrolling, reduced motion disables it, and it never scrolls the page behind an open dialog.
+- **Smooth scrolling:** Lenis for mouse and trackpad, driven by GSAP's ticker so Lenis, ScrollTrigger and the scenes update in the same frame (separate loops are what cause judder). Touch devices keep native scrolling, reduced motion disables it, and it never scrolls the page behind an open dialog. Measured on an integrated Intel GPU: 60 fps through both scroll stories.
+- **Keep scrolling cheap:** no `blur()` on large decorative layers (use a `radial-gradient` glow instead), animate only `transform` and `opacity`, and cap WebGL pixel ratio at 1.5 for scroll scenes.
 - **Micro-interactions:** buttons press to 97%, cards lift 4px, icons tilt, photos zoom 5% on hover. Use `duration-150` for presses, `duration-300` for hovers, `duration-500`–`700` for photo zooms, and `--ease-out` for entrances.
 - **Static fallbacks:** reduced motion, no WebGL2, data saver or under 4 GB memory give the implant story as a photo plus three numbered steps, and the hero as the logo. Same content, no 3D.
 - **Reduced motion** (`prefers-reduced-motion`) turns every animation into an instant change and stills the loaders.
@@ -229,6 +236,13 @@ Three layers, cheapest first. Reach for the next one only when the previous can'
 ### Photos
 
 Photos come from [`src/content/photos.ts`](../apps/web/src/content/photos.ts) through `<Photo>`: AVIF with a WebP fallback, two widths each, lazy unless `priority`, with fixed aspect ratios so nothing shifts. They're Unsplash photos (free for commercial use; credited in the footer) until the clinic's own photos replace them: keep the names, convert them the same way, done. Text over a photo always sits on a `bg-scrim` overlay and uses `text-on-scrim`.
+
+Illustrations come from **one family** (Round Icons on Unsplash: tooth with crown, braces, toothbrush, calendar, tooth with plus). Mixing illustration styles is the fastest way to look templated, so add new ones only from the same set.
+
+Honesty rules for images:
+
+- **Never put a stock portrait next to a doctor's name.** Doctor pages show their speciality illustration until the clinic provides real portraits (`portrait` in `content/clinic.ts`).
+- **Before/after only with real cases and patient consent.** Until then the slider is labelled "Demo only".
 
 ## Performance budget
 

@@ -1,14 +1,32 @@
+import type { FestivalKey } from '@quantam/shared';
+import { HandGrabbingIcon } from '@phosphor-icons/react';
 import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
-import logoAvif from '@/assets/brand/logo-mark.avif';
-import logoWebp from '@/assets/brand/logo-mark.webp';
+import { LogoMark } from '@/components/brand/logo';
 import { cx } from '@/lib/cx';
 import { canRender3D } from '@/lib/device';
+import { useFestival } from '@/lib/festival';
 
-import type { SceneColours } from './tooth-scene';
+import { LOGO_THEMES, type LogoTheme } from './logo-themes';
 
-// three.js + react-three-fiber live in this chunk, fetched only when needed.
-const ToothScene = lazy(() => import('./tooth-scene'));
+// three.js lives in this chunk, fetched only when needed.
+const LogoScene = lazy(() => import('./logo-scene'));
+
+/** Festival campaign → the brand kit's 3D logo theme. */
+const themeForFestival: Record<FestivalKey, LogoTheme> = {
+  clinic: 'brand',
+  'new-year': 'brand',
+  'oral-health': 'brand',
+  sankranti: 'sankranti',
+  holi: 'holi',
+  ugadi: 'onam',
+  eid: 'eid',
+  national: 'independence',
+  ganesh: 'ganesh',
+  dasara: 'navratri',
+  diwali: 'diwali',
+  christmas: 'christmas',
+};
 
 const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 const useReducedMotion = () =>
@@ -20,33 +38,21 @@ const useReducedMotion = () =>
     () => reducedMotionQuery.matches,
   );
 
-const readColours = (): SceneColours => {
-  const css = getComputedStyle(document.documentElement);
-  const token = (name: string) => css.getPropertyValue(name).trim();
-  return { brand: token('--color-brand'), aqua: token('--color-aqua'), tooth: '#ffffff' };
-};
-
 /**
- * Hero artwork. Paints the logo immediately (no layout shift, fast LCP), then fades the
- * 3D scene in once the browser is idle, the hero is on screen and the device can handle
- * it. The render loop pauses when the hero scrolls out of view.
+ * Hero artwork: the brand kit's interactive 3D logo on a dark stage. The flat logo paints
+ * immediately (fast first paint, no layout shift); the 3D version fades in once the
+ * browser is idle, the hero is on screen and the device can handle it, and its loop
+ * pauses when scrolled away. The stage follows the running festival theme.
  */
 export function HeroVisual({ className }: { className?: string }) {
   const container = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const theme = themeForFestival[useFestival((s) => s.festival)];
   const [inView, setInView] = useState(false);
   const [idle, setIdle] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
   const [supported] = useState(canRender3D);
-  const [colours, setColours] = useState(readColours);
-
-  // Re-read the colour tokens whenever the resolved theme flips (dark mode lightens brand
-  // blue), including device changes while the mode is "system".
-  useEffect(() => {
-    const observer = new MutationObserver(() => setColours(readColours()));
-    observer.observe(document.documentElement, { attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, []);
+  const [compact] = useState(() => window.matchMedia('(max-width: 767px)').matches);
 
   useEffect(() => {
     const element = container.current;
@@ -72,23 +78,27 @@ export function HeroVisual({ className }: { className?: string }) {
   return (
     <div
       ref={container}
-      data-scene-ready={sceneReady}
-      className={cx('relative aspect-square w-full', className)}
+      className={cx(
+        'relative aspect-square w-full overflow-hidden rounded-4xl shadow-2xl shadow-elevation/30 ring-1 ring-surface/20 transition-colors duration-700',
+        className,
+      )}
+      style={{ backgroundColor: LOGO_THEMES[theme].stage }}
     >
-      <picture>
-        <source srcSet={logoAvif} type="image/avif" />
-        <img
-          src={logoWebp}
-          alt=""
-          width={400}
-          height={373}
-          fetchPriority="high"
-          className={cx(
-            'absolute inset-[18%] size-[64%] object-contain transition-[opacity,scale] duration-700 ease-out',
-            sceneReady ? 'scale-90 opacity-0' : 'opacity-100',
-          )}
-        />
-      </picture>
+      {/* Soft light pool behind the logo (radial gradient, not blur: cheap to composite). */}
+      <div
+        aria-hidden
+        className="absolute inset-[6%] opacity-60"
+        style={{
+          backgroundImage: `radial-gradient(closest-side, ${LOGO_THEMES[theme].glow}, transparent)`,
+        }}
+      />
+      <LogoMark
+        priority
+        className={cx(
+          'absolute inset-[24%] h-auto w-[52%] transition-[opacity,scale] duration-700 ease-out',
+          sceneReady ? 'scale-90 opacity-0' : 'opacity-100',
+        )}
+      />
       {load3D ? (
         <Suspense fallback={null}>
           <div
@@ -97,14 +107,21 @@ export function HeroVisual({ className }: { className?: string }) {
               sceneReady ? 'opacity-100' : 'opacity-0',
             )}
           >
-            <ToothScene
-              colours={colours}
+            <LogoScene
+              theme={theme}
               active={inView}
               reducedMotion={reducedMotion}
+              compact={compact}
               onReady={() => setSceneReady(true)}
             />
           </div>
         </Suspense>
+      ) : null}
+      {sceneReady ? (
+        <p className="pointer-events-none absolute inset-x-0 bottom-4 flex items-center justify-center gap-1.5 text-caption font-medium text-on-scrim/70">
+          <HandGrabbingIcon size={14} aria-hidden />
+          Drag to spin · tap to pulse
+        </p>
       ) : null}
     </div>
   );

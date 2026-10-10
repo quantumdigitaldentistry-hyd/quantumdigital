@@ -1,7 +1,8 @@
-import { ArrowRightIcon } from '@phosphor-icons/react';
-import { useRef } from 'react';
+import { ArrowUpRightIcon } from '@phosphor-icons/react';
+import { useRef, type CSSProperties } from 'react';
 import { Link } from 'react-router';
 
+import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { treatments } from '@/content/clinic';
 import { photos, type Photo as PhotoData } from '@/content/photos';
@@ -14,44 +15,46 @@ const treatmentPhotos: Record<string, PhotoData> = {
   'smile-design': photos.smile,
 };
 
+const highlights: Record<string, string[]> = {
+  invisalign: ['Nearly invisible', 'Removable to eat', 'Digitally planned'],
+  implants: ['Fixed, not removable', 'Looks like a natural tooth', 'Protects the jawbone'],
+  'laser-dentistry': ['Gentle on gums', 'Less bleeding', 'Often quicker healing'],
+  'smile-design': ['Shape and shade', 'Planned before treatment', 'Combines treatments'],
+};
+
 /**
- * Treatments as large photo cards. Phones and tablets: a native swipe row with snap
- * points. Desktop: the section pins and vertical scrolling moves the row sideways.
+ * Treatments as a stack of large cards. Each card sticks a little lower than the one
+ * before, so they pile up as you scroll; a card eases back and dims as the next one
+ * covers it. Without scripts (or with reduced motion) the cards still stack, just
+ * without the recede.
  */
 export function TreatmentShowcase() {
   const section = useRef<HTMLElement>(null);
-  const track = useRef<HTMLUListElement>(null);
 
   useScrollScene(section, ({ gsap }, element) => {
-    const media = gsap.matchMedia();
-    media.add('(min-width: 1024px)', () => {
-      const row = track.current;
-      if (!row) return;
-      const distance = () => Math.max(0, row.scrollWidth - window.innerWidth + 48);
-      gsap.to(row, {
-        x: () => -distance(),
+    const cards = gsap.utils.toArray<HTMLElement>('[data-stack-card]', element);
+    cards.slice(0, -1).forEach((card, index) => {
+      const next = cards[index + 1];
+      if (!next) return;
+      const scrollTrigger = { trigger: next, start: 'top bottom', end: 'top 20%', scrub: true };
+      // The card stays opaque (so covered cards never show through); a scrim dims it.
+      gsap.to(card.querySelector('[data-stack-inner]'), {
+        scale: 0.92,
         ease: 'none',
-        scrollTrigger: {
-          trigger: element,
-          start: 'top 64px',
-          end: () => `+=${distance()}`,
-          pin: true,
-          scrub: 0.6,
-          invalidateOnRefresh: true,
-        },
+        scrollTrigger,
+      });
+      gsap.to(card.querySelector('[data-stack-dim]'), {
+        opacity: 0.45,
+        ease: 'none',
+        scrollTrigger,
       });
     });
-    return () => media.revert();
   });
 
   return (
-    <section
-      ref={section}
-      aria-labelledby="treatments-title"
-      className="overflow-hidden bg-canvas py-14 md:py-20 lg:flex lg:min-h-[calc(100vh-4rem)] lg:flex-col lg:justify-center lg:py-12"
-    >
-      <div className="mx-auto mb-8 flex w-full max-w-6xl flex-col gap-3 px-4 md:mb-10 md:flex-row md:items-end md:justify-between md:px-6">
-        <div className="flex flex-col gap-2">
+    <section ref={section} aria-labelledby="treatments-title" className="bg-canvas">
+      <Container className="grid gap-10 py-16 md:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
           <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
             02 · Treatments
           </p>
@@ -61,46 +64,77 @@ export function TreatmentShowcase() {
           >
             Four specialities, one roof.
           </h2>
-        </div>
-        <Link
-          to="/treatments"
-          viewTransition
-          className="inline-flex items-center gap-2 font-medium text-brand hover:underline"
-        >
-          All treatments
-          <ArrowRightIcon size={18} aria-hidden />
-        </Link>
-      </div>
-
-      <ul
-        ref={track}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-4 [scrollbar-width:none] md:scroll-px-6 md:px-6 lg:snap-none lg:gap-6 lg:overflow-visible lg:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))]"
-      >
-        {treatments.map((treatment, index) => (
-          <li
-            key={treatment.slug}
-            className="group relative w-[78vw] shrink-0 snap-start overflow-hidden rounded-container sm:w-[46vw] lg:w-[26rem]"
+          <p className="max-w-[40ch] text-ink-muted">
+            Each treatment is led by a specialist and planned with digital records before anything
+            begins.
+          </p>
+          <Link
+            to="/treatments"
+            viewTransition
+            className="group inline-flex w-fit items-center gap-2 rounded-full border border-line-strong bg-surface px-5 py-3 font-medium transition-colors hover:border-brand hover:text-brand"
           >
-            <div className="aspect-[4/5] overflow-hidden">
-              <Photo
-                photo={treatmentPhotos[treatment.slug] ?? photos.smile}
-                sizes="(min-width: 1024px) 26rem, (min-width: 640px) 46vw, 78vw"
-                className="block size-full"
-                imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-            </div>
-            {/* Scrim keeps the caption readable on any photo. */}
-            <div className="absolute inset-0 bg-linear-to-t from-scrim/90 via-scrim/35 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-5 text-on-scrim md:p-6">
-              <span className="font-mono text-small opacity-80">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <h3 className="font-display text-title font-bold">{treatment.name}</h3>
-              <p className="text-small opacity-90">{treatment.summary}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+            Explore treatments
+            <ArrowUpRightIcon
+              size={18}
+              aria-hidden
+              className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
+        </div>
+
+        <ol className="flex flex-col gap-6">
+          {treatments.map((treatment, index) => (
+            <li
+              key={treatment.slug}
+              data-stack-card
+              className="sticky top-(--stack-top)"
+              style={{ '--stack-top': `${5.5 + index * 1.25}rem` } as CSSProperties}
+            >
+              <article
+                data-stack-inner
+                className="group relative origin-top overflow-hidden rounded-4xl border border-line bg-surface shadow-xl shadow-elevation/10"
+              >
+                <div className="relative aspect-16/10 overflow-hidden">
+                  <Photo
+                    photo={treatmentPhotos[treatment.slug] ?? photos.smile}
+                    sizes="(min-width: 1024px) 40rem, 92vw"
+                    className="block size-full"
+                    imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
+                    {String(index + 1).padStart(2, '0')} /{' '}
+                    {String(treatments.length).padStart(2, '0')}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-3 p-5 md:p-7">
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-display text-title font-bold">{treatment.name}</h3>
+                    <span className="grid size-11 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
+                      <ArrowUpRightIcon size={20} aria-hidden />
+                    </span>
+                  </div>
+                  <p className="text-ink-muted">{treatment.summary}</p>
+                  <ul className="flex flex-wrap gap-2 pt-1">
+                    {(highlights[treatment.slug] ?? []).map((item) => (
+                      <li
+                        key={item}
+                        className="rounded-full border border-line px-3 py-1 text-small text-ink-muted"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div
+                  data-stack-dim
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 bg-scrim opacity-0"
+                />
+              </article>
+            </li>
+          ))}
+        </ol>
+      </Container>
     </section>
   );
 }

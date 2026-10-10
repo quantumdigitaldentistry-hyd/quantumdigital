@@ -49,7 +49,8 @@ export function RootLayout() {
       <FloatingActions />
       <QuickActionsHost />
       <SmoothScroll />
-      <ScrollRestoration />
+      {/* Keyed by path: fresh loads all share the key "default", which restored stale positions. */}
+      <ScrollRestoration getKey={(location) => location.pathname} />
     </div>
   );
 }

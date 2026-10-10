@@ -1,6 +1,7 @@
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { LandingHero } from '@/components/landing/landing-hero';
+import { GalleryPreview, SmileResults } from '@/components/landing/results-and-gallery';
 import { TreatmentMarquee } from '@/components/landing/treatment-marquee';
 import { TreatmentShowcase } from '@/components/landing/treatment-showcase';
 import { VisitJourney } from '@/components/landing/visit-journey';
@@ -8,8 +9,9 @@ import { DoctorList } from '@/components/sections/doctor-list';
 import { Section } from '@/components/sections/section';
 
 /**
- * Home (the dashboard) as a landing page: 3D hero, treatment ticker, the scroll-driven
- * implant story, treatment showcase, visit journey, doctors, closing call to action.
+ * Home (the dashboard) as a landing page: interactive 3D logo hero, treatment ticker, the
+ * scroll-driven implant story, stacked treatment cards, visit journey, before/after
+ * results, gallery, doctors and a closing call to action.
  */
 export default function HomePage() {
   return (
@@ -19,10 +21,13 @@ export default function HomePage() {
       <ImplantStory />
       <TreatmentShowcase />
       <VisitJourney />
+      <SmileResults />
+      <GalleryPreview />
       <Section
-        eyebrow="04 · Doctors"
+        id="doctors"
+        eyebrow="06 · Doctors"
         title="Specialists who lead your care."
-        intro="Postgraduate specialists in the treatments they lead."
+        intro="Postgraduate specialists in the treatments they lead. Open a profile to see their speciality in 3D."
       >
         <DoctorList />
       </Section>

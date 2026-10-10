@@ -1,19 +1,20 @@
 /**
- * Photos used on the site, as responsive AVIF + WebP sets (src/assets/photos).
- * All from Unsplash under the Unsplash License (free for commercial use, no permission
- * needed); credits are shown in the footer anyway. Replace with the clinic's own photos
- * when they are ready: keep the names, re-run the conversion, done.
+ * Photos and illustrations used on the site, as responsive AVIF + WebP sets
+ * (src/assets/photos, src/assets/illustrations). All from Unsplash under the Unsplash
+ * License (free for commercial use, no permission needed); credits are shown in the footer
+ * anyway. Replace with the clinic's own photos when ready: keep the names, re-run the
+ * conversion, done.
  */
 
-const files = import.meta.glob('../assets/photos/*.{avif,webp}', {
+const files = import.meta.glob('../assets/{photos,illustrations}/*.{avif,webp}', {
   eager: true,
   query: '?url',
   import: 'default',
 }) as Record<string, string>;
 
-const url = (name: string, width: number, format: 'avif' | 'webp') => {
-  const found = files[`../assets/photos/${name}-${width}.${format}`];
-  if (!found) throw new Error(`Missing photo ${name}-${width}.${format}`);
+const url = (folder: string, name: string, width: number, format: 'avif' | 'webp') => {
+  const found = files[`../assets/${folder}/${name}-${width}.${format}`];
+  if (!found) throw new Error(`Missing image ${folder}/${name}-${width}.${format}`);
   return found;
 };
 
@@ -26,39 +27,114 @@ export type Photo = {
   alt: string;
 };
 
-function photo(name: string, widths: [number, number], aspect: number, alt: string): Photo {
+/** `size` is the largest variant's pixel size: [width, height]. */
+function image(
+  folder: 'photos' | 'illustrations',
+  name: string,
+  widths: [number, number],
+  size: [number, number],
+  alt: string,
+): Photo {
   const set = (format: 'avif' | 'webp') =>
-    widths.map((w) => `${url(name, w, format)} ${w}w`).join(', ');
-  const [, large] = widths;
+    widths.map((w) => `${url(folder, name, w, format)} ${w}w`).join(', ');
   return {
     avif: set('avif'),
     webp: set('webp'),
-    fallback: url(name, large, 'webp'),
-    width: large,
-    height: Math.round(large / aspect),
+    fallback: url(folder, name, widths[1], 'webp'),
+    width: size[0],
+    height: size[1],
     alt,
   };
 }
 
+const photo = (name: string, widths: [number, number], size: [number, number], alt: string) =>
+  image('photos', name, widths, size, alt);
+
 export const photos = {
-  aligners: photo('aligners', [480, 800], 4 / 5, 'Hands holding clear aligners and their case'),
+  aligners: photo(
+    'aligners',
+    [480, 800],
+    [800, 1000],
+    'Hands holding clear aligners and their case',
+  ),
   implantModel: photo(
     'implant-model',
     [480, 800],
-    4 / 5,
+    [800, 1000],
     'Dental model showing an implant between natural teeth',
   ),
-  procedure: photo('procedure', [480, 800], 4 / 5, 'Dentist wearing loupes treating a patient'),
-  smile: photo('smile', [480, 800], 4 / 5, 'Close-up of a woman smiling'),
-  consult: photo('consult', [640, 1200], 4 / 3, 'Dentist talking with a patient in the chair'),
-  xray: photo('xray', [640, 1200], 4 / 3, 'Dentist reading dental scans on a light box'),
-  clinic: photo('clinic', [960, 1600], 16 / 9, 'Bright dental treatment room'),
+  procedure: photo(
+    'procedure',
+    [480, 800],
+    [800, 1000],
+    'Dentist wearing loupes treating a patient',
+  ),
+  smile: photo('smile', [480, 800], [800, 1000], 'Close-up of a woman smiling'),
+  consult: photo(
+    'consult',
+    [640, 1200],
+    [1200, 900],
+    'Dentist talking with a patient in the chair',
+  ),
+  xray: photo('xray', [640, 1200], [1200, 900], 'Dentist reading dental scans on a light box'),
+  clinic: photo('clinic', [960, 1600], [1600, 900], 'Bright dental treatment room'),
+  alignerFit: photo(
+    'aligner-fit',
+    [640, 1200],
+    [1200, 900],
+    'Person fitting a clear aligner over their teeth',
+  ),
+  bracesModels: photo(
+    'braces-models',
+    [640, 1200],
+    [1200, 900],
+    'Dental models with and without braces',
+  ),
+  smileJoy: photo('smile-joy', [480, 960], [960, 1200], 'Young woman laughing with a bright smile'),
+  scan: photo(
+    'scan',
+    [480, 960],
+    [960, 640],
+    'Gloved hand pointing at a digital dental scan on a tablet',
+  ),
+} satisfies Record<string, Photo>;
+
+/** Gallery photos keep their natural shape for the masonry grid. */
+export const galleryPhotos: Photo[] = [
+  photo('room-white', [480, 960], [960, 1440], 'White dental chair beside a bright window'),
+  photos.scan,
+  photo('room-art', [480, 960], [960, 640], 'Treatment room with a blue chair and artwork'),
+  photos.smileJoy,
+  photo('room-orange', [480, 960], [960, 640], 'Treatment room with an orange dental chair'),
+  photo('braces-close', [480, 960], [960, 720], 'Close-up of a dental model with braces'),
+  photo('room-blue', [480, 960], [960, 1440], 'Dental chair with blue upholstery and instruments'),
+  photo('room-wide', [480, 960], [960, 640], 'Wide view of a modern treatment room'),
+];
+
+const illustration = (name: string, alt: string) =>
+  image('illustrations', name, [320, 640], [640, 640], alt);
+
+/** One illustration family (Round Icons), so the style stays consistent. */
+export const illustrations = {
+  crown: illustration('crown', 'Illustration of a tooth with a crown'),
+  braces: illustration('braces', 'Illustration of a smile with braces'),
+  toothbrush: illustration('toothbrush', 'Illustration of a toothbrush with toothpaste'),
+  calendar: illustration('calendar', 'Illustration of a tooth with a calendar'),
+  toothPlus: illustration('tooth-plus', 'Illustration of a tooth with a plus sign'),
 } satisfies Record<string, Photo>;
 
 export const photoCredits = [
-  { name: 'Candid', handle: 'candid' },
-  { name: 'Jonathan Borba', handle: 'jonathanborba' },
-  { name: 'Lesly Juarez', handle: 'jblesly' },
-  { name: 'Benyamin Bohlouli', handle: 'benyamin_bohlouli' },
-  { name: 'Harold Hisona', handle: 'harold_angus' },
+  'Candid',
+  'Jonathan Borba',
+  'Lesly Juarez',
+  'Benyamin Bohlouli',
+  'Harold Hisona',
+  'Katarzyna Zygnerska',
+  'Ozkan Guner',
+  'Kari Bjorn Photography',
+  'Atikah Akhtar',
+  'Quang Tri Nguyen',
+  'Connor Wilkins',
+  'Diana Polekhina',
+  'Round Icons (illustrations)',
 ];
