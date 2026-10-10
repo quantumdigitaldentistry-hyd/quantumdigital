@@ -6,6 +6,7 @@ import { cx } from '@/lib/cx';
  * ghost:     low-emphasis actions in lists and toolbars
  * danger:    destructive actions
  * festive:   offer CTAs inside festive banners only, never for clinical actions
+ * callback:  "Instant call back" everywhere, in the signage yellow (#ffe419, both themes)
  */
 const variants = {
   primary: 'bg-brand text-on-brand hover:bg-brand-strong',
@@ -13,6 +14,7 @@ const variants = {
   ghost: 'text-brand hover:bg-sunken',
   danger: 'bg-danger text-on-danger hover:opacity-90',
   festive: 'bg-festive text-on-festive hover:opacity-90',
+  callback: 'bg-highlight font-semibold text-on-highlight shadow-sm hover:brightness-95',
 } as const;
 
 export type ButtonVariant = keyof typeof variants;
@@ -25,7 +27,7 @@ export const buttonClass = (variant: ButtonVariant = 'primary', className?: stri
   cx(
     'relative inline-flex min-h-11 select-none items-center justify-center gap-2 rounded-full px-5',
     'font-medium text-body whitespace-nowrap',
-    'transition-[transform,background-color,opacity] duration-150 ease-out active:scale-[0.97]',
+    'transition-[transform,background-color,opacity,filter] duration-150 ease-out active:scale-[0.97]',
     'disabled:pointer-events-none disabled:opacity-45 aria-busy:cursor-progress',
     variants[variant],
     className,

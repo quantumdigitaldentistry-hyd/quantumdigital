@@ -247,6 +247,7 @@ export default function DesignPage() {
           <Button>Book appointment</Button>
           <Button variant="secondary">Reschedule</Button>
           <Button variant="ghost">Send reminder</Button>
+          <Button variant="callback">Instant call back</Button>
           <Button variant="danger">Cancel visit</Button>
           <Button disabled>Unavailable</Button>
         </div>

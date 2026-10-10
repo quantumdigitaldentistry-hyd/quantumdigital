@@ -23,7 +23,7 @@ export function TopBar() {
           <button
             type="button"
             onClick={() => show('callback')}
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-highlight px-3.5 text-small font-semibold whitespace-nowrap text-on-highlight transition-transform duration-150 active:scale-95"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-highlight px-3.5 text-small font-semibold whitespace-nowrap text-on-highlight transition-[transform,filter] duration-150 hover:brightness-95 active:scale-95"
           >
             <PhoneCallIcon size={16} weight="bold" aria-hidden />
             Instant call back

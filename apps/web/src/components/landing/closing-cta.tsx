@@ -77,7 +77,7 @@ export function ClosingCta({
           <div className="flex flex-wrap items-center gap-4">
             <button
               type="button"
-              className={buttonClass('secondary')}
+              className={buttonClass('callback')}
               onClick={() => show('callback')}
             >
               <PhoneCallIcon size={20} aria-hidden />

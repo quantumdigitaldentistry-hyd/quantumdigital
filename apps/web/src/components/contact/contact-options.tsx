@@ -15,7 +15,7 @@ export function ContactOptions({ className }: { className?: string }) {
     <div className={cx('flex flex-col gap-3 sm:flex-row', className)}>
       <button
         type="button"
-        className={buttonClass('primary', 'w-full sm:w-auto')}
+        className={buttonClass('callback', 'w-full sm:w-auto')}
         onClick={() => show('callback')}
       >
         <PhoneCallIcon size={20} aria-hidden />

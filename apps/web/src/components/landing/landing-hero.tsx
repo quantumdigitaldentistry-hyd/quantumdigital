@@ -86,7 +86,7 @@ export function LandingHero() {
             </button>
             <button
               type="button"
-              className={buttonClass('secondary')}
+              className={buttonClass('callback')}
               onClick={() => show('callback')}
             >
               <PhoneCallIcon size={20} aria-hidden />
