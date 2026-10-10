@@ -1,85 +1,145 @@
 import { ArrowLeftIcon, ArrowRightIcon, ArrowsOutIcon, XIcon } from '@phosphor-icons/react';
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 
-import { Reveal } from '@/components/reveal';
 import { Photo } from '@/components/ui/photo';
 import type { Photo as PhotoData } from '@/content/photos';
 import { cx } from '@/lib/cx';
 
+type Origin = { rect: DOMRect; src: string };
+
 /**
- * Masonry gallery (CSS columns: 2 on phones, 3 from md) that opens a full-screen
- * lightbox. Lightbox: native <dialog> (focus trap, Esc), arrow keys, on-screen arrows and
- * swipe. Images are lazy, so the grid costs nothing until it's scrolled into view.
+ * Masonry gallery (CSS columns: 2 on phones, 3 from md). Photos unveil as they scroll
+ * in (`.gallery-item`). Tapping one expands it straight out of its thumbnail into a
+ * full-screen lightbox: arrow keys, on-screen arrows and swipe to browse, Esc to close.
  */
 export function PhotoGallery({ items, className }: { items: PhotoData[]; className?: string }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [open, setOpen] = useState<{ index: number; origin: Origin | null } | null>(null);
 
   return (
     <>
       <ul className={cx('columns-2 gap-3 md:columns-3 md:gap-4', className)}>
         {items.map((item, index) => (
-          <li key={item.fallback} className="mb-3 break-inside-avoid md:mb-4">
-            <Reveal step={index % 3}>
-              <button
-                type="button"
-                onClick={() => setOpenIndex(index)}
-                aria-label={`View larger: ${item.alt}`}
-                className="group relative block w-full overflow-hidden rounded-container"
-              >
-                <Photo
-                  photo={item}
-                  sizes="(min-width: 768px) 33vw, 50vw"
-                  className="block"
-                  imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                <span className="absolute inset-0 grid place-items-center bg-scrim/0 transition-colors duration-300 group-hover:bg-scrim/30 group-focus-visible:bg-scrim/30">
-                  <span className="grid size-11 scale-75 place-items-center rounded-full bg-surface text-ink opacity-0 transition-[opacity,scale] duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
-                    <ArrowsOutIcon size={20} aria-hidden />
-                  </span>
+          <li key={item.fallback} className="gallery-item mb-3 break-inside-avoid md:mb-4">
+            <button
+              type="button"
+              onClick={(event) => {
+                const img = event.currentTarget.querySelector('img');
+                setOpen({
+                  index,
+                  origin: img ? { rect: img.getBoundingClientRect(), src: img.currentSrc } : null,
+                });
+              }}
+              aria-label={`View larger: ${item.alt}`}
+              className="group relative block w-full overflow-hidden rounded-container"
+            >
+              <Photo
+                photo={item}
+                sizes="(min-width: 768px) 33vw, 50vw"
+                className="block"
+                imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <span className="absolute inset-0 grid place-items-center bg-scrim/0 transition-colors duration-300 group-hover:bg-scrim/30 group-focus-visible:bg-scrim/30">
+                <span className="grid size-11 scale-75 place-items-center rounded-full bg-surface text-ink opacity-0 transition-[opacity,scale] duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
+                  <ArrowsOutIcon size={20} aria-hidden />
                 </span>
-              </button>
-            </Reveal>
+              </span>
+            </button>
           </li>
         ))}
       </ul>
       <Lightbox
         items={items}
-        index={openIndex}
-        onIndex={setOpenIndex}
-        onClose={() => setOpenIndex(null)}
+        index={open?.index ?? null}
+        origin={open?.origin ?? null}
+        onIndex={(index) => setOpen({ index, origin: null })}
+        onClose={() => setOpen(null)}
       />
     </>
   );
 }
 
+/** Where a photo of this aspect ratio is drawn inside `box` with object-fit: contain. */
+function containRect(box: DOMRect, photo: PhotoData) {
+  const aspect = photo.width / photo.height;
+  const width = Math.min(box.width, box.height * aspect);
+  const height = width / aspect;
+  return {
+    left: box.left + (box.width - width) / 2,
+    top: box.top + (box.height - height) / 2,
+    width,
+    height,
+  };
+}
+
 function Lightbox({
   items,
   index,
+  origin,
   onIndex,
   onClose,
 }: {
   items: PhotoData[];
   index: number | null;
+  origin: Origin | null;
   onIndex: (index: number) => void;
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const ghost = useRef<HTMLImageElement>(null);
   const swipeStart = useRef<number | null>(null);
+  // The thumbnail copy shows from opening until its flight for this origin has finished.
+  const [landedFor, setLandedFor] = useState<Origin | null>(null);
+  const [reducedMotion] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  const flying = !!origin && landedFor !== origin && !reducedMotion;
   const open = index !== null;
   const current = index !== null ? items[index] : undefined;
 
-  useEffect(() => {
+  // Layout effect, declared first: the dialog must be open (and laid out) before the
+  // expand animation below measures where the photo will land.
+  useLayoutEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
     if (open && !dialog.open) dialog.showModal();
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
+  // Expand from the thumbnail: a copy of it flies to where the full photo will sit.
+  useLayoutEffect(() => {
+    const box = stage.current?.getBoundingClientRect();
+    const image = ghost.current;
+    if (!open || !origin || !current || !box || !image || !flying) return;
+    const target = containRect(box, current);
+    const from = origin.rect;
+    const animation = image.animate(
+      [
+        {
+          left: `${from.left}px`,
+          top: `${from.top}px`,
+          width: `${from.width}px`,
+          height: `${from.height}px`,
+          borderRadius: '20px',
+        },
+        {
+          left: `${target.left}px`,
+          top: `${target.top}px`,
+          width: `${target.width}px`,
+          height: `${target.height}px`,
+          borderRadius: '8px',
+        },
+      ],
+      { duration: 480, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' },
+    );
+    animation.onfinish = () => setLandedFor(origin);
+    return () => animation.cancel();
+  }, [open, origin, current, flying]);
+
   const step = (delta: number) => {
     if (index === null) return;
     onIndex((index + delta + items.length) % items.length);
   };
-
   const onPointerDown = (event: PointerEvent) => {
     swipeStart.current = event.clientX;
   };
@@ -99,7 +159,7 @@ function Lightbox({
         if (event.key === 'ArrowRight') step(1);
         if (event.key === 'ArrowLeft') step(-1);
       }}
-      className="dialog dialog-sheet m-0 h-dvh max-h-none w-screen max-w-none bg-scrim/95 p-0 text-on-scrim"
+      className="dialog dialog-fade m-0 h-dvh max-h-none w-screen max-w-none bg-scrim/95 p-0 text-on-scrim"
     >
       {current ? (
         <div
@@ -121,19 +181,39 @@ function Lightbox({
             </button>
           </div>
           <figure className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-3 pb-6 md:px-20">
-            <Photo
-              key={current.fallback}
-              photo={current}
-              sizes="100vw"
-              fit="contain"
-              priority
-              className="block min-h-0 w-full flex-1 animate-[lightbox-in_320ms_var(--ease-out)_both]"
-              imgClassName="select-none"
-            />
+            <div ref={stage} className="relative min-h-0 w-full flex-1">
+              <Photo
+                key={current.fallback}
+                photo={current}
+                sizes="100vw"
+                fit="contain"
+                priority
+                className={cx(
+                  'absolute inset-0 block',
+                  flying ? 'opacity-0' : 'animate-[lightbox-in_320ms_var(--ease-out)_both]',
+                )}
+                imgClassName="select-none"
+              />
+            </div>
             <figcaption className="max-w-xl text-center text-small opacity-80">
               {current.alt}
             </figcaption>
           </figure>
+          {origin && flying ? (
+            <img
+              ref={ghost}
+              src={origin.src}
+              alt=""
+              aria-hidden
+              className="pointer-events-none fixed object-cover"
+              style={{
+                left: origin.rect.left,
+                top: origin.rect.top,
+                width: origin.rect.width,
+                height: origin.rect.height,
+              }}
+            />
+          ) : null}
           {(
             [
               ['Previous photo', -1, ArrowLeftIcon, 'left-3 md:left-6'],

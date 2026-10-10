@@ -3,59 +3,73 @@ import { Link } from 'react-router';
 
 import { Reveal } from '@/components/reveal';
 import { Photo } from '@/components/ui/photo';
-import { doctors, specialtyIllustration } from '@/content/clinic';
+import { doctors, specialtyIllustration, type Doctor } from '@/content/clinic';
+import { vtNames } from '@/lib/transition-names';
 
-/** Doctor cards: speciality illustration, name, degree, and a link to their page. */
+/** Label shown on placeholder photos so they're never mistaken for the doctor. */
+export function PlaceholderPhotoTag() {
+  return (
+    <span className="absolute top-3 right-3 rounded-full bg-scrim/70 px-2.5 py-1 text-caption font-medium text-on-scrim backdrop-blur-sm">
+      Placeholder photo
+    </span>
+  );
+}
+
+function DoctorCard({ doctor }: { doctor: Doctor }) {
+  return (
+    <Link
+      to={`/doctors/${doctor.slug}`}
+      viewTransition
+      className="group flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua"
+    >
+      <div className="relative">
+        <div
+          className="aspect-4/3 overflow-hidden"
+          style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
+        >
+          <Photo
+            photo={doctor.portrait}
+            sizes="(min-width: 768px) 36rem, 92vw"
+            className="block size-full"
+            imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        </div>
+        {doctor.portraitIsPlaceholder ? <PlaceholderPhotoTag /> : null}
+        <span className="absolute top-3 left-3 rounded-full bg-surface/85 px-3 py-1 text-label font-semibold text-brand backdrop-blur-sm">
+          {doctor.specialty}
+        </span>
+        <span className="float-y absolute right-5 -bottom-8 grid size-20 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20 md:size-24">
+          <Photo
+            photo={specialtyIllustration(doctor)}
+            sizes="96px"
+            fit="contain"
+            className="block size-[68%]"
+          />
+        </span>
+      </div>
+      <div className="flex flex-1 items-center gap-4 p-5 pt-6 md:p-7">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <h3 className="font-display text-heading font-semibold md:text-title">{doctor.name}</h3>
+          <p className="text-small font-medium text-brand">{doctor.degree}</p>
+          <p className="text-small text-ink-muted">{doctor.focus}</p>
+        </div>
+        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-soft text-on-brand-soft transition-transform duration-300 ease-out group-hover:rotate-45">
+          <ArrowUpRightIcon size={20} aria-hidden />
+          <span className="sr-only">View profile</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+/** Doctor cards in page order (Dr Pradeep left, Dr Mohana Bindu right). */
 export function DoctorList() {
   return (
-    <ul className="grid gap-5 md:grid-cols-2">
+    <ul className="grid gap-6 md:grid-cols-2">
       {doctors.map((doctor, index) => (
         <li key={doctor.slug}>
           <Reveal step={index} className="h-full">
-            <Link
-              to={`/doctors/${doctor.slug}`}
-              viewTransition
-              className="group flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua"
-            >
-              <div className="relative grid aspect-video place-items-center overflow-hidden bg-aqua-soft">
-                <div
-                  aria-hidden
-                  className="absolute size-[70%] rounded-full opacity-80 transition-transform duration-700 ease-out group-hover:scale-110"
-                  style={{
-                    backgroundImage:
-                      'radial-gradient(closest-side, var(--color-hero-from), transparent)',
-                  }}
-                />
-                <Photo
-                  photo={doctor.portrait ?? specialtyIllustration(doctor)}
-                  sizes="(min-width: 768px) 20rem, 60vw"
-                  fit="contain"
-                  className="float-y relative block h-[78%] w-auto"
-                />
-                <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 text-label font-semibold text-brand backdrop-blur-sm">
-                  {doctor.specialty}
-                </span>
-              </div>
-              <div className="flex flex-1 items-center gap-4 p-5 md:p-7">
-                <span
-                  aria-hidden
-                  className="grid size-14 shrink-0 place-items-center rounded-full bg-linear-to-br from-hero-from to-hero-to font-display text-heading font-bold text-on-hero"
-                >
-                  {doctor.initials}
-                </span>
-                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <h3 className="font-display text-heading font-semibold md:text-title">
-                    {doctor.name}
-                  </h3>
-                  <p className="text-small font-medium text-brand">{doctor.degree}</p>
-                  <p className="text-small text-ink-muted">{doctor.focus}</p>
-                </div>
-                <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-soft text-on-brand-soft transition-transform duration-300 ease-out group-hover:rotate-45">
-                  <ArrowUpRightIcon size={20} aria-hidden />
-                  <span className="sr-only">View profile</span>
-                </span>
-              </div>
-            </Link>
+            <DoctorCard doctor={doctor} />
           </Reveal>
         </li>
       ))}

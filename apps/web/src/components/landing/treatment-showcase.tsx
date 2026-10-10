@@ -5,22 +5,8 @@ import { Link } from 'react-router';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { treatments } from '@/content/clinic';
-import { photos, type Photo as PhotoData } from '@/content/photos';
 import { useScrollScene } from '@/lib/gsap';
-
-const treatmentPhotos: Record<string, PhotoData> = {
-  invisalign: photos.aligners,
-  implants: photos.implantModel,
-  'laser-dentistry': photos.procedure,
-  'smile-design': photos.smile,
-};
-
-const highlights: Record<string, string[]> = {
-  invisalign: ['Nearly invisible', 'Removable to eat', 'Digitally planned'],
-  implants: ['Fixed, not removable', 'Looks like a natural tooth', 'Protects the jawbone'],
-  'laser-dentistry': ['Gentle on gums', 'Less bleeding', 'Often quicker healing'],
-  'smile-design': ['Shape and shade', 'Planned before treatment', 'Combines treatments'],
-};
+import { vtNames } from '@/lib/transition-names';
 
 /**
  * Treatments as a stack of large cards. Each card sticks a little lower than the one
@@ -94,37 +80,54 @@ export function TreatmentShowcase() {
                 data-stack-inner
                 className="group relative origin-top overflow-hidden rounded-4xl border border-line bg-surface shadow-xl shadow-elevation/10"
               >
-                <div className="relative aspect-16/10 overflow-hidden">
-                  <Photo
-                    photo={treatmentPhotos[treatment.slug] ?? photos.smile}
-                    sizes="(min-width: 1024px) 40rem, 92vw"
-                    className="block size-full"
-                    imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                  <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
-                    {String(index + 1).padStart(2, '0')} /{' '}
-                    {String(treatments.length).padStart(2, '0')}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-3 p-5 md:p-7">
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-display text-title font-bold">{treatment.name}</h3>
-                    <span className="grid size-11 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
-                      <ArrowUpRightIcon size={20} aria-hidden />
+                <Link
+                  to={`/treatments/${treatment.slug}`}
+                  viewTransition
+                  className="block focus-visible:outline-offset-[-4px]"
+                >
+                  <div
+                    className="relative aspect-16/10 overflow-hidden"
+                    style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
+                  >
+                    <Photo
+                      photo={treatment.photo}
+                      sizes="(min-width: 1024px) 40rem, 92vw"
+                      className="block size-full"
+                      imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <span className="float-y absolute right-4 -bottom-1 grid size-20 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20 md:size-24">
+                      <Photo
+                        photo={treatment.illustration}
+                        sizes="96px"
+                        fit="contain"
+                        className="block size-[68%]"
+                      />
+                    </span>
+                    <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
+                      {String(index + 1).padStart(2, '0')} /{' '}
+                      {String(treatments.length).padStart(2, '0')}
                     </span>
                   </div>
-                  <p className="text-ink-muted">{treatment.summary}</p>
-                  <ul className="flex flex-wrap gap-2 pt-1">
-                    {(highlights[treatment.slug] ?? []).map((item) => (
-                      <li
-                        key={item}
-                        className="rounded-full border border-line px-3 py-1 text-small text-ink-muted"
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="flex flex-col gap-3 p-5 md:p-7">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-display text-title font-bold">{treatment.name}</h3>
+                      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
+                        <ArrowUpRightIcon size={20} aria-hidden />
+                      </span>
+                    </div>
+                    <p className="text-ink-muted">{treatment.summary}</p>
+                    <ul className="flex flex-wrap gap-2 pt-1">
+                      {treatment.highlights.map((item) => (
+                        <li
+                          key={item}
+                          className="rounded-full border border-line px-3 py-1 text-small text-ink-muted"
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Link>
                 <div
                   data-stack-dim
                   aria-hidden

@@ -6,6 +6,7 @@ import { LogoMark } from '@/components/brand/logo';
 import { cx } from '@/lib/cx';
 import { canRender3D } from '@/lib/device';
 import { useFestival } from '@/lib/festival';
+import { getResolvedTheme, subscribeResolvedTheme } from '@/lib/theme';
 
 import { LOGO_THEMES, type LogoTheme } from './logo-themes';
 
@@ -39,14 +40,15 @@ const useReducedMotion = () =>
   );
 
 /**
- * Hero artwork: the brand kit's interactive 3D logo on a dark stage. The flat logo paints
- * immediately (fast first paint, no layout shift); the 3D version fades in once the
- * browser is idle, the hero is on screen and the device can handle it, and its loop
- * pauses when scrolled away. The stage follows the running festival theme.
+ * Hero artwork: the brand kit's interactive 3D logo, floating free over the hero (no
+ * background) with a soft glow behind it and a contact shadow beneath it. The flat logo
+ * paints immediately; the 3D version fades in once the browser is idle, the hero is on
+ * screen and the device can handle it. Its loop pauses when scrolled away.
  */
 export function HeroVisual({ className }: { className?: string }) {
   const container = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const resolvedTheme = useSyncExternalStore(subscribeResolvedTheme, getResolvedTheme);
   const theme = themeForFestival[useFestival((s) => s.festival)];
   const [inView, setInView] = useState(false);
   const [idle, setIdle] = useState(false);
@@ -76,26 +78,20 @@ export function HeroVisual({ className }: { className?: string }) {
   const load3D = supported && idle && (inView || sceneReady);
 
   return (
-    <div
-      ref={container}
-      className={cx(
-        'relative aspect-square w-full overflow-hidden rounded-4xl shadow-2xl shadow-elevation/30 ring-1 ring-surface/20 transition-colors duration-700',
-        className,
-      )}
-      style={{ backgroundColor: LOGO_THEMES[theme].stage }}
-    >
-      {/* Soft light pool behind the logo (radial gradient, not blur: cheap to composite). */}
+    <div ref={container} className={cx('relative aspect-square w-full', className)}>
+      {/* Depth: a soft pool of the theme's glow behind the logo. */}
       <div
         aria-hidden
-        className="absolute inset-[6%] opacity-60"
+        className="absolute inset-[4%] transition-[background-image] duration-700"
         style={{
-          backgroundImage: `radial-gradient(closest-side, ${LOGO_THEMES[theme].glow}, transparent)`,
+          backgroundImage: `radial-gradient(closest-side, ${LOGO_THEMES[theme].glow}55, transparent)`,
         }}
       />
+      {/* Poster: the flat logo with a soft drop shadow, until the 3D is ready. */}
       <LogoMark
         priority
         className={cx(
-          'absolute inset-[24%] h-auto w-[52%] transition-[opacity,scale] duration-700 ease-out',
+          'absolute inset-[22%] h-auto w-[56%] drop-shadow-[0_24px_24px_rgb(7_13_40/0.28)] transition-[opacity,scale] duration-700 ease-out',
           sceneReady ? 'scale-90 opacity-0' : 'opacity-100',
         )}
       />
@@ -112,13 +108,14 @@ export function HeroVisual({ className }: { className?: string }) {
               active={inView}
               reducedMotion={reducedMotion}
               compact={compact}
+              onLight={resolvedTheme === 'light'}
               onReady={() => setSceneReady(true)}
             />
           </div>
         </Suspense>
       ) : null}
       {sceneReady ? (
-        <p className="pointer-events-none absolute inset-x-0 bottom-4 flex items-center justify-center gap-1.5 text-caption font-medium text-on-scrim/70">
+        <p className="pointer-events-none absolute inset-x-0 bottom-1 flex items-center justify-center gap-1.5 text-caption font-medium text-on-hero-muted">
           <HandGrabbingIcon size={14} aria-hidden />
           Drag to spin · tap to pulse
         </p>

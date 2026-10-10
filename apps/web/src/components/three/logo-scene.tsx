@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {
   AdditiveBlending,
+  NormalBlending,
   AmbientLight,
   BufferAttribute,
   BufferGeometry,
@@ -63,6 +64,7 @@ export default function LogoScene({
   active,
   reducedMotion,
   compact = false,
+  onLight = false,
   onReady,
 }: {
   theme?: LogoTheme;
@@ -71,6 +73,8 @@ export default function LogoScene({
   reducedMotion: boolean;
   /** Fewer particles, for phones and small cards. */
   compact?: boolean;
+  /** Transparent over a light background: glows use normal blending (additive vanishes on white). */
+  onLight?: boolean;
   onReady?: () => void;
 }) {
   const host = useRef<HTMLDivElement>(null);
@@ -91,6 +95,9 @@ export default function LogoScene({
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.outputColorSpace = SRGBColorSpace;
+    // Shader compile logs are for development; in production they only cost time and
+    // surface harmless driver notes as console warnings.
+    renderer.debug.checkShaderErrors = import.meta.env.DEV;
     Object.assign(renderer.domElement.style, {
       position: 'absolute',
       inset: '0',
@@ -107,7 +114,21 @@ export default function LogoScene({
     logoTexture.colorSpace = SRGBColorSpace;
     logoTexture.anisotropy = 8;
     const glow = glowTexture();
-    textures.push(logoTexture, glow);
+    const blending = onLight ? NormalBlending : AdditiveBlending;
+
+    // Soft contact shadow on the "floor" under the logo: a squashed radial sprite that
+    // shrinks and fades as the logo floats up, which is what sells the depth.
+    const shadowCanvas = document.createElement('canvas');
+    shadowCanvas.width = shadowCanvas.height = 128;
+    const shadowCtx = shadowCanvas.getContext('2d')!;
+    const shadowGradient = shadowCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    shadowGradient.addColorStop(0, 'rgba(7,13,40,0.55)');
+    shadowGradient.addColorStop(0.5, 'rgba(7,13,40,0.22)');
+    shadowGradient.addColorStop(1, 'rgba(7,13,40,0)');
+    shadowCtx.fillStyle = shadowGradient;
+    shadowCtx.fillRect(0, 0, 128, 128);
+    const shadowTexture = new CanvasTexture(shadowCanvas);
+    textures.push(logoTexture, glow, shadowTexture);
 
     const root = new Group();
     const logo = new Group();
@@ -118,7 +139,7 @@ export default function LogoScene({
     const width = 2.6;
     const plane = new PlaneGeometry(width, (width * 373) / 400);
     const layers = compact ? 28 : 44;
-    const depth = 0.26;
+    const depth = 0.38;
     const edgeBack = new Color('#0d1f6e');
     const edgeFront = new Color('#2b5fe0');
     for (let i = 0; i < layers; i++) {
@@ -153,9 +174,9 @@ export default function LogoScene({
       new SpriteMaterial({
         map: glow,
         transparent: true,
-        opacity: 0.55,
+        opacity: onLight ? 0.3 : 0.55,
         depthWrite: false,
-        blending: AdditiveBlending,
+        blending,
       }),
     );
     halo.scale.set(5.2, 5.2, 1);
@@ -188,8 +209,8 @@ export default function LogoScene({
         new TorusGeometry(radius, 0.075, 12, 240),
         new MeshBasicMaterial({
           transparent: true,
-          opacity: 0.2,
-          blending: AdditiveBlending,
+          opacity: onLight ? 0.14 : 0.2,
+          blending,
           depthWrite: false,
         }),
       );
@@ -201,7 +222,7 @@ export default function LogoScene({
         new SpriteMaterial({
           map: glow,
           transparent: true,
-          blending: AdditiveBlending,
+          blending,
           depthWrite: false,
         }),
       );
@@ -249,10 +270,22 @@ export default function LogoScene({
         vertexColors: true,
         transparent: true,
         depthWrite: false,
-        blending: AdditiveBlending,
+        blending,
       }),
     );
     scene.add(dust);
+
+    const shadow = new Sprite(
+      new SpriteMaterial({
+        map: shadowTexture,
+        transparent: true,
+        depthWrite: false,
+        opacity: 0.8,
+      }),
+    );
+    shadow.position.set(0, -1.75, -0.4);
+    shadow.scale.set(2.8, 0.42, 1);
+    scene.add(shadow);
 
     scene.add(new AmbientLight('#ffffff', 1.1));
     const key = new DirectionalLight('#ffffff', 1.4);
@@ -374,6 +407,10 @@ export default function LogoScene({
       logo.rotation.set(rx, ry + spin, 0);
       root.rotation.set(rx * 0.5, ry * 0.5, 0);
       root.position.y = reduce ? 0 : Math.sin(t * 1.3) * 0.07;
+      // Higher logo: smaller, fainter shadow.
+      const lift = root.position.y / 0.07;
+      shadow.scale.set(2.8 - lift * 0.25, 0.42 - lift * 0.04, 1);
+      (shadow.material as SpriteMaterial).opacity = (onLight ? 0.8 : 0.55) - lift * 0.15;
       pulse *= 0.92;
       boost *= 0.95;
       scale += ((pointer.inside ? 1.06 : 1) + pulse * 0.12 - scale) * 0.12;
@@ -426,7 +463,7 @@ export default function LogoScene({
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [compact]);
+  }, [compact, onLight]);
 
   useEffect(() => {
     api.current?.setTheme(theme);

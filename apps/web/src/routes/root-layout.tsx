@@ -1,6 +1,8 @@
-import { Outlet, ScrollRestoration, useNavigation } from 'react-router';
+import { useEffect } from 'react';
+import { Outlet, ScrollRestoration, useLocation, useNavigation } from 'react-router';
 
 import { QuickActionsHost } from '@/components/actions/quick-actions-host';
+import { ChatBubble } from '@/components/chat/chat-bubble';
 import { FloatingActions } from '@/components/layout/floating-actions';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -9,6 +11,7 @@ import { SmoothScroll } from '@/components/smooth-scroll';
 import { cx } from '@/lib/cx';
 import { useFestival } from '@/lib/festival';
 import { useFestiveTheme } from '@/lib/festive-themes';
+import { markNavigated } from '@/lib/navigation';
 
 /** Thin bar while a lazy route is loading, so navigation always feels acknowledged. */
 function NavigationProgress() {
@@ -30,6 +33,9 @@ function NavigationProgress() {
  */
 export function RootLayout() {
   useFestiveTheme(useFestival((s) => s.festival));
+  const location = useLocation();
+  // Lets an animated "back" finish once the previous page is rendered and scrolled.
+  useEffect(() => markNavigated(), [location.key]);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -47,10 +53,16 @@ export function RootLayout() {
       </main>
       <SiteFooter />
       <FloatingActions />
+      <ChatBubble />
       <QuickActionsHost />
       <SmoothScroll />
-      {/* Keyed by path: fresh loads all share the key "default", which restored stale positions. */}
-      <ScrollRestoration getKey={(location) => location.pathname} />
+      {/*
+        One saved position per history entry, so Back returns to the exact spot. Fresh page
+        loads all share the key "default", so those fall back to the path.
+      */}
+      <ScrollRestoration
+        getKey={(entry) => (entry.key === 'default' ? entry.pathname : entry.key)}
+      />
     </div>
   );
 }

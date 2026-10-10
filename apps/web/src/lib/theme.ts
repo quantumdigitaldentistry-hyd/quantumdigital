@@ -48,3 +48,12 @@ export const useTheme = create<{ mode: ThemeMode; setMode: (mode: ThemeMode) => 
 darkQuery.addEventListener('change', () => {
   if (useTheme.getState().mode === 'system') apply('system');
 });
+
+/** The theme actually on screen ('light' | 'dark'), following <html data-theme> live. */
+export function subscribeResolvedTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributeFilter: ['data-theme'] });
+  return () => observer.disconnect();
+}
+export const getResolvedTheme = () =>
+  document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';

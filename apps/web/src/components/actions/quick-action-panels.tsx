@@ -1,15 +1,15 @@
 import { callbackRequestSchema, toIndianE164 } from '@quantam/shared';
-import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router';
+import { lazy, Suspense, useState, type FormEvent } from 'react';
 
-import { ContactOptions } from '@/components/contact/contact-options';
+import { ChatAssistant } from '@/components/chat/chat-assistant';
 import { PhoneLink } from '@/components/contact/phone-link';
 import { Button } from '@/components/ui/button';
-import { buttonClass } from '@/components/ui/button-class';
 import { Dialog } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { CallbackNotConnectedError, requestCallback } from '@/lib/callback';
 import { useQuickActions } from '@/lib/quick-actions';
+
+const AppointmentForm = lazy(() => import('@/components/contact/appointment-form'));
 
 type FormErrors = { name?: string; phone?: string };
 
@@ -100,21 +100,17 @@ export function QuickActionPanels() {
         open={open === 'book'}
         onClose={close}
         title="Book an appointment"
-        description="Online booking is being set up. Until then, the front desk books it for you."
+        description="Tell us what you need and when suits you. The front desk confirms the time."
       >
-        <ContactOptions />
-        <Link to="/treatments" onClick={close} className={buttonClass('ghost', 'self-start px-0')}>
-          See treatments first
-        </Link>
+        {open === 'book' ? (
+          <Suspense fallback={<div aria-hidden className="h-96" />}>
+            <AppointmentForm plain />
+          </Suspense>
+        ) : null}
       </Dialog>
 
-      <Dialog
-        open={open === 'chat'}
-        onClose={close}
-        title="Chat assistant"
-        description="Our assistant is coming soon. It will answer questions about treatments, timings and offers."
-      >
-        <ContactOptions />
+      <Dialog open={open === 'chat'} onClose={close} title="Chat assistant">
+        {open === 'chat' ? <ChatAssistant /> : null}
       </Dialog>
     </>
   );

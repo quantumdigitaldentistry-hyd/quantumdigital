@@ -190,15 +190,20 @@ Icons come from Phosphor (`@phosphor-icons/react`). Use the `*Icon` names (`SunI
 
 ## Layout shell (every page)
 
-| Piece                   | File                                     | Behaviour                                                                                                                  |
-| ----------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Top contact bar         | `components/layout/top-bar.tsx`          | Phone number and the yellow **Instant call back** pill on every size; social icons from `md` up                            |
-| Navigation              | `components/layout/site-header.tsx`      | Sticky. Inline links from `lg` up; below that a menu drawer with links, phone, call back, socials and theme                |
-| Floating actions        | `components/layout/floating-actions.tsx` | Right side, bottom up: **Book** (brand blue), **Call** (yellow), **Chat** (outline). Labels on hover from `md`             |
-| Book / Call back / Chat | `components/actions/*`                   | One set of dialogs for the whole site, opened with `useQuickActions().show('book' \| 'callback' \| 'chat')`. Loaded lazily |
-| Footer                  | `components/layout/site-footer.tsx`      | Logo, links, phone, socials. Extra bottom padding on phones so the floating actions never cover it                         |
+| Piece                   | File                                     | Behaviour                                                                                                                                                       |
+| ----------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Top contact bar         | `components/layout/top-bar.tsx`          | Phone number and the yellow **Instant call back** pill on every size; social icons from `md` up                                                                 |
+| Navigation              | `components/layout/site-header.tsx`      | Sticky. Inline links from `lg` up; below that a menu drawer with links, phone, call back, socials and theme                                                     |
+| Floating actions        | `components/layout/floating-actions.tsx` | Right side, bottom up: **Book** (brand blue, opens the appointment form), **Call** (yellow). Labels on hover from `md`                                          |
+| Chat bubble             | `components/chat/chat-bubble.tsx`        | Draggable anywhere (mouse, touch, arrow keys); tap opens the assistant; position remembered. Rule-based answers from site content until a real assistant exists |
+| Book / Call back / Chat | `components/actions/*`                   | One set of dialogs for the whole site, opened with `useQuickActions().show('book' \| 'callback' \| 'chat')`. Loaded lazily                                      |
+| Footer                  | `components/layout/site-footer.tsx`      | Logo, links, phone, socials. Extra bottom padding on phones so the floating actions never cover it                                                              |
 
 Contact details, social links and the menu live in **one file**, [`apps/web/src/config/site.ts`](../apps/web/src/config/site.ts). The phone number is a placeholder until `clinic.phone` is filled in: until then it shows as text, and the Call button offers a call back instead of dialling. Each social icon becomes a link as soon as its `href` is set.
+
+Every detail page has a `BackButton`: it returns to the previous page at the exact scroll position (one saved position per history entry) with the page transition played in reverse, or to a parent page when opened directly.
+
+Page transitions use the View Transitions API (`styles.css`): the old page sinks back and softens, the new one rises in; the header, floating actions and chat bubble hold still. Matching `view-transition-name`s (`lib/transition-names.ts`) morph a hero chip into the treatment title, a treatment card photo into the treatment hero, and a doctor card photo into the doctor hero.
 
 Reusable building blocks: `Dialog` (bottom sheet on phones, centred from `md`, or a side `drawer`), `IconButton`, `Container`, `Field`, `Logo` / `LogoMark`, `PageHero`, `Section`, `TreatmentGrid`, `DoctorList` and `PlannedContent` (the "coming soon" outline for pages not built yet). Page copy for treatments and doctors lives in `src/content/clinic.ts`.
 

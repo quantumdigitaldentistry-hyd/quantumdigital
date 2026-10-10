@@ -1,5 +1,7 @@
-import { ArrowLeftIcon, CalendarPlusIcon, CheckCircleIcon } from '@phosphor-icons/react';
-import { Link, useParams, type LoaderFunctionArgs } from 'react-router';
+import { CalendarPlusIcon, CheckCircleIcon } from '@phosphor-icons/react';
+import { useParams, type LoaderFunctionArgs } from 'react-router';
+
+import { BackButton } from '@/components/back-button';
 
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
@@ -10,7 +12,9 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { doctors, specialtyIllustration } from '@/content/clinic';
 import { photos } from '@/content/photos';
+import { PlaceholderPhotoTag } from '@/components/sections/doctor-list';
 import { useQuickActions } from '@/lib/quick-actions';
+import { vtNames } from '@/lib/transition-names';
 
 /** Unknown doctor slugs become the site's 404 page. */
 export function loader({ params }: LoaderFunctionArgs) {
@@ -36,14 +40,7 @@ export default function DoctorPage() {
       <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
         <Container className="grid items-center gap-8 py-10 md:grid-cols-[1.1fr_1fr] md:py-20">
           <div className="flex flex-col gap-5">
-            <Link
-              to="/#doctors"
-              viewTransition
-              className="inline-flex w-fit items-center gap-2 text-small font-medium text-on-hero-muted hover:text-on-hero"
-            >
-              <ArrowLeftIcon size={16} aria-hidden />
-              All doctors
-            </Link>
+            <BackButton fallback="/" />
             <p className="text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase">
               {role}
             </p>
@@ -60,25 +57,29 @@ export default function DoctorPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto grid aspect-square w-full max-w-sm place-items-center md:max-w-md">
-            {/* Orbit rings echo the logo; the illustration floats inside. */}
-            <div aria-hidden className="absolute inset-0 rounded-full border border-surface/50" />
+          <div className="relative mx-auto w-full max-w-md">
             <div
-              aria-hidden
-              className="absolute inset-[12%] rounded-full border border-surface/40"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-[18%] rounded-full bg-surface/50 backdrop-blur-sm"
-            />
-            <Photo
-              photo={doctor.portrait ?? specialtyIllustration(doctor)}
-              sizes="(min-width: 768px) 24rem, 70vw"
-              fit="contain"
-              priority
-              className="float-y relative block w-[62%]"
-            />
-            <span className="absolute bottom-[10%] left-[6%] md:right-[6%] md:left-auto grid size-16 place-items-center rounded-full bg-surface font-display text-heading font-bold text-brand shadow-lg shadow-elevation/15 md:size-20 md:text-title">
+              className="relative aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
+              style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
+            >
+              <Photo
+                photo={doctor.portrait}
+                sizes="(min-width: 768px) 28rem, 90vw"
+                priority
+                className="block size-full"
+              />
+              {doctor.portraitIsPlaceholder ? <PlaceholderPhotoTag /> : null}
+            </div>
+            {/* Speciality illustration floats over the corner, with the doctor's initials. */}
+            <div className="float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40">
+              <Photo
+                photo={specialtyIllustration(doctor)}
+                sizes="160px"
+                fit="contain"
+                className="block size-[68%]"
+              />
+            </div>
+            <span className="absolute -top-4 -right-2 grid size-16 place-items-center rounded-full bg-brand font-display text-heading font-bold text-on-brand shadow-lg shadow-elevation/20 md:size-20 md:text-title">
               {doctor.initials}
             </span>
           </div>

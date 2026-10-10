@@ -91,6 +91,25 @@ export const photos = {
     'Dental models with and without braces',
   ),
   smileJoy: photo('smile-joy', [480, 960], [960, 1200], 'Young woman laughing with a bright smile'),
+  smileClose: photo(
+    'smile-close',
+    [640, 1200],
+    [1200, 900],
+    'Close-up of a smile with white, even teeth',
+  ),
+  // Placeholders until the clinic provides real portraits (always shown with a visible label).
+  doctorPlaceholderA: photo(
+    'doctor-placeholder-a',
+    [480, 800],
+    [800, 1000],
+    'Dentist in a mask treating a patient',
+  ),
+  doctorPlaceholderB: photo(
+    'doctor-placeholder-b',
+    [480, 800],
+    [800, 1000],
+    'Dentist in a mask examining a patient',
+  ),
   scan: photo(
     'scan',
     [480, 960],
@@ -121,6 +140,9 @@ export const illustrations = {
   toothbrush: illustration('toothbrush', 'Illustration of a toothbrush with toothpaste'),
   calendar: illustration('calendar', 'Illustration of a tooth with a calendar'),
   toothPlus: illustration('tooth-plus', 'Illustration of a tooth with a plus sign'),
+  smileBlue: illustration('smile-blue', 'Illustration of a smile'),
+  beam: illustration('beam', 'Illustration of a focused beam of light'),
+  smileOrange: illustration('smile-orange', 'Illustration of a bright smile'),
 } satisfies Record<string, Photo>;
 
 export const photoCredits = [
@@ -136,5 +158,6 @@ export const photoCredits = [
   'Quang Tri Nguyen',
   'Connor Wilkins',
   'Diana Polekhina',
+  'Kamal Hoseinianzade',
   'Round Icons (illustrations)',
 ];

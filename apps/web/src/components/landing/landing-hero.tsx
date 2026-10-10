@@ -1,26 +1,50 @@
-import { CalendarPlusIcon, PhoneCallIcon } from '@phosphor-icons/react';
+import { ArrowRightIcon, CalendarPlusIcon, PhoneCallIcon } from '@phosphor-icons/react';
 import type { CSSProperties } from 'react';
+import { Link } from 'react-router';
 
 import { HeroVisual } from '@/components/three/hero-visual';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
+import { treatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
+import { vtNames } from '@/lib/transition-names';
 
 const HEADLINE = 'Implants, aligners and smile design, planned digitally.';
 
-/** Facts from the clinic signage, floating around the 3D tooth. */
-const chips = [
-  { label: 'Invisalign provider', className: 'left-0 top-[12%] md:-left-4', delay: '0s' },
-  // Right-hand chips only from md: on phones they would sit under the floating buttons.
-  {
-    label: 'Implant center',
-    className: 'hidden md:block right-0 top-[30%] md:-right-2',
-    delay: '-2s',
-  },
-  { label: 'Laser dentistry', className: 'left-[4%] bottom-[22%]', delay: '-4s' },
-  { label: 'Smile design', className: 'hidden md:block right-[6%] bottom-[8%]', delay: '-1s' },
-];
+/** Where each treatment chip floats around the 3D logo (md and up). */
+const chipPlacement: Record<string, { className: string; delay: string }> = {
+  invisalign: { className: '-left-4 top-[10%]', delay: '0s' },
+  implants: { className: '-right-2 top-[30%]', delay: '-2s' },
+  'laser-dentistry': { className: 'left-[2%] bottom-[22%]', delay: '-4s' },
+  'smile-design': { className: 'right-[6%] bottom-[8%]', delay: '-1s' },
+};
+
+const chipClass =
+  'group inline-flex items-center gap-1.5 rounded-full border border-surface/60 bg-surface/75 px-3.5 py-2 text-label font-semibold text-ink shadow-lg shadow-elevation/15 backdrop-blur-md transition-[background-color,translate,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-surface hover:shadow-xl md:text-small';
+
+/** A treatment chip: opens the treatment page, its label morphing into the page title. */
+function TreatmentChip({
+  slug,
+  name,
+  className,
+}: {
+  slug: string;
+  name: string;
+  className?: string;
+}) {
+  return (
+    <Link to={`/treatments/${slug}`} viewTransition className={cx(chipClass, className)}>
+      <span style={{ viewTransitionName: vtNames.treatmentTitle(slug) }}>{name}</span>
+      <ArrowRightIcon
+        size={14}
+        weight="bold"
+        aria-hidden
+        className="text-brand transition-transform duration-300 group-hover:translate-x-0.5"
+      />
+    </Link>
+  );
+}
 
 export function LandingHero() {
   const show = useQuickActions((s) => s.show);
@@ -73,20 +97,29 @@ export function LandingHero() {
 
         <div className="hero-exit relative mx-auto w-full max-w-[min(100%,30rem)] md:max-w-none">
           <HeroVisual />
-          {chips.map(({ label, className, delay }) => (
-            <span
-              key={label}
-              aria-hidden
-              style={{ animationDelay: delay }}
-              className={cx(
-                'float-y absolute rounded-full border border-surface/60 bg-surface/70 px-3 py-1.5 text-label font-semibold text-ink shadow-lg shadow-elevation/10 backdrop-blur-md md:px-4 md:py-2 md:text-small',
-                className,
-              )}
-            >
-              {label}
-            </span>
-          ))}
+          {/* Desktop: chips float around the logo. */}
+          {treatments.map(({ slug, name }) => {
+            const place = chipPlacement[slug];
+            return (
+              <div
+                key={slug}
+                className={cx('float-y absolute hidden md:block', place?.className)}
+                style={{ animationDelay: place?.delay }}
+              >
+                <TreatmentChip slug={slug} name={name} />
+              </div>
+            );
+          })}
         </div>
+        {/* Phones: the same chips in a row under the logo, clear of the floating buttons. */}
+        <nav
+          aria-label="Treatments"
+          className="-mt-2 flex flex-wrap justify-center gap-2 md:hidden"
+        >
+          {treatments.map(({ slug, name }) => (
+            <TreatmentChip key={slug} slug={slug} name={name} />
+          ))}
+        </nav>
       </Container>
 
       <a

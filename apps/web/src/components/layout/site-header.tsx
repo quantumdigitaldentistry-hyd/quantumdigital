@@ -19,7 +19,11 @@ export function SiteHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/70 bg-canvas/85 backdrop-blur-md">
+    <header
+      // Named so page transitions leave the header in place.
+      style={{ viewTransitionName: 'site-header' }}
+      className="sticky top-0 z-40 border-b border-line/70 bg-canvas/85 backdrop-blur-md"
+    >
       <Container className="flex h-16 items-center gap-3">
         <Link to="/" viewTransition aria-label="Quantum Digital Dentistry, home">
           <Logo />

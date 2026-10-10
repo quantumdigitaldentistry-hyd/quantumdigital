@@ -94,6 +94,9 @@ export default function OrthoScene({ ref, onReady }: ScrollSceneProps) {
     const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.outputColorSpace = SRGBColorSpace;
+    // Shader compile logs are for development; in production they only cost time and
+    // surface harmless driver notes as console warnings.
+    renderer.debug.checkShaderErrors = import.meta.env.DEV;
     renderer.toneMapping = ACESFilmicToneMapping;
 
     const scene = new Scene();

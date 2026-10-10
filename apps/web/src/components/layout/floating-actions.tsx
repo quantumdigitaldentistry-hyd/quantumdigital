@@ -1,4 +1,4 @@
-import { CalendarPlusIcon, ChatCircleDotsIcon, PhoneIcon, type Icon } from '@phosphor-icons/react';
+import { CalendarPlusIcon, PhoneIcon, type Icon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 
 import { clinicTelHref } from '@/config/site';
@@ -37,7 +37,8 @@ function FabLabel({ children }: { children: ReactNode }) {
 }
 
 /**
- * Right-side floating actions on every page: chat assistant, call, book an appointment.
+ * Right-side floating actions on every page: call and book an appointment. (The chat
+ * assistant is its own draggable bubble, components/chat/chat-bubble.tsx.)
  * Book sits lowest, nearest the thumb. Call dials directly once the number is configured,
  * and offers the call back until then.
  */
@@ -45,13 +46,6 @@ export function FloatingActions() {
   const show = useQuickActions((s) => s.show);
 
   const fabs: Fab[] = [
-    {
-      id: 'chat',
-      label: 'Chat with us',
-      Icon: ChatCircleDotsIcon,
-      tone: 'border border-line bg-surface text-brand',
-      onClick: () => show('chat'),
-    },
     {
       id: 'call',
       label: clinicTelHref ? 'Call the clinic' : 'Request a call back',
@@ -72,6 +66,7 @@ export function FloatingActions() {
     <div
       role="group"
       aria-label="Quick actions"
+      style={{ viewTransitionName: 'quick-actions' }}
       className="fixed right-3 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex flex-col items-end gap-3 md:right-5 md:bottom-6"
     >
       {fabs.map(({ id, label, Icon, tone, href, onClick }, index) => {

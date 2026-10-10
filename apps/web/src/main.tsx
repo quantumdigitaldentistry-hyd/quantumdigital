@@ -32,6 +32,13 @@ const router = createBrowserRouter([
         lazy: async () => ({ Component: (await import('@/routes/treatments')).default }),
       },
       {
+        path: 'treatments/:slug',
+        lazy: async () => {
+          const page = await import('@/routes/treatment');
+          return { Component: page.default, loader: page.loader };
+        },
+      },
+      {
         path: 'patient-safety',
         lazy: async () => ({ Component: (await import('@/routes/patient-safety')).default }),
       },
@@ -68,6 +75,16 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+// Clicking quickly between pages starts a new view transition before the last one has
+// finished; the browser then rejects the old one with this AbortError. That's expected,
+// so it shouldn't surface as an uncaught error.
+window.addEventListener('unhandledrejection', (event) => {
+  const reason = event.reason as Error | undefined;
+  if (reason?.name === 'AbortError' && /transition was skipped/i.test(reason.message)) {
+    event.preventDefault();
+  }
+});
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 60_000, refetchOnWindowFocus: false } },

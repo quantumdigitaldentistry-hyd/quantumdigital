@@ -1,0 +1,196 @@
+import { ArrowUpRightIcon, CalendarPlusIcon, CheckIcon, InfoIcon } from '@phosphor-icons/react';
+import { Link, useParams, type LoaderFunctionArgs } from 'react-router';
+
+import { BackButton } from '@/components/back-button';
+import { ResultsShowcase } from '@/components/gallery/results-showcase';
+import { ClosingCta } from '@/components/landing/closing-cta';
+import { ImplantStory } from '@/components/landing/implant-story';
+import { OrthoStory } from '@/components/landing/ortho-story';
+import { Reveal } from '@/components/reveal';
+import { buttonClass } from '@/components/ui/button-class';
+import { Container } from '@/components/ui/container';
+import { Photo } from '@/components/ui/photo';
+import { resultCases, treatments } from '@/content/clinic';
+import { useQuickActions } from '@/lib/quick-actions';
+import { vtNames } from '@/lib/transition-names';
+
+/** Unknown treatment slugs become the site's 404 page. */
+export function loader({ params }: LoaderFunctionArgs) {
+  if (!treatments.some((treatment) => treatment.slug === params.slug)) {
+    throw new Response('Not found', { status: 404 });
+  }
+  return null;
+}
+
+export default function TreatmentPage() {
+  const { slug } = useParams();
+  const show = useQuickActions((s) => s.show);
+  const treatment = treatments.find((item) => item.slug === slug)!;
+  const cases = resultCases.filter((item) => item.treatment === treatment.slug);
+  const others = treatments.filter((item) => item.slug !== treatment.slug);
+
+  return (
+    <>
+      <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
+        <Container className="grid items-center gap-10 py-8 md:grid-cols-[1.05fr_1fr] md:py-16">
+          <div className="flex flex-col gap-5">
+            <BackButton fallback="/treatments" />
+            <p className="text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase">
+              Treatment
+            </p>
+            <h1
+              style={{ viewTransitionName: vtNames.treatmentTitle(treatment.slug) }}
+              className="w-fit font-display text-[clamp(2.4rem,8vw,4rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance"
+            >
+              {treatment.name}
+            </h1>
+            <p className="max-w-[46ch] text-on-hero-muted md:text-heading md:font-normal">
+              {treatment.summary}
+            </p>
+            <ul className="flex flex-wrap gap-2">
+              {treatment.highlights.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-center gap-1.5 rounded-full bg-surface/70 px-3 py-1.5 text-small font-medium text-ink backdrop-blur-sm"
+                >
+                  <CheckIcon size={14} weight="bold" className="text-brand" aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              className={buttonClass('primary', 'w-fit')}
+              onClick={() => show('book')}
+            >
+              <CalendarPlusIcon size={20} aria-hidden />
+              Book a consultation
+            </button>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-md">
+            <div
+              style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
+              className="aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
+            >
+              <Photo
+                photo={treatment.photo}
+                sizes="(min-width: 768px) 28rem, 90vw"
+                priority
+                className="block size-full"
+              />
+            </div>
+            {/* The treatment's illustration floats over the photo's corner. */}
+            <div className="float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40">
+              <Photo
+                photo={treatment.illustration}
+                sizes="160px"
+                fit="contain"
+                className="block size-[70%]"
+              />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section aria-labelledby="about-title" className="border-b border-line bg-surface">
+        <Container className="grid gap-10 py-16 md:grid-cols-[0.9fr_1.1fr] md:gap-14 md:py-24">
+          <Reveal className="flex flex-col gap-4">
+            <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
+              How it works
+            </p>
+            <h2
+              id="about-title"
+              className="font-display text-title font-bold text-balance md:text-display"
+            >
+              What to expect.
+            </h2>
+            <p className="text-ink-muted md:text-heading md:font-normal">{treatment.intro}</p>
+          </Reveal>
+          <ol className="flex flex-col gap-4">
+            {treatment.steps.map((step, index) => (
+              <li key={step.title}>
+                <Reveal
+                  step={index}
+                  className="flex gap-4 rounded-container border border-line bg-canvas p-5"
+                >
+                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-small font-medium text-on-brand">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div className="flex flex-col gap-1">
+                    <h3 className="font-display text-heading font-semibold">{step.title}</h3>
+                    <p className="text-ink-muted">{step.body}</p>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+        </Container>
+      </section>
+
+      {treatment.slug === 'implants' ? <ImplantStory eyebrow="Implants in 3D" /> : null}
+      {treatment.slug === 'invisalign' ? <OrthoStory eyebrow="Straightening in 3D" /> : null}
+
+      {cases.length ? (
+        <section aria-labelledby="cases-title" className="bg-canvas">
+          <Container className="grid gap-10 py-16 *:min-w-0 md:grid-cols-[0.8fr_1.2fr] md:items-center md:gap-14 md:py-24">
+            <Reveal className="flex flex-col gap-4">
+              <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
+                Before and after
+              </p>
+              <h2
+                id="cases-title"
+                className="font-display text-title font-bold text-balance md:text-display"
+              >
+                {treatment.name} results.
+              </h2>
+              <p className="flex items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
+                <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+                Demo cases until the clinic adds real ones, shared with patient consent.
+              </p>
+            </Reveal>
+            <Reveal step={1}>
+              <ResultsShowcase cases={cases} />
+            </Reveal>
+          </Container>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="others-title" className="border-t border-line bg-surface">
+        <Container className="flex flex-col gap-6 py-14 md:py-20">
+          <h2 id="others-title" className="font-display text-title font-bold">
+            Other treatments
+          </h2>
+          <ul className="grid gap-4 sm:grid-cols-3">
+            {others.map((item) => (
+              <li key={item.slug}>
+                <Link
+                  to={`/treatments/${item.slug}`}
+                  viewTransition
+                  className="group flex items-center gap-3 rounded-container border border-line bg-canvas p-4 transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-aqua"
+                >
+                  <span className="grid size-14 shrink-0 place-items-center rounded-full bg-aqua-soft">
+                    <Photo
+                      photo={item.illustration}
+                      sizes="56px"
+                      fit="contain"
+                      className="block size-[70%]"
+                    />
+                  </span>
+                  <span className="flex-1 font-display font-semibold">{item.name}</span>
+                  <ArrowUpRightIcon
+                    size={18}
+                    aria-hidden
+                    className="text-brand transition-transform duration-300 group-hover:rotate-45"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <ClosingCta />
+    </>
+  );
+}

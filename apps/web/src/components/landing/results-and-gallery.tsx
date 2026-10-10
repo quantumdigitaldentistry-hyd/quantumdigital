@@ -1,11 +1,12 @@
 import { ArrowUpRightIcon, InfoIcon } from '@phosphor-icons/react';
 import { Link } from 'react-router';
 
-import { BeforeAfter } from '@/components/gallery/before-after';
+import { ResultsShowcase } from '@/components/gallery/results-showcase';
 import { PhotoGallery } from '@/components/gallery/photo-gallery';
 import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
-import { galleryPhotos, photos } from '@/content/photos';
+import { resultCases } from '@/content/clinic';
+import { galleryPhotos } from '@/content/photos';
 
 /**
  * Smile results (before/after slider) and a gallery preview.
@@ -17,7 +18,7 @@ import { galleryPhotos, photos } from '@/content/photos';
 export function SmileResults() {
   return (
     <section aria-labelledby="results-title" className="bg-canvas">
-      <Container className="grid gap-10 py-16 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 md:py-24">
+      <Container className="grid gap-10 py-16 *:min-w-0 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 md:py-24">
         <Reveal className="flex flex-col gap-4">
           <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
             04 · Results
@@ -29,21 +30,16 @@ export function SmileResults() {
             See the difference.
           </h2>
           <p className="max-w-[42ch] text-ink-muted">
-            Drag the handle to compare before and after. Real cases from the clinic will appear
+            Pick a case, then drag the handle to compare. Real cases from the clinic will appear
             here, shared with each patient&apos;s consent.
           </p>
           <p className="flex max-w-[44ch] items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
             <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
-            Demo only: the same photo with a filter, to show how the comparison works.
+            Demo only: each case uses one photo with a filter, to show how the comparison works.
           </p>
         </Reveal>
         <Reveal step={1}>
-          <BeforeAfter
-            before={photos.smileJoy}
-            after={photos.smileJoy}
-            beforeClassName="[filter:sepia(0.45)_saturate(0.6)_brightness(0.9)_contrast(0.95)]"
-            label="Compare before and after (demo)"
-          />
+          <ResultsShowcase cases={resultCases} />
         </Reveal>
       </Container>
     </section>

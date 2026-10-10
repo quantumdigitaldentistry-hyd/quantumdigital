@@ -217,6 +217,9 @@
     translate: 100% 0;
   }
   @starting-style {
+    .dialog-fade[open] {
+      opacity: 0;
+    }
     .dialog-sheet[open] {
       opacity: 0;
       translate: 0 32px;
@@ -246,6 +249,18 @@
 /* Keep the page still behind an open dialog. */
 html:has(dialog[open]) {
   overflow: hidden;
+}
+
+/* Chat bubble attention ring. */
+@keyframes chat-ping {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
 }
 
 /* Lightbox photo swap. */
@@ -375,6 +390,19 @@ html:has(dialog[open]) {
     .journey-timeline {
       view-timeline: --journey block;
     }
+    /* Gallery photos unveil as they scroll in: clip opens, image rises and settles. */
+    .gallery-item {
+      animation: gallery-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+@keyframes gallery-in {
+  from {
+    opacity: 0;
+    clip-path: inset(14% 8% 0 8% round 24px);
+    transform: translateY(48px) scale(0.94);
   }
 }
 @keyframes hero-exit {
@@ -405,22 +433,58 @@ html:has(dialog[open]) {
   }
 }
 
-/* Route changes use the browser's View Transitions API (Link viewTransition). */
+/*
+ * Page transitions (View Transitions API). Forward: the old page sinks back and softens
+ * while the new one rises in. Back (html[data-nav='back'], lib/navigation.ts): reversed.
+ * The header has its own name, so it holds still instead of fading with the page.
+ * Shared elements (treatment titles and photos, doctor photos) morph between pages via
+ * matching view-transition-name values.
+ */
 ::view-transition-old(root) {
-  animation: 160ms var(--ease-in-out) both vt-fade-out;
+  animation: 320ms var(--ease-in-out) both vt-page-out;
 }
 ::view-transition-new(root) {
-  animation: 280ms var(--ease-out) both vt-fade-in;
+  animation: 520ms var(--ease-out) both vt-page-in;
 }
-@keyframes vt-fade-out {
+html[data-nav='back']::view-transition-old(root) {
+  animation-name: vt-page-out-back;
+}
+html[data-nav='back']::view-transition-new(root) {
+  animation-name: vt-page-in-back;
+}
+::view-transition-group(site-header),
+::view-transition-group(quick-actions),
+::view-transition-group(chat-bubble) {
+  animation: none;
+}
+::view-transition-group(*) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out);
+}
+@keyframes vt-page-out {
   to {
     opacity: 0;
+    transform: translateY(-24px) scale(0.98);
+    filter: blur(6px);
   }
 }
-@keyframes vt-fade-in {
+@keyframes vt-page-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(48px);
+  }
+}
+@keyframes vt-page-out-back {
+  to {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+}
+@keyframes vt-page-in-back {
+  from {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.98);
+    filter: blur(6px);
   }
 }
 

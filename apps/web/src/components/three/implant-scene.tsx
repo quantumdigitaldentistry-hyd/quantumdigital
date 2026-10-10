@@ -132,6 +132,9 @@ export default function ImplantScene({ ref, onReady }: ScrollSceneProps) {
     // 1.5x is visually identical here and ~30% cheaper per frame than 2x on phones.
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.outputColorSpace = SRGBColorSpace;
+    // Shader compile logs are for development; in production they only cost time and
+    // surface harmless driver notes as console warnings.
+    renderer.debug.checkShaderErrors = import.meta.env.DEV;
     renderer.toneMapping = ACESFilmicToneMapping;
 
     const scene = new Scene();
