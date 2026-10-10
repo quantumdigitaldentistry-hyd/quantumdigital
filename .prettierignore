@@ -7,3 +7,6 @@ pnpm-lock.yaml
 .claude
 skills-lock.json
 **/uniwind-types.d.ts
+docs/brand/kit
+apps/dental
+packages/ui

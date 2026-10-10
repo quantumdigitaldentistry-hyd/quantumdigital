@@ -1,6 +1,14 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+  # Set aside while the product is web-only (kept in git history and on disk, not built):
+  - '!apps/dental'
+  - '!packages/ui'
+
+# Only install versions that have been public for 14 days (20160 minutes), including
+# transitive dependencies: brand-new releases are where regressions and compromised
+# packages usually show up.
+minimumReleaseAge: 20160
 
 # pnpm 10 skips dependency install scripts unless allow-listed.
 onlyBuiltDependencies:

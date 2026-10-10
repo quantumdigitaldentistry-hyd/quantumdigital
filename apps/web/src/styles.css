@@ -1,0 +1,246 @@
+@import 'tailwindcss';
+
+/*
+ * Quantam Dental design tokens: "Clinic Sky".
+ * From the clinic signage: aqua sky, the royal-blue tooth mark, sunshine-yellow pills
+ * with plum lettering. Rules: docs/design-system.md. Use these tokens, never raw hex in
+ * components. Every text/background pair is checked for WCAG AA (4.5:1) in both themes:
+ * run `pnpm check:contrast` after editing.
+ *
+ * Light values live in @theme. Dark values override them on [data-theme='dark'], which
+ * index.html sets before first paint. Festival campaigns repaint the festive-* tokens at
+ * runtime (src/lib/festive-themes.ts).
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  /* Backgrounds: cool white with a faint aqua cast */
+  --color-canvas: #f4f8fa; /* page background */
+  --color-surface: #ffffff; /* cards, sheets, rows */
+  --color-sunken: #e8f0f4; /* input wells, skeletons */
+  --color-line: #d5e2e9; /* hairlines, card borders */
+  --color-line-strong: #a9bdc8; /* input borders, visible dividers */
+  --color-logo-tile: #ffffff; /* behind art with a baked-in white background */
+
+  /* Text: deep navy ink, never pure black */
+  --color-ink: #0d1b2a;
+  --color-ink-muted: #46586a;
+  --color-ink-subtle: #5d6e7e; /* 4.5:1 even on sunken */
+
+  /* Brand blue (the tooth mark): actions, links, focus, selection */
+  --color-brand: #1a5bc4;
+  --color-brand-strong: #13469b;
+  --color-on-brand: #ffffff;
+  --color-brand-soft: #e3eefb;
+  --color-on-brand-soft: #13469b;
+
+  /* Aqua (the signage sky): atmosphere only, never a button or text colour */
+  --color-aqua: #6dd3e6;
+  --color-on-aqua: #0d1b2a;
+  --color-aqua-soft: #ddf5fa;
+  --color-on-aqua-soft: #0b4f5c;
+
+  /* Hero gradient. on-hero passes on both stops. */
+  --color-hero-from: #a9e7f2;
+  --color-hero-to: #6dd3e6;
+  --color-on-hero: #0d1b2a;
+  --color-on-hero-muted: #1f3a4d;
+
+  /* Sunshine highlight (the yellow pills) with plum text */
+  --color-highlight: #ffe419;
+  --color-on-highlight: #4a1d6b;
+  --color-highlight-soft: #fff8c7;
+  --color-on-highlight-soft: #4a1d6b;
+
+  /* Status */
+  --color-success: #1c7a4a;
+  --color-success-soft: #e0f3e8;
+  --color-warning: #8a5300;
+  --color-warning-soft: #fcefd6;
+  --color-danger: #b3261e;
+  --color-on-danger: #ffffff;
+  --color-danger-soft: #fbe5e2;
+
+  /* Festive overlay: everyday ("clinic") values, replaced while a festival runs */
+  --color-festive: #ffe419;
+  --color-festive-end: #ffd60a;
+  --color-on-festive: #4a1d6b;
+  --color-festive-soft: #fff8c7;
+  --color-on-festive-soft: #4a1d6b;
+  --color-festive-accent: #6dd3e6;
+
+  /* Type: Sora (display, echoes the QUANTUM wordmark), Instrument Sans (text), Plex Mono (data) */
+  --font-display: 'Sora Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Type scale, mobile first. Use md:text-display-lg etc. to step up on wide screens. */
+  --text-display: 2rem;
+  --text-display--line-height: 2.5rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 3.75rem;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-title: 1.5rem;
+  --text-title--line-height: 2rem;
+  --text-title--letter-spacing: -0.01em;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.5rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.25rem;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+
+  /* Shape: pills for buttons/badges, 12px fields, 20px containers */
+  --radius-control: 12px;
+  --radius-container: 20px;
+
+  /* Motion: one easing family. Enter slower than exit. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root[data-theme='dark'] {
+  --color-canvas: #0a121a;
+  --color-surface: #111c26;
+  --color-sunken: #070d13;
+  --color-line: #1f2e3b;
+  --color-line-strong: #33475a;
+  --color-logo-tile: #ffffff;
+
+  --color-ink: #e6eef4;
+  --color-ink-muted: #9db0c0;
+  --color-ink-subtle: #7f93a5;
+
+  --color-brand: #7fb2ff;
+  --color-brand-strong: #a3c8ff;
+  --color-on-brand: #06162e;
+  --color-brand-soft: #13284a;
+  --color-on-brand-soft: #b7d3ff;
+
+  --color-aqua: #5cc8dc;
+  --color-on-aqua: #04141a;
+  --color-aqua-soft: #0e2a33;
+  --color-on-aqua-soft: #a8e9f5;
+
+  --color-hero-from: #12394a;
+  --color-hero-to: #0b2533;
+  --color-on-hero: #e6eef4;
+  --color-on-hero-muted: #b5ccd8;
+
+  --color-highlight: #ffe419;
+  --color-on-highlight: #3a1556;
+  --color-highlight-soft: #2e2a0b;
+  --color-on-highlight-soft: #ffe97a;
+
+  --color-success: #5fd49a;
+  --color-success-soft: #0f2e20;
+  --color-warning: #f5be5c;
+  --color-warning-soft: #33260c;
+  --color-danger: #ff9580;
+  --color-on-danger: #2b0804;
+  --color-danger-soft: #3a1913;
+
+  --color-festive: #ffe419;
+  --color-festive-end: #ffc93c;
+  --color-on-festive: #3a1556;
+  --color-festive-soft: #2e2a0b;
+  --color-on-festive-soft: #ffe97a;
+  --color-festive-accent: #5cc8dc;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-body text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  ::selection {
+    @apply bg-brand-soft text-on-brand-soft;
+  }
+}
+
+/* Brand kit loader "F · Dots": rise 8px and brighten, 1100ms loop, staggered 150ms. */
+@keyframes dot-rise {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(var(--dot-lift, -8px));
+    opacity: 1;
+  }
+}
+
+/*
+ * Scroll reveal (components/reveal.tsx): tied to the element entering the viewport, so it
+ * costs no JavaScript. Without scroll-timeline support the content is simply visible.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 45%);
+    }
+  }
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/* Route changes use the browser's View Transitions API (Link viewTransition). */
+::view-transition-old(root) {
+  animation: 160ms var(--ease-in-out) both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 280ms var(--ease-out) both vt-fade-in;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after,
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

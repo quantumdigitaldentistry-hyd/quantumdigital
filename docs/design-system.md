@@ -1,6 +1,6 @@
 # Quantam Dental design system: "Clinic Sky"
 
-One design system for **web, Android and iOS**. Tokens are defined once in [`apps/dental/src/global.css`](../apps/dental/src/global.css), festival palettes in [`packages/ui/src/festive-themes.ts`](../packages/ui/src/festive-themes.ts), and shared components in [`packages/ui`](../packages/ui/src). To see everything live, including every festival in light and dark, run the app and open **`/design`**.
+The design system for the **web app**, built mobile first and then scaled up for larger screens. Tokens are defined once in [`apps/web/src/styles.css`](../apps/web/src/styles.css) (Tailwind v4 `@theme`), festival palettes in [`apps/web/src/lib/festive-themes.ts`](../apps/web/src/lib/festive-themes.ts), and components in [`apps/web/src/components/ui`](../apps/web/src/components/ui). To see everything live, including every festival in light and dark, run `pnpm dev` and open **`/design`**.
 
 ## Direction
 
@@ -18,7 +18,7 @@ Each colour has one job:
 
 ## Readability rules (apply to every screen)
 
-1. **Every text colour has a home.** Text on `bg-x` uses tone `on-x`. Plain backgrounds (`canvas`, `surface`, `sunken`) use `default`, `muted` or `subtle`. Never put white text on aqua or yellow.
+1. **Every text colour has a home.** Text on `bg-x` uses `text-on-x`. Plain backgrounds (`canvas`, `surface`, `sunken`) use `text-ink`, `text-ink-muted` or `text-ink-subtle`. Never put white text on aqua or yellow.
 2. **All pairs pass WCAG AA (4.5:1) in light and dark.** That's 130 pairs, including every festival. `pnpm check:contrast` checks them, so run it after changing any colour.
 3. **Gradients carry text only when the text passes on both stops.** That's why each gradient has two close stops, not a rainbow.
 4. **Colour never carries meaning alone.** Statuses and offers always have a text label.
@@ -55,22 +55,24 @@ Use semantic tokens (`bg-surface`, `text-ink-muted`). **Never put hex values or 
 | `warning-soft` / `warning`                       | `#FCEFD6` / `#8A5300` | `#33260C` / `#F5BE5C` |
 | `danger-soft` / `danger`, `danger` / `on-danger` | `#FBE5E2` / `#B3261E` | `#3A1913` / `#FF9580` |
 
-In dark mode, brand blue gets lighter and the text on it turns dark. Always pair `bg-brand` with tone `on-brand`, and never hard-code white.
+In dark mode, brand blue gets lighter and the text on it turns dark. Always pair `bg-brand` with `text-on-brand`, and never hard-code white.
+
+Light/dark: `index.html` sets `<html data-theme>` before first paint (saved choice, otherwise the device setting), so there's no flash. [`lib/theme.ts`](../apps/web/src/lib/theme.ts) keeps it in sync and follows device changes while set to "system". Dark values override the tokens under `:root[data-theme='dark']`, and the `dark:` variant is available for the rare one-off.
 
 ### Gradients
 
-Only **linear** gradients are used, because they render natively on iOS and Android through Uniwind. Radial and conic gradients are web-only, so don't use them.
+Use **linear** gradients with two close stops, so text can be checked against both ends.
 
-| Gradient | Classes                                       | Text tones                 | Where                                           |
-| -------- | --------------------------------------------- | -------------------------- | ----------------------------------------------- |
-| Hero     | `bg-linear-to-br from-hero-from to-hero-to`   | `on-hero`, `on-hero-muted` | `<HeroBand>`: screen header, dashboard greeting |
-| Festive  | `bg-linear-to-br from-festive to-festive-end` | `on-festive`               | `<OfferBanner>`, greeting cards                 |
+| Gradient | Classes                                       | Text classes                         | Where                                   |
+| -------- | --------------------------------------------- | ------------------------------------ | --------------------------------------- |
+| Hero     | `bg-linear-to-br from-hero-from to-hero-to`   | `text-on-hero`, `text-on-hero-muted` | Home hero, page headers, doctor avatars |
+| Festive  | `bg-linear-to-br from-festive to-festive-end` | `text-on-festive`                    | `<OfferBanner>`, greeting cards         |
 
 Light hero runs `#A9E7F2 → #6DD3E6` (the signage sky). Dark hero runs `#12394A → #0B2533` (deep ocean). Rules: **at most one gradient band per screen**, no gradients on buttons, inputs or list rows, and the rest of the screen sits on plain `canvas`.
 
 ### Appointment status
 
-Use `appointmentStatusBadge` from [`apps/dental/src/theme/status.ts`](../apps/dental/src/theme/status.ts).
+Use `appointmentStatusBadge` from [`apps/web/src/lib/status.ts`](../apps/web/src/lib/status.ts).
 
 | Status    | Badge tone |
 | --------- | ---------- |
@@ -113,8 +115,8 @@ Each festival defines these tokens, separately for light and dark:
 ### How it works
 
 - Clinic staff create a **campaign** (`campaignSchema` in `@quantam/shared`) with a festival key, title, offer ("20% off", "₹999"), and start and end dates. Festival dates move every year, mostly with the lunar calendar, so the clinic sets the window. The app never guesses it.
-- `activeCampaign(campaigns, today)` picks the running campaign, and the root layout calls `useFestiveTheme(key)`, which repaints the tokens at runtime on web, iOS and Android (`Uniwind.updateCSSVariables`). When no campaign is running, it falls back to `clinic`.
-- For now `useFestival` in [`src/theme/festival.ts`](../apps/dental/src/theme/festival.ts) holds the key, and `/design` sets it for previews. Once campaigns are stored in Supabase, set it from the active campaign.
+- `activeCampaign(campaigns, today)` picks the running campaign, and the root layout calls `useFestiveTheme(key)`, which writes one small `<style>` tag that overrides the festive tokens for light and dark. When no campaign is running, it falls back to `clinic` (the defaults in `styles.css`).
+- For now `useFestival` in [`src/lib/festival.ts`](../apps/web/src/lib/festival.ts) holds the key, and `/design` sets it for previews. Once campaigns are stored in Supabase, set it from the active campaign.
 
 ### Adding a festival
 
@@ -127,34 +129,28 @@ Keep festive treatments respectful: use colours and simple dot motifs, with no r
 
 ## Typography
 
-| Family              | Use                                                                              |
-| ------------------- | -------------------------------------------------------------------------------- |
-| **Sora**            | `display`, `title`, `heading`. A geometric face that echoes the QUANTUM wordmark |
-| **Instrument Sans** | All body and interface text: compact and legible in dense lists                  |
-| **IBM Plex Mono**   | **Data only**: times, phone numbers, patient IDs, amounts                        |
+| Family              | Use                                                                          |
+| ------------------- | ---------------------------------------------------------------------------- |
+| **Sora**            | Display, titles, headings. A geometric face that echoes the QUANTUM wordmark |
+| **Instrument Sans** | All body and interface text: compact and legible in dense lists              |
+| **IBM Plex Mono**   | **Data only**: times, phone numbers, patient IDs, amounts                    |
 
-Use `<Text variant tone>` from `@quantam/ui`, not raw `text-*` or `font-*` classes.
+Fonts are self-hosted from Fontsource (variable Sora and Instrument Sans, Plex Mono 400/500), so no request goes to Google. Each file has a `unicode-range`, so browsers download only the Latin files a page uses.
 
-| Variant                | Size / line height | Font                        | Use for                           |
-| ---------------------- | ------------------ | --------------------------- | --------------------------------- |
-| `display`              | 32 / 40            | Sora Bold                   | Offer numbers, dashboard greeting |
-| `title`                | 24 / 32            | Sora SemiBold               | Screen titles                     |
-| `heading`              | 18 / 24            | Sora SemiBold               | Section and card titles           |
-| `body` / `body-strong` | 16 / 24            | Instrument Regular / Medium | Default text, button labels       |
-| `small`                | 14 / 20            | Instrument Regular          | Secondary lines in lists          |
-| `label`                | 13 / 16            | Instrument Medium           | Form labels, badges               |
-| `caption`              | 12 / 16            | Instrument Regular          | Timestamps, footnotes             |
-| `data` / `data-strong` | 14 / 20            | Plex Mono Regular / Medium  | Times, phones, IDs, money         |
+Type sizes are Tailwind tokens. Pair them with the family and weight:
 
-Set colour with `tone`, **not** with a `text-*` class in `className`. Two colour classes on one element conflict, and the result differs between web and native.
+| Token                    | Size / line height | Classes                                                  | Use for                      |
+| ------------------------ | ------------------ | -------------------------------------------------------- | ---------------------------- |
+| `display` → `display-lg` | 32/40 → 56/60      | `font-display text-display font-bold md:text-display-lg` | Hero headline, offer numbers |
+| `title`                  | 24 / 32            | `font-display text-title font-semibold`                  | Page and section titles      |
+| `heading`                | 18 / 24            | `font-display text-heading font-semibold`                | Card titles                  |
+| `body`                   | 16 / 24            | `text-body` (default)                                    | Default text, button labels  |
+| `small`                  | 14 / 20            | `text-small`                                             | Secondary lines              |
+| `label`                  | 13 / 16            | `text-label font-medium`                                 | Form labels, badges          |
+| `caption`                | 12 / 16            | `text-caption`                                           | Timestamps, footnotes        |
+| data                     | 14 / 20            | `font-mono text-small`                                   | Times, phones, IDs, money    |
 
-### Why fonts are named per weight
-
-Android can't pick a weight file out of a single family name, so each weight is registered as its own family (`Sora-Bold`, `InstrumentSans-Medium`, and so on) in [`src/theme/fonts.ts`](../apps/dental/src/theme/fonts.ts). To add a weight:
-
-1. Import it from its own subpath (`@expo-google-fonts/sora/800ExtraBold`), never from the package root, which bundles every weight into the app.
-2. Register it in `fonts.ts`.
-3. Add the token in `global.css`, in both `@layer theme` and `@theme`.
+Mobile first: write the phone style unprefixed, then step up with `md:` (768px) and `lg:` (1024px). Only `display` changes size between breakpoints; everything else stays readable at one size.
 
 ## Shape and spacing
 
@@ -166,50 +162,63 @@ Soft and friendly, with one rule:
 | Fields: inputs, selects, segmented controls | 12px   | `rounded-control`   |
 | Containers: cards, sheets, banners, dialogs | 20px   | `rounded-container` |
 
-- Spacing uses Tailwind's 4px scale: `gap-2`, `gap-3`, `gap-4` and `p-4` within groups, and `gap-6` to `gap-8` between sections.
-- The minimum touch target is **44px** (`min-h-11`).
-- Hierarchy comes from borders, spacing and the single hero band, not drop shadows. Cards are `bg-surface` with `border-line`. Don't nest cards.
+- Spacing uses Tailwind's 4px scale: `gap-2` to `gap-4` within groups, and `py-14 md:py-20` between page sections. Page content sits in `mx-auto max-w-6xl px-4 md:px-6`.
+- The minimum touch target is **44px** (`min-h-11`, or `size-11` for icon buttons on phones).
+- Hierarchy comes from borders, spacing and one gradient band, not drop shadows. Cards are `bg-surface` with `border-line`. Don't nest cards.
 
-## Components (`@quantam/ui`)
+## Components (`apps/web/src/components/ui`)
 
-| Component     | Notes                                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------- |
-| `Text`        | `variant` + `tone`                                                                       |
-| `Button`      | `primary`, `secondary`, `ghost`, `danger`, `festive` (offer CTAs only). Flat fills, pill |
-| `Badge`       | `neutral`, `brand`, `success`, `warning`, `danger`, `highlight`, `festive`               |
-| `Card`        | Surface plus border                                                                      |
-| `HeroBand`    | Aqua gradient band; text uses `on-hero` tones                                            |
-| `OfferBanner` | Festival offer: greeting, big offer number, title, validity, CTA                         |
-| `FestiveDots` | Decorative rangoli dot row, hidden from screen readers                                   |
-| `Screen`      | Safe areas, scroll, centred max-width column on web                                      |
+| Component       | Notes                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| `Button`        | `primary`, `secondary`, `ghost`, `danger`, `festive` (offer CTAs only). Pill, flat fill, `loading` |
+| `buttonClass()` | Button styles for links: `<Link className={buttonClass('secondary')}>`                             |
+| `Badge`         | `neutral`, `brand`, `success`, `warning`, `danger`, `highlight`, `festive`                         |
+| `Card`          | Surface plus border                                                                                |
+| `OfferBanner`   | Festival offer: greeting, big offer number, title, validity, action slot                           |
+| `FestiveDots`   | Decorative rangoli dot row, hidden from screen readers                                             |
+| `ThemeSwitcher` | Device / light / dark, remembered per browser                                                      |
+| `PageLoader`    | Brand kit Fill loader for whole pages                                                              |
+| `DotsLoader`    | Brand kit Dots loader for buttons and inline waits                                                 |
+| `Reveal`        | Scroll-in fade (`components/reveal.tsx`)                                                           |
+| `HeroVisual`    | Logo poster, upgraded to the 3D tooth when it's cheap enough (`components/three`)                  |
+
+Icons come from Phosphor (`@phosphor-icons/react`). Use the `*Icon` names (`SunIcon`, not the deprecated `Sun`), `weight="duotone"` for feature icons and `regular` in controls, and always `aria-hidden` next to a text label.
 
 ## Loaders
 
-Brand assets live in [`apps/dental/assets/`](../apps/dental/assets). `Brand Kit.dc.html` there previews them all.
+The original brand kit (logo, icons, all six GIFs, `Brand Kit.dc.html`) is kept in [`docs/brand/kit`](brand/kit). The web app ships optimised copies from `apps/web/src/assets`.
 
-| Where                      | Loader                                         | How                                                                                                                          |
-| -------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Whole page waiting on data | **Fill** (`assets/gifs/fill.gif`)              | `<PageLoader label="Loading patients" />` from `@/components/page-loader`                                                    |
-| Buttons                    | **Dots** (brand kit "F · Dots", built in code) | `<Button title="Save" loading={isSaving} />`. The dots take the label colour, the width stays fixed, and presses are blocked |
-| Small inline areas         | **Dots**                                       | `<DotsLoader />` (brand blue to aqua) from `@quantam/ui`                                                                     |
+| Where              | Loader                                           | How                                                                                                      |
+| ------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Whole page waiting | **Fill** (`fill.gif` re-encoded as a 16 kB WebP) | `<PageLoader label="Loading patients" />`. Also the router's first-load fallback                         |
+| Buttons            | **Dots** (brand kit "F · Dots", pure CSS)        | `<Button loading={isSaving}>Save</Button>`. Dots use the label colour, width stays fixed, clicks ignored |
+| Small inline areas | **Dots**                                         | `<DotsLoader />` (brand blue to aqua)                                                                    |
 
-- The GIFs have a solid white background, so they always sit on a `bg-logo-tile` white tile, never directly on a coloured or dark surface.
-- There's no dots GIF. Dots is animated with Reanimated using the brand kit's exact timing: an 1100ms loop with 150ms stagger and an 8px lift.
-- With the phone's reduced-motion setting on, the GIF holds its first frame and the dots hold still.
-- Use a loader only when a wait is likely to take longer than about 300ms. For lists, prefer skeleton rows on `bg-sunken`.
+- The Fill art has a solid white background, so it always sits on a `bg-logo-tile` tile.
+- `PageLoader` stays invisible for its first 200ms, so fast loads never flash a loader.
+- With reduced motion on, the page loader shows the still logo and the dots hold still.
+- For lists, prefer skeleton rows on `bg-sunken` over a loader.
 
-## Native (Android and iOS) specifics
+## Motion and 3D
 
-| Concern                                  | Where it's handled                                                                   |
-| ---------------------------------------- | ------------------------------------------------------------------------------------ |
-| Light/dark follows the phone setting     | `userInterfaceStyle: automatic` in `app.json` plus Uniwind adaptive themes           |
-| Status bar, window background, nav theme | `ThemeSync` in [`src/theme/theme-sync.tsx`](../apps/dental/src/theme/theme-sync.tsx) |
-| Festival tokens                          | `useFestiveTheme` in `_layout.tsx` (updates both themes at runtime)                  |
-| Splash screen                            | `app.json`: `#F4F8FA` light, `#0A121A` dark                                          |
-| Android adaptive icon background         | `app.json`: `#6DD3E6` (signage aqua)                                                 |
-| Fonts ready before first paint           | `_layout.tsx` keeps the splash up until fonts load                                   |
+- **Page transitions:** the browser's View Transitions API (`<Link viewTransition>`): a 160ms fade out and a 280ms fade up. No JavaScript animation library is shipped.
+- **Scroll reveals:** CSS scroll-driven animations (`.reveal`). Content is never hidden waiting for a script; browsers without support show it immediately.
+- **Micro-interactions:** buttons press to 97%, cards lift 4px and their icon tilts on hover. Use `duration-150` for presses, `duration-300` for hovers and `--ease-out` for entrances.
+- **3D hero:** plain three.js with named imports, so only the classes used are bundled. The tooth is generated from lathe profiles (no model to download) and reflections come from three's `RoomEnvironment` (no HDR file).
+- **Reduced motion** (`prefers-reduced-motion`) turns every animation into an instant change, freezes the 3D scene on one frame and stills the loaders.
 
-The app icon and splash image are still Expo placeholders. Replace them in `apps/dental/assets/images/` with the clinic's tooth logo.
+## Performance budget
+
+| Rule                         | How it's met                                                                                                                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| First load stays small       | Main JS is about 114 kB gzipped (React, React Router, TanStack Query). Each page is its own lazy chunk                                                                          |
+| 3D never delays first paint  | The logo paints first. three.js (about 137 kB gzipped) loads only after the browser is idle, with the hero on screen, WebGL2 available, data saver off and at least 4 GB memory |
+| 3D costs nothing when unseen | The render loop stops when the hero scrolls away and pauses in background tabs. Pixel ratio is capped at 1.75                                                                   |
+| Images are light             | Logo 17 kB AVIF / 21 kB WebP (was a 279 kB PNG). Fill loader 16 kB WebP (was a 310 kB GIF)                                                                                      |
+| No layout shift              | Images have width and height; the 3D canvas replaces the poster inside a fixed square                                                                                           |
+| Long-cached assets           | Hashed file names; `vercel.json` serves `/assets/*` as immutable for a year                                                                                                     |
+| Big chunks fail loudly       | `chunkSizeWarningLimit` in `vite.config.ts` sits just above the 3D chunk, so anything bigger warns                                                                              |
+| Dependencies are stable      | pnpm installs only versions published at least 14 days ago (`minimumReleaseAge` in `pnpm-workspace.yaml`)                                                                       |
 
 ## Copy and content
 
@@ -221,11 +230,13 @@ The app icon and splash image are still Expo placeholders. Replace them in `apps
 ## Checklist for new screens
 
 - [ ] Only semantic tokens, with no hex values or palette classes
-- [ ] Every text tone matches its background (`on-x` on `bg-x`)
+- [ ] Every text colour matches its background (`text-on-x` on `bg-x`)
 - [ ] At most one gradient band, and it's linear
 - [ ] Festive tokens only on offer and greeting UI
-- [ ] Text uses `<Text variant tone>`; times, phones and IDs use `data`
+- [ ] Type uses the size tokens; times, phones and IDs use `font-mono`
+- [ ] Built at 390px first, then checked at 768px and 1280px with no horizontal scroll
 - [ ] Radii follow the pill / 12 / 20 rule
 - [ ] Checked in **light and dark**, and with at least one dark and one light festival (use `/design`)
 - [ ] Touch targets ≥ 44px; nothing relies on colour alone
 - [ ] Loading, empty and error states designed
+- [ ] New heavy code (charts, editors, 3D) is lazy-loaded, and `pnpm build` shows no warnings
