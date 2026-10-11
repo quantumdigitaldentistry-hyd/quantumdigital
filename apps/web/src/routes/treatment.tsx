@@ -16,10 +16,10 @@ import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
-import { leadDoctor, resultCases, treatments } from '@/content/clinic';
+import { demoCasesFor, leadDoctor, treatments } from '@/content/clinic';
 import { treatmentDetails } from '@/content/treatment-details';
 import { useLiveResults } from '@/lib/live-content';
-import { useQuickActions } from '@/lib/quick-actions';
+import { bookingPath } from '@/lib/booking';
 import { usePointerParallax } from '@/lib/use-pointer-fx';
 import { vtNames } from '@/lib/transition-names';
 
@@ -33,12 +33,10 @@ export function loader({ params }: LoaderFunctionArgs) {
 
 export default function TreatmentPage() {
   const { slug } = useParams();
-  const show = useQuickActions((s) => s.show);
   const treatment = treatments.find((item) => item.slug === slug)!;
   const live = useLiveResults(treatment.slug).data ?? [];
-  const cases = live.length
-    ? live
-    : resultCases.filter((item) => item.treatment === treatment.slug);
+  // Every treatment shows a before/after: real cases once the clinic adds them, a demo until then.
+  const cases = live.length ? live : demoCasesFor(treatment);
   const others = treatments.filter((item) => item.slug !== treatment.slug);
   const doctor = leadDoctor(treatment);
   const details = treatmentDetails[treatment.slug];
@@ -89,15 +87,15 @@ export default function TreatmentPage() {
                 </li>
               ))}
             </ul>
-            <button
-              type="button"
+            <Link
               className={buttonClass('primary', 'enter w-fit')}
               style={{ '--d': 3 } as CSSProperties}
-              onClick={() => show('book')}
+              to={bookingPath(treatment.slug)}
+              viewTransition
             >
               <CalendarPlusIcon size={20} aria-hidden />
               Book a consultation
-            </button>
+            </Link>
           </div>
 
           <div className="hero-exit relative mx-auto w-full max-w-md">
@@ -233,7 +231,10 @@ export default function TreatmentPage() {
         />
       ) : null}
 
-      <section aria-labelledby="others-title" className="border-t border-line bg-surface">
+      <section
+        aria-labelledby="others-title"
+        className="overflow-x-clip border-t border-line bg-surface"
+      >
         <Container className="flex flex-col gap-6 py-14 md:py-20">
           <h2 id="others-title" className="heading-3d font-display text-title font-bold">
             Other treatments
