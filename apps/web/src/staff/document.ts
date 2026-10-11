@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 /** Labels the tab and keeps staff pages out of search engines (noindex, nofollow). */
 export function useStaffDocument(title: string) {
   useEffect(() => {
-    const previous = document.title;
     document.title = `${title} · Quantum staff`;
     let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
     const created = !robots;
@@ -15,7 +14,8 @@ export function useStaffDocument(title: string) {
     const before = robots.content;
     robots.content = 'noindex, nofollow';
     return () => {
-      document.title = previous;
+      // Back to the site's own title (nested staff pages unmount in either order).
+      document.title = 'Quantum Digital Dentistry';
       if (created) robots?.remove();
       else if (robots) robots.content = before;
     };

@@ -87,6 +87,17 @@ npx supabase functions serve --env-file supabase/functions/.env
 4. **Create the super admin** with `scripts/create-super-admin.mjs` (see the comments in it), using the project's URL and service role key.
 5. **Website env** (Vercel › Project › Environment Variables): `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from Dashboard › Settings › API. **Never** the service role key.
 
+## Festival packages
+
+Staff pick a festival in **Festival & hours**. The site then switches to that festival's palette and adds, on every page:
+
+- the festival's deity or symbol in a glowing medallion next to the logo (Unsplash photos, credited);
+- festive particles with depth and scroll parallax (diya embers, marigold petals, gulal, snow, kites, tricolour confetti) and warm ambient lighting;
+- on Home, a 3D greeting banner with the blessing and the offer, plus the festival logo, loader and browser icon;
+- a greeting popup, once per visit, when an offer is set with "Show a welcome popup" on. The medallion reopens it.
+
+The **offer** (discount, title, details, valid-until date, popup on or off) is saved with the festival in `site_settings` and validated by the database. An offer past its date disappears by itself. Eid, Christmas, the national days, Onam, Sankranti and Raksha Bandhan use symbols rather than deity images.
+
 ## Messages to patients
 
 - **New request email**: `book-appointment` emails the clinic through Gmail SMTP (port 465; Edge Functions block 587). Without `SMTP_USER` / `SMTP_PASS` it skips the email and the request still appears in the staff area.

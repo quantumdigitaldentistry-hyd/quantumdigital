@@ -23,6 +23,8 @@ export function useFestivalSync() {
 
   useEffect(() => {
     setFestival(pack?.palette ?? 'clinic');
+    if (pack) document.documentElement.dataset.festival = pack.id;
+    else delete document.documentElement.dataset.festival;
     const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
     if (!link) return;
     const original = link.dataset.original ?? link.href;

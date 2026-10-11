@@ -13,7 +13,7 @@ import {
 } from '@phosphor-icons/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router';
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 
 import { LogoMark } from '@/components/brand/logo';
 import { PageLoader } from '@/components/ui/page-loader';
@@ -39,7 +39,10 @@ function Shell({ me, children }: { me: TeamMember; children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const queryClient = useQueryClient();
 
+  const navigate = useNavigate();
+  // Leave for the public website first, so the guard doesn't bounce to the sign-in page.
   const signOut = async () => {
+    navigate('/', { replace: true });
     await backend?.auth.signOut();
     queryClient.clear();
   };

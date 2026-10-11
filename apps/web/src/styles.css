@@ -565,6 +565,164 @@ html:has(dialog[open]) {
   }
 }
 
+/*
+ * Festival mode (html[data-festival], set from the active festival package). Colours come
+ * from the festive tokens, so each festival lights the site in its own palette.
+ */
+html[data-festival] body {
+  background-image:
+    radial-gradient(
+      60vw 50vh at 8% 12%,
+      color-mix(in oklab, var(--color-festive) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50vw 45vh at 95% 70%,
+      color-mix(in oklab, var(--color-festive-accent) 14%, transparent),
+      transparent 70%
+    );
+  background-attachment: fixed;
+}
+html[data-festival] .tilt-glare {
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    color-mix(in oklab, var(--color-festive) 55%, white),
+    transparent 55%
+  );
+}
+html[data-festival] .heading-3d {
+  text-shadow: 0 0 28px color-mix(in oklab, var(--color-festive) 35%, transparent);
+}
+
+/* Medallion: rotating festive ring with a soft glow. */
+.festival-ring {
+  background: conic-gradient(
+    from 0deg,
+    var(--color-festive),
+    var(--color-festive-accent),
+    var(--color-festive-end),
+    var(--color-festive)
+  );
+  box-shadow: 0 0 18px color-mix(in oklab, var(--color-festive) 60%, transparent);
+  animation: festival-spin 8s linear infinite;
+}
+.festival-medallion img {
+  transition: scale 300ms var(--ease-out);
+}
+.festival-medallion:hover img {
+  scale: 1.08;
+}
+
+/* Shrine: halo behind the arch and a sheen across the image. */
+.festival-halo {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--color-festive-accent) 75%, white),
+    transparent
+  );
+  filter: blur(14px);
+  opacity: 0.85;
+  animation: festival-breathe 4s var(--ease-in-out) infinite;
+}
+.festival-shrine {
+  animation: float-y 7s var(--ease-in-out) infinite;
+}
+.festival-sheen {
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.38) 50%,
+    transparent 65%
+  );
+  background-size: 250% 100%;
+  animation: festival-sheen 5s var(--ease-in-out) infinite;
+}
+/* Banner: slow light sweep and warm glow. */
+.festival-sweep {
+  background:
+    radial-gradient(40% 70% at 15% 30%, rgb(255 255 255 / 0.22), transparent 70%),
+    linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.18) 48%, transparent 66%);
+  background-size:
+    100% 100%,
+    260% 100%;
+  animation: festival-sheen 7s var(--ease-in-out) infinite;
+}
+/* Discount: shimmering metallic text. */
+.festival-shimmer {
+  /* Explicit colours: currentColor would be the transparent text colour itself. */
+  background: linear-gradient(
+    100deg,
+    var(--color-on-festive) 20%,
+    color-mix(in oklab, var(--color-on-festive) 35%, white) 45%,
+    var(--color-on-festive) 70%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: festival-shimmer 3.5s linear infinite;
+}
+@keyframes festival-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+/* Popup: swings up in 3D with a glow. */
+.festival-popup[open] .festival-popup-card {
+  animation: festival-pop 700ms var(--ease-out) both;
+}
+.festival-popup::backdrop {
+  animation: lightbox-in 300ms var(--ease-out) both;
+}
+@keyframes festival-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes festival-breathe {
+  50% {
+    opacity: 0.55;
+    scale: 1.06;
+  }
+}
+@keyframes festival-sheen {
+  from {
+    background-position:
+      0 0,
+      120% 0;
+  }
+  to {
+    background-position:
+      0 0,
+      -120% 0;
+  }
+}
+@keyframes festival-pop {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(22deg) translateY(60px) scale(0.92);
+    box-shadow: 0 0 0 transparent;
+  }
+  60% {
+    box-shadow: 0 0 80px color-mix(in oklab, var(--color-festive) 60%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .festival-ring,
+  .festival-halo,
+  .festival-shrine,
+  .festival-sheen,
+  .festival-sweep,
+  .festival-shimmer,
+  .festival-popup[open] .festival-popup-card {
+    animation: none;
+  }
+}
+
 /* Load-time cascade for hero content: set --d (0, 1, 2…) for the order. */
 @keyframes enter-up {
   from {

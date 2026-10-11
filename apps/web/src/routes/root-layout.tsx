@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, ScrollRestoration, useLocation, useNavigation } from 'react-router';
 
 import { QuickActionsHost } from '@/components/actions/quick-actions-host';
+import { FestivalLayer } from '@/components/brand/festival-experience';
 import { ChatBubble } from '@/components/chat/chat-bubble';
 import { FloatingActions } from '@/components/layout/floating-actions';
 import { SiteFooter } from '@/components/layout/site-footer';
@@ -56,6 +57,7 @@ export function RootLayout() {
       <SiteFooter />
       <FloatingActions />
       <ChatBubble />
+      <FestivalLayer />
       <QuickActionsHost />
       <SmoothScroll />
       {/*

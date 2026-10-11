@@ -1,4 +1,4 @@
-import { FestivalBanner } from '@/components/brand/festival-banner';
+import { FestivalBanner } from '@/components/brand/festival-experience';
 import { ClinicLocation } from '@/components/contact/clinic-location';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { LandingHero } from '@/components/landing/landing-hero';

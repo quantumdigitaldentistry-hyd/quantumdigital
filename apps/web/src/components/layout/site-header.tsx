@@ -4,6 +4,7 @@ import { Link, NavLink } from 'react-router';
 
 import { Logo } from '@/components/brand/logo';
 import { ContactOptions } from '@/components/contact/contact-options';
+import { FestivalMedallion } from '@/components/brand/festival-experience';
 import { PhoneLink } from '@/components/contact/phone-link';
 import { SocialLinks } from '@/components/contact/social-links';
 import { AccordionItem } from '@/components/ui/accordion';
@@ -31,6 +32,8 @@ export function SiteHeader() {
         <Link to="/" viewTransition aria-label="Quantum Digital Dentistry, home">
           <Logo />
         </Link>
+        {/* Festival deity/symbol medallion: opens the greeting and offer. */}
+        <FestivalMedallion />
 
         <nav aria-label="Main" className="ml-auto hidden items-center gap-1 lg:flex">
           {navItems.map((item) => {

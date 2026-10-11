@@ -279,4 +279,17 @@ export const photoCredits = [
   'Swipe',
   'Round Icons (illustrations)',
   'unDraw (doctor illustrations)',
+  // Festival deities and symbols (lib/festival-packs.ts)
+  'Agnieszka Ziomek',
+  'Onkarphoto',
+  'krivi',
+  'hidefumi ohmichi',
+  'Naveed Ahmed',
+  'Paras Kaushal',
+  'manju',
+  'Rachel N Raju',
+  'Mohnish Landge',
+  'Vishal',
+  'Vivek Sharma',
+  'Aaron Burden',
 ];

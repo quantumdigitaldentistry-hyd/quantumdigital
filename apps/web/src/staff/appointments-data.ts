@@ -37,7 +37,8 @@ export const timeOfDayLabel: Record<string, string> = {
   evening: 'Evening',
 };
 
-/** Doctors on the team (active), for allocation and the calendar filter. */
+/** Doctors on the team (active), for allocation and the calendar. The clinic account (super
+ * admin) is a doctor too, so it can be booked and has its own calendar column. */
 export function useDoctors() {
   return useQuery({
     queryKey: ['doctors'],
@@ -46,7 +47,7 @@ export function useDoctors() {
       const { data, error } = await backend!
         .from('team_members')
         .select('*')
-        .eq('role', 'doctor')
+        .in('role', ['doctor', 'super_admin'])
         .eq('active', true)
         .order('full_name');
       if (error) throw error;

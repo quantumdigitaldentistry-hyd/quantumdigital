@@ -268,6 +268,20 @@ begin
            and (new.value ->> 'theme') !~ '^[a-z]{2,20}$') then
       raise exception 'festival must be {"theme": "<id>" | null}';
     end if;
+    -- Optional offer shown on the festival banner and popup:
+    -- { "title": text<=60, "discount": text<=20, "details": text<=200,
+    --   "validUntil": "YYYY-MM-DD" | null, "popup": boolean }
+    if new.value ? 'offer' and jsonb_typeof(new.value -> 'offer') <> 'null' then
+      if jsonb_typeof(new.value -> 'offer') <> 'object'
+         or char_length(coalesce(new.value #>> '{offer,title}', '')) > 60
+         or char_length(coalesce(new.value #>> '{offer,discount}', '')) > 20
+         or char_length(coalesce(new.value #>> '{offer,details}', '')) > 200
+         or coalesce(new.value #>> '{offer,validUntil}', '') !~ '^(\d{4}-\d{2}-\d{2})?$'
+         or (new.value #> '{offer,popup}' is not null
+             and jsonb_typeof(new.value #> '{offer,popup}') <> 'boolean') then
+        raise exception 'festival offer is not valid';
+      end if;
+    end if;
   elsif new.key = 'clinic_hours' then
     -- Seven entries, Sunday first: null, "closed", or {"open":"HH:MM","close":"HH:MM"}
     if jsonb_typeof(new.value) <> 'array' or jsonb_array_length(new.value) <> 7 then
