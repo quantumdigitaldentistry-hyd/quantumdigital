@@ -19,7 +19,8 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { treatments } from '@/content/clinic';
 import { photos } from '@/content/photos';
-import { useQuickActions } from '@/lib/quick-actions';
+import { Link } from 'react-router';
+import { bookingPath } from '@/lib/booking';
 
 const reasons: Feature[] = [
   {
@@ -109,7 +110,6 @@ const travelTreatments = [
   .filter((treatment) => treatment !== undefined);
 
 export default function DentalTourismPage() {
-  const show = useQuickActions((s) => s.show);
   return (
     <>
       <MediaHero
@@ -119,10 +119,10 @@ export default function DentalTourismPage() {
         photo={photos.charminar}
         inset={photos.planeWindow}
       >
-        <button type="button" className={buttonClass('primary')} onClick={() => show('book')}>
+        <Link className={buttonClass('primary')} to={bookingPath()} viewTransition>
           <CalendarPlusIcon size={20} aria-hidden />
           Plan a consultation
-        </button>
+        </Link>
       </MediaHero>
 
       <section aria-labelledby="intro-title" className="bg-surface">

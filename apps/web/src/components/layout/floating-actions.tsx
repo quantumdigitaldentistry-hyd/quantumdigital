@@ -1,7 +1,9 @@
 import { CalendarPlusIcon, PhoneIcon, type Icon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 
 import { clinicTelHref } from '@/config/site';
+import { bookingPath } from '@/lib/booking';
 import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
 
@@ -10,7 +12,8 @@ type Fab = {
   label: string;
   Icon: Icon;
   tone: string;
-  /** A link (tel:) or an action. */
+  /** A page on the site, a link (tel:), or an action. */
+  to?: string;
   href?: string;
   onClick?: () => void;
 };
@@ -58,7 +61,7 @@ export function FloatingActions() {
       label: 'Book an appointment',
       Icon: CalendarPlusIcon,
       tone: 'bg-brand text-on-brand',
-      onClick: () => show('book'),
+      to: bookingPath(),
     },
   ];
 
@@ -69,7 +72,7 @@ export function FloatingActions() {
       style={{ viewTransitionName: 'quick-actions' }}
       className="fixed right-3 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex flex-col items-end gap-3 md:right-5 md:bottom-6"
     >
-      {fabs.map(({ id, label, Icon, tone, href, onClick }, index) => {
+      {fabs.map(({ id, label, Icon, tone, to, href, onClick }, index) => {
         const style = { animationDelay: `${300 + index * 70}ms` };
         const inner = (
           <>
@@ -77,6 +80,20 @@ export function FloatingActions() {
             <FabLabel>{label}</FabLabel>
           </>
         );
+        if (to) {
+          return (
+            <Link
+              key={id}
+              to={to}
+              viewTransition
+              aria-label={label}
+              className={cx(fabClass, tone)}
+              style={style}
+            >
+              {inner}
+            </Link>
+          );
+        }
         return href ? (
           <a key={id} href={href} aria-label={label} className={cx(fabClass, tone)} style={style}>
             {inner}

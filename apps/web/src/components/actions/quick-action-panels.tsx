@@ -1,5 +1,5 @@
 import { callbackRequestSchema, toIndianE164 } from '@quantam/shared';
-import { lazy, Suspense, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 
 import { ChatAssistant } from '@/components/chat/chat-assistant';
 import { PhoneLink } from '@/components/contact/phone-link';
@@ -8,8 +8,6 @@ import { Dialog } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { CallbackNotConnectedError, requestCallback } from '@/lib/callback';
 import { useQuickActions } from '@/lib/quick-actions';
-
-const AppointmentForm = lazy(() => import('@/components/contact/appointment-form'));
 
 type FormErrors = { name?: string; phone?: string };
 
@@ -119,19 +117,6 @@ export function QuickActionPanels() {
       >
         {/* Re-mounted on every open, so the form starts empty. */}
         {open === 'callback' ? <CallbackForm /> : null}
-      </Dialog>
-
-      <Dialog
-        open={open === 'book'}
-        onClose={close}
-        title="Book an appointment"
-        description="Tell us what you need and when suits you. The front desk confirms the time."
-      >
-        {open === 'book' ? (
-          <Suspense fallback={<div aria-hidden className="h-96" />}>
-            <AppointmentForm plain />
-          </Suspense>
-        ) : null}
       </Dialog>
 
       <Dialog open={open === 'chat'} onClose={close} origin={origin} title="Chat assistant">

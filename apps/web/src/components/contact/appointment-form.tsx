@@ -71,11 +71,18 @@ function Group({ step, title, children }: { step: number; title: string; childre
  * field). Until the backend exists the request is not sent, and the form says so
  * plainly with the clinic's number instead of faking a confirmation.
  */
-export default function AppointmentForm({ plain = false }: { plain?: boolean }) {
+export default function AppointmentForm({
+  plain = false,
+  initialTreatment = '',
+}: {
+  plain?: boolean;
+  /** A treatment slug to start with already chosen. */
+  initialTreatment?: string;
+}) {
   const [values, setValues] = useState({
     name: '',
     phone: '',
-    treatment: '',
+    treatment: initialTreatment,
     preferredDate: '',
     preferredTime: '' as TimeOfDay | '',
     message: '',

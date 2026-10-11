@@ -35,7 +35,7 @@ const describe = (hours: DayHours) =>
       : 'Call to confirm';
 
 const mapEmbed = `https://www.google.com/maps?q=${clinic.address.lat},${clinic.address.lng}(${encodeURIComponent(clinic.name)})&z=17&output=embed`;
-const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
+export const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
 
 /** Same footprint as the form, so nothing jumps when it arrives. */
 function FormPlaceholder() {
@@ -48,7 +48,7 @@ function FormPlaceholder() {
 }
 
 /** This week's timings, today highlighted. */
-function Timings() {
+export function Timings() {
   const hours = useClinicHours();
   const today = new Date().getDay();
   return (

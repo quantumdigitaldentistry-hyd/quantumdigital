@@ -6,6 +6,7 @@ import { DotsLoader } from '@/components/ui/dots-loader';
 import { clinic, clinicTelHref } from '@/config/site';
 import { doctors, treatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
+import { bookingPath } from '@/lib/booking';
 import { useQuickActions, type QuickAction } from '@/lib/quick-actions';
 
 type Action = { label: string; to?: string; quick?: QuickAction; href?: string };
@@ -54,7 +55,7 @@ function answer(raw: string): Reply {
         text: `${treatment.name}: ${treatment.summary} ${treatment.intro.split('. ')[0]}.`,
         actions: [
           { label: `About ${treatment.name.toLowerCase()}`, to: `/treatments/${treatment.slug}` },
-          { label: 'Book a consultation', quick: 'book' },
+          { label: 'Book a consultation', to: bookingPath(treatment.slug) },
         ],
       };
     }
@@ -92,7 +93,7 @@ function answer(raw: string): Reply {
   if (has(text, ['book', 'appointment', 'visit', 'consult', 'slot'])) {
     return {
       text: 'Happy to help you book. Share your details and the front desk will confirm a time.',
-      actions: [{ label: 'Book an appointment', quick: 'book' }],
+      actions: [{ label: 'Book an appointment', to: bookingPath() }],
     };
   }
   if (has(text, ['price', 'cost', 'fee', 'charge', 'emi', 'how much', 'rate'])) {

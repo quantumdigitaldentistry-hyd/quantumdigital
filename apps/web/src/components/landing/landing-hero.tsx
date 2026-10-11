@@ -7,6 +7,7 @@ import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { featuredTreatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
+import { bookingPath } from '@/lib/booking';
 import { useQuickActions } from '@/lib/quick-actions';
 import { vtNames } from '@/lib/transition-names';
 
@@ -80,10 +81,10 @@ export function LandingHero() {
             each treatment.
           </p>
           <div className="flex flex-wrap gap-3">
-            <button type="button" className={buttonClass()} onClick={() => show('book')}>
+            <Link className={buttonClass()} to={bookingPath()} viewTransition>
               <CalendarPlusIcon size={20} aria-hidden />
               Book appointment
-            </button>
+            </Link>
             <button
               type="button"
               className={buttonClass('callback')}
