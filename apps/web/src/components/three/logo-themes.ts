@@ -43,6 +43,16 @@ export const LOGO_THEMES = {
     glow: '#ffb703',
     v: ['#ffb703', '#fb8500', '#e10600', '#38b000', '#ffea00'],
   },
+  janmashtami: {
+    stage: '#04182a',
+    glow: '#3fb3d1',
+    v: ['#0b6e99', '#3fb3d1', '#f2b53c', '#2e8b57', '#ffffff'],
+  },
+  raksha: {
+    stage: '#2a0610',
+    glow: '#f0b429',
+    v: ['#c8102e', '#f0b429', '#ff7a00', '#ffd166', '#ffffff'],
+  },
   eid: {
     stage: '#021f17',
     glow: '#ffd166',

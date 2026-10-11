@@ -2,6 +2,7 @@ import { appointmentRequestSchema, toIndianE164 } from '@quantam/shared';
 import {
   ArrowRightIcon,
   CalendarPlusIcon,
+  CheckCircleIcon,
   InfoIcon,
   LockSimpleIcon,
   MoonStarsIcon,
@@ -80,7 +81,11 @@ export default function AppointmentForm({ plain = false }: { plain?: boolean }) 
     message: '',
   });
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<'idle' | 'sending' | 'not-connected' | 'failed'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'not-connected' | 'failed'>(
+    'idle',
+  );
+  const [failure, setFailure] = useState('');
+  const [trap, setTrap] = useState('');
 
   const set = (key: keyof typeof values) => (value: string) =>
     setValues((current) => ({ ...current, [key]: value }));
@@ -108,8 +113,10 @@ export default function AppointmentForm({ plain = false }: { plain?: boolean }) 
     setErrors({});
     setStatus('sending');
     try {
-      await requestAppointment(parsed.data);
+      await requestAppointment(parsed.data, trap);
+      setStatus('sent');
     } catch (error) {
+      setFailure(error instanceof Error ? error.message : '');
       setStatus(error instanceof CallbackNotConnectedError ? 'not-connected' : 'failed');
     }
   };
@@ -121,7 +128,7 @@ export default function AppointmentForm({ plain = false }: { plain?: boolean }) 
       aria-labelledby={plain ? undefined : 'appointment-form-title'}
       aria-label={plain ? 'Request an appointment' : undefined}
       className={cx(
-        'flex flex-col gap-5 text-ink',
+        'relative flex flex-col gap-5 text-ink',
         !plain &&
           'rounded-4xl border border-line bg-surface p-5 shadow-2xl shadow-elevation/30 md:p-7',
       )}
@@ -227,14 +234,37 @@ export default function AppointmentForm({ plain = false }: { plain?: boolean }) 
         </Button>
       </div>
 
+      {/* Honeypot: hidden from people (and screen readers); bots fill it in. */}
+      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label>
+          Leave this empty
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={trap}
+            onChange={(e) => setTrap(e.target.value)}
+          />
+        </label>
+      </div>
       <div aria-live="polite">
+        {status === 'sent' ? (
+          <p className="flex items-start gap-2 rounded-control bg-success-soft p-3 text-small text-success">
+            <CheckCircleIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+            <span>
+              Thank you. Your request has reached the clinic. The front desk will call you to
+              confirm a time.
+            </span>
+          </p>
+        ) : null}
         {status === 'not-connected' || status === 'failed' ? (
           <p className="flex items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
             <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
             <span>
               {status === 'not-connected'
                 ? 'Online booking is being set up, so this request was not sent. '
-                : 'Your request could not be sent. '}
+                : `${failure || 'Your request could not be sent.'} `}
               Please call <PhoneLink className="align-bottom" iconSize={14} /> to book.
             </span>
           </p>

@@ -17,7 +17,11 @@ function CallbackForm() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<'idle' | 'sending' | 'not-connected' | 'failed'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'not-connected' | 'failed'>(
+    'idle',
+  );
+  const [failure, setFailure] = useState('');
+  const [trap, setTrap] = useState('');
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -34,14 +38,16 @@ function CallbackForm() {
     setErrors({});
     setStatus('sending');
     try {
-      await requestCallback(parsed.data);
+      await requestCallback(parsed.data, trap);
+      setStatus('sent');
     } catch (error) {
+      setFailure(error instanceof Error ? error.message : '');
       setStatus(error instanceof CallbackNotConnectedError ? 'not-connected' : 'failed');
     }
   };
 
   return (
-    <form noValidate onSubmit={submit} className="flex flex-col gap-4">
+    <form noValidate onSubmit={submit} className="relative flex flex-col gap-4">
       <Field
         label="Your name"
         name="name"
@@ -66,12 +72,31 @@ function CallbackForm() {
       <Button type="submit" loading={status === 'sending'} className="w-full">
         Call me back
       </Button>
+      {/* Honeypot: hidden from people (and screen readers); bots fill it in. */}
+      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label>
+          Leave this empty
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={trap}
+            onChange={(e) => setTrap(e.target.value)}
+          />
+        </label>
+      </div>
       <div aria-live="polite">
+        {status === 'sent' ? (
+          <p className="rounded-control bg-success-soft p-3 text-small text-success">
+            Thank you. The clinic will call you back shortly during opening hours.
+          </p>
+        ) : null}
         {status === 'not-connected' || status === 'failed' ? (
           <p className="rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
             {status === 'not-connected'
               ? 'Online call-back requests are being set up and your request was not sent. '
-              : 'Your request could not be sent. '}
+              : `${failure || 'Your request could not be sent.'} `}
             Please call us on <PhoneLink className="align-bottom" iconSize={14} />.
           </p>
         ) : null}

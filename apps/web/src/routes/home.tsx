@@ -1,3 +1,4 @@
+import { FestivalBanner } from '@/components/brand/festival-banner';
 import { ClinicLocation } from '@/components/contact/clinic-location';
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
@@ -18,6 +19,7 @@ export default function HomePage() {
   return (
     <>
       <LandingHero />
+      <FestivalBanner className="py-6 md:py-10" />
       <TreatmentMarquee />
       <ImplantStory />
       <TreatmentShowcase />

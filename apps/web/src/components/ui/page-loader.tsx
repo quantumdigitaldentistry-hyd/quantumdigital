@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import logoWebp from '@/assets/brand/logo-mark.webp';
 import fillWebp from '@/assets/gifs/fill.webp';
+import { useActiveFestival } from '@/lib/active-festival';
 import { cx } from '@/lib/cx';
 
 /**
@@ -20,6 +21,7 @@ export function PageLoader({
   className?: string;
 }) {
   const [visible, setVisible] = useState(delay === 0);
+  const festival = useActiveFestival();
 
   useEffect(() => {
     if (delay === 0) return;
@@ -40,7 +42,7 @@ export function PageLoader({
       <div className="flex flex-col items-center gap-5">
         <div className="size-28 overflow-hidden rounded-[28px] border border-line bg-logo-tile md:size-32">
           <img
-            src={fillWebp}
+            src={festival?.loader ?? fillWebp}
             alt=""
             width={240}
             height={240}

@@ -8,6 +8,7 @@ import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
 import { TopBar } from '@/components/layout/top-bar';
 import { SmoothScroll } from '@/components/smooth-scroll';
+import { useFestivalSync } from '@/lib/active-festival';
 import { cx } from '@/lib/cx';
 import { useFestival } from '@/lib/festival';
 import { useFestiveTheme } from '@/lib/festive-themes';
@@ -32,6 +33,7 @@ function NavigationProgress() {
  * Book / Call / Chat actions with their panels.
  */
 export function RootLayout() {
+  useFestivalSync();
   useFestiveTheme(useFestival((s) => s.festival));
   const location = useLocation();
   // Lets an animated "back" finish once the previous page is rendered and scrolled.
