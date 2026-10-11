@@ -15,6 +15,9 @@ import { z } from 'npm:zod@4.1.5';
 
 import { adminClient, escapeHtml, json, preflight } from '../_shared/http.ts';
 
+/** Supabase Edge Runtime: keeps background work (the clinic email) alive after the reply. */
+declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void } | undefined;
+
 const today = () => new Date().toISOString().slice(0, 10);
 
 const requestSchema = z.object({
@@ -142,12 +145,13 @@ Deno.serve(async (request) => {
     return json(request, 500, { error: 'Something went wrong. Please call the clinic.' });
   }
 
-  let emailed = false;
-  try {
-    emailed = await emailClinic(details, row.id);
-  } catch (mailError) {
-    // The request is saved and visible to staff even if the email fails.
+  // The request is saved and visible to staff, so answer the patient now and send the
+  // clinic email in the background (Gmail SMTP can take several seconds).
+  const email = emailClinic(details, row.id).catch((mailError) => {
     console.error('email', mailError);
-  }
-  return json(request, 200, { ok: true, id: row.id, emailed });
+    return false;
+  });
+  if (typeof EdgeRuntime !== 'undefined') EdgeRuntime.waitUntil(email);
+  else await email;
+  return json(request, 200, { ok: true, id: row.id });
 });
