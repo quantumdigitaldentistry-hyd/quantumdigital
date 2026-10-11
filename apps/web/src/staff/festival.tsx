@@ -1,4 +1,4 @@
-import { CheckCircleIcon, DownloadSimpleIcon } from '@phosphor-icons/react';
+import { CheckCircleIcon, DownloadSimpleIcon, XCircleIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,29 @@ function FestivalPicker() {
 
   const hasOffer = !!(offer.title.trim() || offer.discount.trim());
   const pack = festivalPacks.find((item) => item.id === selected);
+
+  const livePack = festivalPacks.find((item) => item.id === current);
+  const [removing, setRemoving] = useState(false);
+
+  /** Switches the website back to the everyday look (the offer goes with it). */
+  const remove = async () => {
+    if (!backend || !livePack) return;
+    if (!window.confirm(`Remove the ${livePack.label} theme from the website?`)) return;
+    setRemoving(true);
+    setMessage(null);
+    const { error } = await backend
+      .from('site_settings')
+      .update({ value: { theme: null, offer: null } })
+      .eq('key', 'festival');
+    setRemoving(false);
+    if (error) return setMessage({ tone: 'error', text: errorMessage(error) });
+    setFestival(null, null);
+    setSelected(null);
+    setMessage({
+      tone: 'success',
+      text: `${livePack.label} theme removed. Back to the everyday look.`,
+    });
+  };
 
   const save = async () => {
     if (!backend) return;
@@ -73,9 +96,42 @@ function FestivalPicker() {
         <p className="text-small text-ink-muted">
           Lights the whole website in the festival’s colours with its deity or symbol, festive
           particles, the greeting banner, loader and browser icon. Add an offer to show it on the
-          banner and in a welcome popup.
+          banner and in a welcome popup. It stays on until you remove it here.
         </p>
       </div>
+      {livePack ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-success/40 bg-success-soft p-4 sm:flex-row sm:items-center">
+          <img
+            src={livePack.icon3d.small}
+            alt=""
+            width={48}
+            height={48}
+            className="size-12 shrink-0 rounded-full object-cover"
+          />
+          <p className="flex-1 text-small">
+            <span className="font-semibold text-success">Live now: {livePack.label}</span>
+            <br />
+            <span className="text-ink-muted">
+              Every visitor sees this theme until it’s removed
+              {currentOffer?.validUntil
+                ? `. The offer hides itself after ${currentOffer.validUntil}; the theme stays.`
+                : '.'}
+            </span>
+          </p>
+          <Button
+            variant="secondary"
+            className="self-start sm:self-center"
+            loading={removing}
+            onClick={() => void remove()}
+          >
+            <XCircleIcon size={18} aria-hidden /> Remove festival theme
+          </Button>
+        </div>
+      ) : (
+        <p className="rounded-2xl bg-sunken p-3 text-small text-ink-muted">
+          No festival theme is on. The website shows the everyday look.
+        </p>
+      )}
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {options.map((option) => {
           const item = festivalPacks.find((p) => p.id === option.id);
