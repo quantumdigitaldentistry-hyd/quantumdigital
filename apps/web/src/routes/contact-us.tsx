@@ -1,12 +1,12 @@
 import { CalendarPlusIcon, PhoneIcon, ShareNetworkIcon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 
+import { ClinicLocation } from '@/components/contact/clinic-location';
 import { ContactOptions } from '@/components/contact/contact-options';
 import { PhoneLink } from '@/components/contact/phone-link';
 import { SocialLinks } from '@/components/contact/social-links';
 import { Reveal } from '@/components/reveal';
 import { PageHero } from '@/components/sections/page-hero';
-import { PlannedContent } from '@/components/sections/planned-content';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
 import { Card } from '@/components/ui/card';
@@ -85,16 +85,7 @@ export default function ContactUsPage() {
         </ul>
       </Section>
 
-      <Section title="Visit the clinic" tinted>
-        <PlannedContent
-          items={[
-            'Clinic address and map',
-            'Opening hours',
-            'Directions and parking',
-            'Online booking form',
-          ]}
-        />
-      </Section>
+      <ClinicLocation tinted />
     </>
   );
 }

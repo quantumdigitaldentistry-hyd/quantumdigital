@@ -25,12 +25,34 @@ export const clinic = {
   name: 'Quantum Digital Dentistry',
   shortName: 'Quantum',
   phone: {
-    // TODO(clinic): replace with the real number. The signage shows it starts 72070.
-    display: '+91 72070 XXXXX',
-    /** E.164 for tel: links, e.g. '+917207012345'. Call links stay off while null. */
-    tel: null as string | null,
+    // From the clinic's Google Maps listing.
+    display: '+91 72070 11988',
+    /** E.164 for tel: links. Call links stay off while null. */
+    tel: '+917207011988' as string | null,
   },
+  /** From the Google Maps listing. */
+  address: {
+    lines: [
+      '3rd Floor, Flat No. 33/A, Sri Sai Govardhan Kunj',
+      "7-1-397/101, 301/A, opposite Domino's Pizza, near Community Hall",
+      'Hyderabad, Telangana 500038',
+    ],
+    /** Clinic pin. */
+    lat: 17.4419959,
+    lng: 78.4461524,
+    mapsUrl: 'https://maps.app.goo.gl/xNYtHzrFkFvKGgay6',
+  },
+  whatsapp: 'https://wa.me/917207011988',
 };
+
+/** Weekly opening hours, Sunday = 0. null = not confirmed yet (shown as "call to confirm"). */
+export type DayHours = { open: string; close: string } | 'closed' | null;
+
+/**
+ * TODO(clinic): fill in the regular weekly hours (24-hour "HH:MM"). Google Maps only showed
+ * a holiday Sunday (3–8 pm) when this was set up. Staff can also edit them in the dashboard.
+ */
+export const defaultHours: DayHours[] = [null, null, null, null, null, null, null];
 
 /** `tel:` link for the clinic, or null while the number isn't configured. */
 export const clinicTelHref = clinic.phone.tel ? `tel:${clinic.phone.tel}` : null;
@@ -39,7 +61,7 @@ export type SocialLink = { id: string; label: string; Icon: Icon; href: string |
 
 /** Shown as icons now; each becomes a link as soon as its `href` is filled in. */
 export const socialLinks: SocialLink[] = [
-  { id: 'whatsapp', label: 'WhatsApp', Icon: WhatsappLogoIcon, href: null },
+  { id: 'whatsapp', label: 'WhatsApp', Icon: WhatsappLogoIcon, href: 'https://wa.me/917207011988' },
   { id: 'instagram', label: 'Instagram', Icon: InstagramLogoIcon, href: null },
   { id: 'facebook', label: 'Facebook', Icon: FacebookLogoIcon, href: null },
   { id: 'youtube', label: 'YouTube', Icon: YoutubeLogoIcon, href: null },

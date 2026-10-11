@@ -1,3 +1,4 @@
+import { ClinicLocation } from '@/components/contact/clinic-location';
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { LandingHero } from '@/components/landing/landing-hero';
@@ -32,6 +33,7 @@ export default function HomePage() {
         <DoctorList />
       </Section>
       <ClosingCta />
+      <ClinicLocation />
     </>
   );
 }
