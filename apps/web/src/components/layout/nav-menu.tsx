@@ -143,7 +143,7 @@ export function NavMenu({ item }: { item: NavItem }) {
           else setOpen((current) => !current);
         }}
         className={cx(
-          'flex items-center gap-1 rounded-full px-3.5 py-2 text-small font-medium whitespace-nowrap transition-colors',
+          'flex items-center gap-1 rounded-full px-2.5 py-2 text-small font-medium whitespace-nowrap xl:px-3.5 transition-colors',
           active || open ? 'bg-brand-soft text-on-brand-soft' : 'text-ink-muted hover:text-ink',
         )}
       >

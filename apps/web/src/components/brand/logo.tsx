@@ -13,7 +13,7 @@ export function LogoMark({
   priority?: boolean;
 }) {
   return (
-    <picture>
+    <picture className="shrink-0">
       <source srcSet={logoAvif} type="image/avif" />
       <img
         src={logoWebp}
@@ -46,7 +46,7 @@ export function Logo({ className }: { className?: string }) {
       ) : (
         <LogoMark className="h-9 w-auto" priority />
       )}
-      <span className="font-display text-body leading-tight font-semibold">
+      <span className="font-display text-body leading-tight font-semibold whitespace-nowrap">
         {clinic.shortName}
         <span className="block text-caption font-medium tracking-[0.12em] text-ink-muted uppercase">
           Digital Dentistry

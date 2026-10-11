@@ -11,6 +11,7 @@ import {
   MapPinIcon,
   ShieldCheckIcon,
   ToothIcon,
+  UsersThreeIcon,
   WhatsappLogoIcon,
   YoutubeLogoIcon,
   type Icon,
@@ -122,6 +123,7 @@ export const learnLinks: NavLinkItem[] = [
 export const navItems: NavItem[] = [
   { to: '/', label: 'Home', Icon: HouseIcon },
   { to: '/treatments', label: 'Treatments', Icon: ToothIcon, menu: 'treatments' },
+  { to: '/about-us', label: 'About us', Icon: UsersThreeIcon },
   { to: '/studio', label: 'Studio', Icon: BuildingsIcon },
   { to: '/dental-tourism', label: 'Dental tourism', Icon: AirplaneTiltIcon },
   { to: '/dental-knowledge', label: 'Learn', Icon: GraduationCapIcon, menu: learnLinks },
