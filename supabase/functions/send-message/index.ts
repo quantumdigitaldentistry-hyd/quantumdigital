@@ -16,11 +16,18 @@ import { adminClient, json, preflight, teamCaller } from '../_shared/http.ts';
 const bodySchema = z.object({ appointmentId: z.uuid() });
 
 const fmtDate = (iso: string) =>
-  new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' }).format(
-    new Date(iso),
-  );
+  new Intl.DateTimeFormat('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(iso));
 const fmtTime = (iso: string) =>
-  new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit' }).format(new Date(iso));
+  new Intl.DateTimeFormat('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(iso));
 
 Deno.serve(async (request) => {
   const early = preflight(request);
@@ -76,5 +83,9 @@ Deno.serve(async (request) => {
     sent_by: caller.id,
   });
 
-  return json(request, ok ? 200 : 502, ok ? { status: 'sent' } : { error: 'The SMS provider rejected the message.' });
+  return json(
+    request,
+    ok ? 200 : 502,
+    ok ? { status: 'sent' } : { error: 'The SMS provider rejected the message.' },
+  );
 });

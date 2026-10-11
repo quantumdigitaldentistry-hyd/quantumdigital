@@ -4,7 +4,9 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
 
 /** Origins allowed to call the functions from a browser (comma-separated env). */
-const allowedOrigins = (Deno.env.get('ALLOWED_ORIGINS') ?? 'http://localhost:5173,http://localhost:4321')
+const allowedOrigins = (
+  Deno.env.get('ALLOWED_ORIGINS') ?? 'http://localhost:5173,http://localhost:4321'
+)
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -59,4 +61,7 @@ export async function teamCaller(request: Request, admin: SupabaseClient): Promi
 }
 
 export const escapeHtml = (value: string) =>
-  value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  value.replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
+  );

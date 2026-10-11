@@ -21,7 +21,10 @@ const requestSchema = z.object({
   kind: z.enum(['appointment', 'callback']).default('appointment'),
   name: z.string().trim().min(2).max(80),
   // Indian mobile in E.164, as the site sends it.
-  phone: z.string().trim().regex(/^\+91[6-9]\d{9}$/),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+91[6-9]\d{9}$/),
   treatment: z
     .string()
     .trim()
