@@ -30,6 +30,7 @@ These rules are enforced in the database (RLS policies and `SECURITY DEFINER` fu
 - The database refuses to confirm two overlapping appointments for the same doctor.
 - Website bookings are validated, rate-limited (5 per client per 30 minutes) and have a honeypot for bots.
 - Uploaded photos are resized and re-encoded in the browser, which removes EXIF data such as GPS location. Before/after cases can't be published without the patient-consent box ticked.
+- Gallery videos are added as YouTube or Google Drive links. Only the video ID is stored (the database checks its format), and the site builds the player address itself, so a gallery row can only ever embed `youtube-nocookie.com` or `drive.google.com`. Drive files must be shared as "Anyone with the link" for visitors to play them.
 
 ## Run it locally
 
@@ -110,4 +111,4 @@ The **offer** (discount, title, details, valid-until date, popup on or off) is s
 
 ## Security headers
 
-`apps/web/vercel.json` sets a Content-Security-Policy (only this site, `*.supabase.co` and the Google Maps embed), HSTS, `nosniff`, a referrer policy and a permissions policy, and `noindex` for `/staff`. If you change the inline theme script in `index.html`, run `pnpm --filter web check:csp` and update its hash in `vercel.json`.
+`apps/web/vercel.json` sets a Content-Security-Policy (only this site, `*.supabase.co`, the Google Maps embed and YouTube / Google Drive gallery videos), HSTS, `nosniff`, a referrer policy and a permissions policy, and `noindex` for `/staff`. If you change the inline theme script in `index.html`, run `pnpm --filter web check:csp` and update its hash in `vercel.json`.

@@ -1,13 +1,15 @@
 import type { Database } from '@quantam/supabase';
 import { useQuery } from '@tanstack/react-query';
 
+import type { GalleryEntry } from '@/components/gallery/photo-gallery';
 import type { ResultCase } from '@/content/clinic';
 import type { Photo } from '@/content/photos';
 import { supabase } from '@/lib/supabase';
+import { thumbnailUrl } from '@/lib/video-links';
 
 /**
  * Content the clinic team publishes from the staff area (articles, before/after cases,
- * gallery photos). Public, read-only queries; RLS only returns published rows. Each
+ * gallery photos and videos). Public, read-only queries; RLS only returns published rows. Each
  * hook returns an empty list without a backend, and pages fall back to their defaults.
  */
 
@@ -87,22 +89,39 @@ export function useLiveResults(treatment?: string) {
   });
 }
 
-/** Published gallery photos, in the team's order. */
+/** Published gallery photos and videos, in the team's order. */
 export function useLiveGallery() {
   return useQuery({
     queryKey: ['gallery'],
     enabled: !!supabase,
-    queryFn: async (): Promise<Photo[]> => {
+    queryFn: async (): Promise<GalleryEntry[]> => {
       const { data, error } = await supabase!
         .from('gallery_items')
-        .select('id, image_path, alt, width, height')
+        .select('id, kind, image_path, video_id, alt, width, height')
         .eq('published', true)
         .order('sort')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data.map((row) =>
-        storedPhoto(row.image_path, row.alt, row.width ?? 1600, row.height ?? 1200),
-      );
+      return data.flatMap((row): GalleryEntry[] => {
+        if ((row.kind === 'youtube' || row.kind === 'drive') && row.video_id) {
+          const video = { provider: row.kind, id: row.video_id } as const;
+          const still = thumbnailUrl(video);
+          return [
+            {
+              avif: '',
+              webp: still,
+              fallback: still,
+              width: 1600,
+              height: 900,
+              alt: row.alt,
+              video,
+            },
+          ];
+        }
+        return row.image_path
+          ? [storedPhoto(row.image_path, row.alt, row.width ?? 1600, row.height ?? 1200)]
+          : [];
+      });
     },
   });
 }

@@ -76,13 +76,13 @@ isOneToOne: false
                   ]
                 },"gallery_items": {
                   Row: {
-                    "alt": string,"created_at": string,"created_by": string | null,"height": number | null,"id": string,"image_path": string,"published": boolean,"sort": number,"updated_at": string,"updated_by": string | null,"width": number | null
+                    "alt": string,"created_at": string,"created_by": string | null,"height": number | null,"id": string,"image_path": string | null,"kind": string,"published": boolean,"sort": number,"updated_at": string,"updated_by": string | null,"video_id": string | null,"width": number | null
                   }
                   Insert: {
-                    "alt": string,"created_at"?: string,"created_by"?: string | null,"height"?: number | null,"id"?: string,"image_path": string,"published"?: boolean,"sort"?: number,"updated_at"?: string,"updated_by"?: string | null,"width"?: number | null
+                    "alt": string,"created_at"?: string,"created_by"?: string | null,"height"?: number | null,"id"?: string,"image_path"?: string | null,"kind"?: string,"published"?: boolean,"sort"?: number,"updated_at"?: string,"updated_by"?: string | null,"video_id"?: string | null,"width"?: number | null
                   }
                   Update: {
-                    "alt"?: string,"created_at"?: string,"created_by"?: string | null,"height"?: number | null,"id"?: string,"image_path"?: string,"published"?: boolean,"sort"?: number,"updated_at"?: string,"updated_by"?: string | null,"width"?: number | null
+                    "alt"?: string,"created_at"?: string,"created_by"?: string | null,"height"?: number | null,"id"?: string,"image_path"?: string | null,"kind"?: string,"published"?: boolean,"sort"?: number,"updated_at"?: string,"updated_by"?: string | null,"video_id"?: string | null,"width"?: number | null
                   }
                   Relationships: [
                     

@@ -11,7 +11,7 @@ export default function GalleryPage() {
       <PageHero
         eyebrow="Gallery"
         title="Inside modern dentistry"
-        description="Treatment rooms, digital planning and the smiles they make possible. Tap any photo to view it full screen."
+        description="Treatment rooms, digital planning and the smiles they make possible. Tap any photo to view it full screen, or a video to play it."
       />
       <Container className="py-12 md:py-20">
         <PhotoGallery

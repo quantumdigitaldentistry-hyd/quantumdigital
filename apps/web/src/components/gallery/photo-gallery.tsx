@@ -1,10 +1,21 @@
-import { ArrowLeftIcon, ArrowRightIcon, ArrowsOutIcon, XIcon } from '@phosphor-icons/react';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowsOutIcon,
+  FilmSlateIcon,
+  PlayIcon,
+  XIcon,
+} from '@phosphor-icons/react';
 import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 
 import { Tilt } from '@/components/fx/tilt';
 import { Photo } from '@/components/ui/photo';
 import type { Photo as PhotoData } from '@/content/photos';
 import { cx } from '@/lib/cx';
+import { embedUrl, thumbnailUrl, type VideoRef } from '@/lib/video-links';
+
+/** A gallery photo, or a YouTube / Google Drive video with its thumbnail as the photo. */
+export type GalleryEntry = PhotoData & { video?: VideoRef };
 
 type Origin = { rect: DOMRect; src: string };
 
@@ -12,8 +23,9 @@ type Origin = { rect: DOMRect; src: string };
  * Masonry gallery (CSS columns: 2 on phones, 3 from md). Photos unveil as they scroll
  * in (`.gallery-item`). Tapping one expands it straight out of its thumbnail into a
  * full-screen lightbox: arrow keys, on-screen arrows and swipe to browse, Esc to close.
+ * Videos show as 16:9 thumbnails with a play button and play in the lightbox.
  */
-export function PhotoGallery({ items, className }: { items: PhotoData[]; className?: string }) {
+export function PhotoGallery({ items, className }: { items: GalleryEntry[]; className?: string }) {
   const [open, setOpen] = useState<{ index: number; origin: Origin | null } | null>(null);
 
   return (
@@ -25,26 +37,39 @@ export function PhotoGallery({ items, className }: { items: PhotoData[]; classNa
               <button
                 type="button"
                 onClick={(event) => {
-                  const img = event.currentTarget.querySelector('img');
+                  // Photos expand out of their thumbnail; videos open straight into the player.
+                  const img = item.video ? null : event.currentTarget.querySelector('img');
                   setOpen({
                     index,
                     origin: img ? { rect: img.getBoundingClientRect(), src: img.currentSrc } : null,
                   });
                 }}
-                aria-label={`View larger: ${item.alt}`}
+                aria-label={item.video ? `Play video: ${item.alt}` : `View larger: ${item.alt}`}
                 className="group relative block w-full overflow-hidden rounded-container"
               >
-                <Photo
-                  photo={item}
-                  sizes="(min-width: 768px) 33vw, 50vw"
-                  className="block"
-                  imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                <span className="absolute inset-0 grid place-items-center bg-scrim/0 transition-colors duration-300 group-hover:bg-scrim/30 group-focus-visible:bg-scrim/30">
-                  <span className="grid size-11 scale-75 place-items-center rounded-full bg-surface text-ink opacity-0 transition-[opacity,scale] duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
-                    <ArrowsOutIcon size={20} aria-hidden />
+                {item.video ? (
+                  <VideoThumb video={item.video} />
+                ) : (
+                  <Photo
+                    photo={item}
+                    sizes="(min-width: 768px) 33vw, 50vw"
+                    className="block"
+                    imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                )}
+                {item.video ? (
+                  <span className="absolute inset-0 grid place-items-center bg-scrim/20 transition-colors duration-300 group-hover:bg-scrim/35">
+                    <span className="grid size-14 place-items-center rounded-full bg-surface/95 text-ink shadow-lg transition-transform duration-300 group-hover:scale-110">
+                      <PlayIcon size={24} weight="fill" aria-hidden />
+                    </span>
                   </span>
-                </span>
+                ) : (
+                  <span className="absolute inset-0 grid place-items-center bg-scrim/0 transition-colors duration-300 group-hover:bg-scrim/30 group-focus-visible:bg-scrim/30">
+                    <span className="grid size-11 scale-75 place-items-center rounded-full bg-surface text-ink opacity-0 transition-[opacity,scale] duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
+                      <ArrowsOutIcon size={20} aria-hidden />
+                    </span>
+                  </span>
+                )}
               </button>
             </Tilt>
           </li>
@@ -58,6 +83,32 @@ export function PhotoGallery({ items, className }: { items: PhotoData[]; classNa
         onClose={() => setOpen(null)}
       />
     </>
+  );
+}
+
+/** 16:9 still for a video; a plain tile if the provider has none (e.g. a private Drive file). */
+function VideoThumb({ video }: { video: VideoRef }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <span className="relative block aspect-video w-full bg-linear-to-br from-brand-soft to-sunken">
+      {failed ? (
+        <FilmSlateIcon
+          size={36}
+          className="absolute inset-0 m-auto text-brand opacity-70"
+          aria-hidden
+        />
+      ) : (
+        <img
+          src={thumbnailUrl(video)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+          className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      )}
+    </span>
   );
 }
 
@@ -81,7 +132,7 @@ function Lightbox({
   onIndex,
   onClose,
 }: {
-  items: PhotoData[];
+  items: GalleryEntry[];
   index: number | null;
   origin: Origin | null;
   onIndex: (index: number) => void;
@@ -156,7 +207,7 @@ function Lightbox({
   return (
     <dialog
       ref={ref}
-      aria-label="Photo viewer"
+      aria-label="Photo and video viewer"
       onClose={onClose}
       onKeyDown={(event) => {
         if (event.key === 'ArrowRight') step(1);
@@ -185,18 +236,32 @@ function Lightbox({
           </div>
           <figure className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-3 pb-6 md:px-20">
             <div ref={stage} className="relative min-h-0 w-full flex-1">
-              <Photo
-                key={current.fallback}
-                photo={current}
-                sizes="100vw"
-                fit="contain"
-                priority
-                className={cx(
-                  'absolute inset-0 block',
-                  flying ? 'opacity-0' : 'animate-[lightbox-in_320ms_var(--ease-out)_both]',
-                )}
-                imgClassName="select-none"
-              />
+              {current.video ? (
+                <div className="absolute inset-0 grid place-items-center">
+                  <iframe
+                    key={current.video.id}
+                    src={embedUrl(current.video)}
+                    title={current.alt}
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                    className="aspect-video max-h-full w-full max-w-[calc((100dvh-10rem)*16/9)] animate-[lightbox-in_320ms_var(--ease-out)_both] rounded-lg border-0 bg-black"
+                  />
+                </div>
+              ) : (
+                <Photo
+                  key={current.fallback}
+                  photo={current}
+                  sizes="100vw"
+                  fit="contain"
+                  priority
+                  className={cx(
+                    'absolute inset-0 block',
+                    flying ? 'opacity-0' : 'animate-[lightbox-in_320ms_var(--ease-out)_both]',
+                  )}
+                  imgClassName="select-none"
+                />
+              )}
             </div>
             <figcaption className="max-w-xl text-center text-small opacity-80">
               {current.alt}
@@ -219,8 +284,8 @@ function Lightbox({
           ) : null}
           {(
             [
-              ['Previous photo', -1, ArrowLeftIcon, 'left-3 md:left-6'],
-              ['Next photo', 1, ArrowRightIcon, 'right-3 md:right-6'],
+              ['Previous', -1, ArrowLeftIcon, 'left-3 md:left-6'],
+              ['Next', 1, ArrowRightIcon, 'right-3 md:right-6'],
             ] as const
           ).map(([label, delta, Icon, position]) => (
             <button
