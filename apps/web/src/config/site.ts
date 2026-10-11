@@ -72,8 +72,18 @@ export type SocialLink = { id: string; label: string; Icon: Icon; href: string |
 /** Shown as icons now; each becomes a link as soon as its `href` is filled in. */
 export const socialLinks: SocialLink[] = [
   { id: 'whatsapp', label: 'WhatsApp', Icon: WhatsappLogoIcon, href: 'https://wa.me/917207011988' },
-  { id: 'instagram', label: 'Instagram', Icon: InstagramLogoIcon, href: null },
-  { id: 'facebook', label: 'Facebook', Icon: FacebookLogoIcon, href: null },
+  {
+    id: 'instagram',
+    label: 'Instagram',
+    Icon: InstagramLogoIcon,
+    href: 'https://www.instagram.com/quantumdigitaldentistry/',
+  },
+  {
+    id: 'facebook',
+    label: 'Facebook',
+    Icon: FacebookLogoIcon,
+    href: 'https://www.facebook.com/people/Quantum-Digital-Dentistry/61591626561368/',
+  },
   { id: 'youtube', label: 'YouTube', Icon: YoutubeLogoIcon, href: null },
   { id: 'google', label: 'Google reviews', Icon: GoogleLogoIcon, href: null },
 ];
