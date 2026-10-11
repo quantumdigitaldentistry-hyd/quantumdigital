@@ -18,6 +18,12 @@ export type FestivalOffer = {
   popup: boolean;
 };
 
+/** Today as YYYY-MM-DD in the visitor's own time zone (not UTC, which lags India by 5½ hours). */
+export const localToday = () => new Date().toLocaleDateString('en-CA');
+
+const isDate = (value: unknown): value is string =>
+  typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+
 const text = (value: unknown, max: number) =>
   typeof value === 'string' ? value.slice(0, max) : '';
 
@@ -29,24 +35,24 @@ export function parseOffer(value: unknown): FestivalOffer | null {
     title: text(raw.title, 60),
     discount: text(raw.discount, 20),
     details: text(raw.details, 200),
-    validUntil: /^\d{4}-\d{2}-\d{2}$/.test(String(raw.validUntil ?? ''))
-      ? String(raw.validUntil)
-      : '',
+    validUntil: isDate(raw.validUntil) ? raw.validUntil : '',
     popup: raw.popup !== false,
   };
   if (!offer.title && !offer.discount) return null;
-  if (offer.validUntil && offer.validUntil < new Date().toISOString().slice(0, 10)) return null;
+  if (offer.validUntil && offer.validUntil < localToday()) return null;
   return offer;
 }
 
 type SiteSettings = {
   festivalId: string | null;
+  /** YYYY-MM-DD, the festival theme's last day, or '' to stay on until it's removed. */
+  festivalUntil: string;
   offer: FestivalOffer | null;
   hours: DayHours[];
   loaded: boolean;
   load: () => Promise<void>;
   /** Used by the staff area after saving, so the change shows immediately. */
-  setFestival: (id: string | null, offer: FestivalOffer | null) => void;
+  setFestival: (id: string | null, offer: FestivalOffer | null, until?: string) => void;
   setHours: (hours: DayHours[]) => void;
 };
 
@@ -74,6 +80,7 @@ let loading: Promise<void> | null = null;
 
 export const useSiteSettings = create<SiteSettings>((set) => ({
   festivalId: null,
+  festivalUntil: '',
   offer: null,
   hours: defaultHours,
   loaded: false,
@@ -84,16 +91,22 @@ export const useSiteSettings = create<SiteSettings>((set) => ({
       const { data, error } = await supabase.from('site_settings').select('key, value');
       if (error || !data) return set({ loaded: true });
       const byKey = Object.fromEntries(data.map((row) => [row.key, row.value]));
-      const festival = byKey.festival as { theme?: unknown; offer?: unknown } | undefined;
+      const festival = byKey.festival as
+        { theme?: unknown; until?: unknown; offer?: unknown } | undefined;
+      const until = isDate(festival?.until) ? festival.until : '';
+      // After its last day the theme switches itself off: everyone sees the everyday look.
+      const live = typeof festival?.theme === 'string' && (!until || until >= localToday());
       set({
         loaded: true,
-        festivalId: typeof festival?.theme === 'string' ? festival.theme : null,
-        offer: parseOffer(festival?.offer),
+        festivalId: live ? (festival.theme as string) : null,
+        festivalUntil: live ? until : '',
+        offer: live ? parseOffer(festival?.offer) : null,
         hours: parseHours(byKey.clinic_hours),
       });
     })();
     return loading;
   },
-  setFestival: (festivalId, offer) => set({ festivalId, offer }),
+  setFestival: (festivalId, offer, until = '') =>
+    set({ festivalId, offer, festivalUntil: festivalId ? until : '' }),
   setHours: (hours) => set({ hours }),
 }));
