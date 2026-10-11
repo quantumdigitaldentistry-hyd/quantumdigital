@@ -10,6 +10,8 @@
 *.keystore
 *.p8
 *.p12
+*service-account*.json
+*serviceAccount*.json
 *.mobileprovision
 *.cer
 credentials.json
@@ -85,3 +87,14 @@ desktop.ini
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+
+# Playwright MCP session output (snapshots, console logs)
+.playwright-mcp/
+
+# Original festival artwork (30 MB). Optimised copies live in apps/web/src/assets/festive.
+apps/web/src/assets/festivals/
+
+# ─────────────────────────────────────────────────────────────
+# Private docs (deployment runbook with project-specific details)
+# ─────────────────────────────────────────────────────────────
+docs/private/

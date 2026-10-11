@@ -1,0 +1,837 @@
+import {
+  ArrowsInIcon,
+  BarbellIcon,
+  BroomIcon,
+  CalendarCheckIcon,
+  ClockIcon,
+  DropIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  ForkKnifeIcon,
+  HandHeartIcon,
+  type Icon,
+  LinkIcon,
+  MagicWandIcon,
+  PaletteIcon,
+  ShieldCheckIcon,
+  SmileyIcon,
+  SparkleIcon,
+  TargetIcon,
+  ToothIcon,
+} from '@phosphor-icons/react';
+
+/**
+ * The longer content on each treatment page: why people choose it, the types offered and
+ * common questions. General patient information in our own words.
+ * TODO(clinic): have the doctors review every answer, and confirm each option is offered.
+ */
+export type TreatmentDetails = {
+  benefits: { title: string; body: string; Icon: Icon }[];
+  options: { title: string; body: string }[];
+  faqs: { question: string; answer: string }[];
+};
+
+export const treatmentDetails: Record<string, TreatmentDetails> = {
+  aligners: {
+    benefits: [
+      {
+        title: 'Hard to spot',
+        body: 'Clear aligners are difficult to notice in everyday conversation.',
+        Icon: EyeSlashIcon,
+      },
+      {
+        title: 'Eat what you like',
+        body: 'Take the aligners out for meals, so there are no food restrictions.',
+        Icon: ForkKnifeIcon,
+      },
+      {
+        title: 'Easy to keep clean',
+        body: 'Brush and floss as usual, with no brackets or wires in the way.',
+        Icon: BroomIcon,
+      },
+      {
+        title: 'See the plan first',
+        body: 'A digital plan shows how your teeth are expected to move before you begin.',
+        Icon: EyeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Full aligner treatment',
+        body: 'For crowding, gaps and many bite problems, planned from start to finish by our orthodontist.',
+      },
+      {
+        title: 'Shorter treatment for minor changes',
+        body: 'For small corrections, such as teeth that have shifted after earlier braces.',
+      },
+      {
+        title: 'Aligners for teenagers',
+        body: 'Suitable for many teenagers who are ready to wear their aligners as advised.',
+      },
+      {
+        title: 'Retainers',
+        body: 'Fixed or removable retainers to keep teeth in place once treatment ends.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Do aligners hurt?',
+        answer:
+          'Most people feel pressure or tightness for a day or two when they start a new set. That is a sign the aligners are working, and it usually settles quickly.',
+      },
+      {
+        question: 'How many hours a day do I wear them?',
+        answer:
+          'Usually 20 to 22 hours a day. Take them out only to eat, drink anything other than water, and clean your teeth.',
+      },
+      {
+        question: 'How long does treatment take?',
+        answer:
+          'It depends on how much your teeth need to move. Minor corrections can take a few months; fuller treatment often takes a year or more. You get an estimate after your assessment.',
+      },
+      {
+        question: 'How do I clean my aligners?',
+        answer:
+          'Rinse them whenever you take them out and brush them gently with cool water. Avoid hot water, which can change their shape.',
+      },
+      {
+        question: 'Will I need a retainer afterwards?',
+        answer:
+          'Yes. Teeth tend to drift back, so a retainer is needed to hold the result. Your orthodontist tells you how long to wear it.',
+      },
+    ],
+  },
+
+  implants: {
+    benefits: [
+      {
+        title: 'Fixed and stable',
+        body: 'An implant stays in place, so you can chew, speak and smile with confidence.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Looks like your own tooth',
+        body: 'The crown on top is shaped and shaded to match the teeth around it.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'Helps protect the jawbone',
+        body: 'Bone can shrink where a tooth is missing; an implant helps keep it in use.',
+        Icon: BarbellIcon,
+      },
+      {
+        title: 'Leaves other teeth alone',
+        body: 'Unlike a bridge, a single implant does not need the neighbouring teeth to be shaped.',
+        Icon: ToothIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Single-tooth implant',
+        body: 'One implant and one crown to replace one missing tooth.',
+      },
+      {
+        title: 'Implant-supported bridge',
+        body: 'Two or more implants hold a bridge that replaces several teeth in a row.',
+      },
+      {
+        title: 'Full-arch fixed teeth',
+        body: 'A fixed set of teeth held by several implants, for people missing most or all teeth in a jaw.',
+      },
+      {
+        title: 'Implant-retained denture',
+        body: 'A removable denture that clips onto implants, so it stays firm while you eat and talk.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does getting an implant hurt?',
+        answer:
+          'The area is numbed with local anaesthesia, so you should not feel pain during the procedure. Some soreness and swelling for a few days afterwards is common and manageable.',
+      },
+      {
+        question: 'How long does the whole process take?',
+        answer:
+          'Often three to six months from placing the implant to fitting the final crown, because the bone needs time to bond to the implant. It can take longer if bone grafting is needed first.',
+      },
+      {
+        question: 'Am I suitable for implants?',
+        answer:
+          'Most adults with healthy gums and enough jawbone are. Smoking and conditions such as uncontrolled diabetes can slow healing, so we review your medical history and X-rays at the assessment.',
+      },
+      {
+        question: 'Do I need tests before an implant?',
+        answer:
+          'We ask about your health and medicines, and may request tests such as blood sugar levels if they are relevant. Your prosthodontist tells you exactly what is needed.',
+      },
+      {
+        question: 'How do I look after an implant?',
+        answer:
+          'Brush twice a day, clean between your teeth and keep your regular check-ups. Healthy gums are the key to an implant lasting.',
+      },
+      {
+        question: 'Is an implant better than a bridge or a denture?',
+        answer:
+          'Each has its place. Implants are fixed and leave neighbouring teeth untouched; bridges are quicker; dentures replace many teeth at a lower cost. We explain the options that suit you.',
+      },
+    ],
+  },
+
+  braces: {
+    benefits: [
+      {
+        title: 'Handles complex cases',
+        body: 'Braces give fine control for severe crowding and bite problems.',
+        Icon: TargetIcon,
+      },
+      {
+        title: 'Always working',
+        body: 'Fixed to your teeth, so there is nothing to remember to wear.',
+        Icon: ClockIcon,
+      },
+      {
+        title: 'Tooth-coloured option',
+        body: 'Ceramic brackets blend in with your teeth for a more discreet look.',
+        Icon: PaletteIcon,
+      },
+      {
+        title: 'For all ages',
+        body: 'Suitable for children, teenagers and adults with healthy teeth and gums.',
+        Icon: HandHeartIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Metal braces',
+        body: 'Strong, reliable and the most widely used type of braces.',
+      },
+      {
+        title: 'Ceramic braces',
+        body: 'Clear or tooth-coloured brackets that are less noticeable.',
+      },
+      {
+        title: 'Early check for children',
+        body: 'An orthodontic check around age seven can show whether early treatment would help.',
+      },
+      {
+        title: 'Retainers',
+        body: 'Fixed or removable retainers to keep teeth in place after braces come off.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Am I too old for braces?',
+        answer:
+          'No. Adults can have braces as long as their teeth and gums are healthy. Many of our orthodontic patients are adults.',
+      },
+      {
+        question: 'How long will I wear braces?',
+        answer:
+          'Often between one and two years, depending on how much correction is needed. Your orthodontist gives you an estimate after your records are taken.',
+      },
+      {
+        question: 'Do braces hurt?',
+        answer:
+          'Your teeth may feel sore for a few days after the braces are fitted and after adjustments. Soft food and simple pain relief usually help.',
+      },
+      {
+        question: 'What should I avoid eating?',
+        answer:
+          'Hard, sticky and chewy foods, such as nuts, toffees and hard sweets, which can break brackets. Cut harder foods like apples into small pieces.',
+      },
+      {
+        question: 'How often are the visits?',
+        answer: 'Usually every four to eight weeks, for a short adjustment.',
+      },
+    ],
+  },
+
+  'crowns-bridges': {
+    benefits: [
+      {
+        title: 'Protects weak teeth',
+        body: 'A crown holds a cracked or heavily filled tooth together.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Matched to your smile',
+        body: 'Shape and shade are chosen to blend in with your natural teeth.',
+        Icon: PaletteIcon,
+      },
+      {
+        title: 'Fixed in place',
+        body: 'Crowns and bridges are cemented, so there is nothing to take out.',
+        Icon: LinkIcon,
+      },
+      {
+        title: 'Chew comfortably again',
+        body: 'Restores a strong, even bite on the treated side.',
+        Icon: ForkKnifeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'All-ceramic and zirconia crowns',
+        body: 'Metal-free crowns with a natural look, suited to front and back teeth.',
+      },
+      {
+        title: 'Metal-ceramic crowns',
+        body: 'A metal base with a tooth-coloured outer layer, for strength where it is needed.',
+      },
+      {
+        title: 'Tooth-supported bridges',
+        body: 'A false tooth held by crowns on the teeth either side of the gap.',
+      },
+      {
+        title: 'Crowns on implants',
+        body: 'The final tooth fitted on top of a dental implant.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'When do I need a crown?',
+        answer:
+          'When a tooth is cracked, badly worn, heavily filled or has had a root canal treatment, and a filling alone would not be strong enough.',
+      },
+      {
+        question: 'How many visits does it take?',
+        answer:
+          'Usually two: one to prepare the tooth and take a scan or impression, and one to fit the finished crown or bridge, typically about a week apart.',
+      },
+      {
+        question: 'Will it look natural?',
+        answer:
+          'Yes. The shade is matched to your teeth, and ceramic materials reflect light in a similar way to enamel.',
+      },
+      {
+        question: 'How long do crowns last?',
+        answer:
+          'Many last for years, often more than ten, with good cleaning and regular check-ups. Grinding your teeth or biting hard objects can shorten their life.',
+      },
+      {
+        question: 'Should I choose a bridge or an implant?',
+        answer:
+          'A bridge is quicker and avoids surgery but involves shaping the neighbouring teeth. An implant leaves them untouched but takes longer. We explain both for your case.',
+      },
+    ],
+  },
+
+  dentures: {
+    benefits: [
+      {
+        title: 'Replaces many teeth',
+        body: 'One denture can replace several teeth or a whole arch.',
+        Icon: ToothIcon,
+      },
+      {
+        title: 'Supports your face',
+        body: 'Fills out the lips and cheeks, which can sink when teeth are missing.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'No surgery needed',
+        body: 'A non-surgical way to restore your smile and your bite.',
+        Icon: HandHeartIcon,
+      },
+      {
+        title: 'Simple to clean',
+        body: 'Take it out to clean it and to rest your gums.',
+        Icon: DropIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Complete dentures',
+        body: 'A full set of teeth for an upper or lower jaw with no natural teeth left.',
+      },
+      {
+        title: 'Partial dentures',
+        body: 'Fill the gaps between your natural teeth and stop them from drifting.',
+      },
+      {
+        title: 'Implant-retained dentures',
+        body: 'Clip onto a few implants for a firmer fit while eating and speaking.',
+      },
+      {
+        title: 'Relines and repairs',
+        body: 'Adjusting an existing denture as your gums change over time.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'How long does it take to get used to dentures?',
+        answer:
+          'Usually a few weeks. Speaking and eating can feel different at first; reading aloud and starting with soft food help.',
+      },
+      {
+        question: 'Can I eat normally?',
+        answer:
+          'Start with soft food cut into small pieces and chew on both sides. Most people return to a varied diet as they get used to their dentures.',
+      },
+      {
+        question: 'Should I wear them at night?',
+        answer:
+          'Usually not. Taking dentures out at night gives your gums a rest. Follow the advice your prosthodontist gives you.',
+      },
+      {
+        question: 'How do I clean my dentures?',
+        answer:
+          'Brush them daily with a soft brush and a denture cleaner, not regular toothpaste, and keep them in water when they are out so they do not dry out.',
+      },
+      {
+        question: 'How long do dentures last?',
+        answer:
+          'Your gums and bone change over time, so dentures usually need relining or replacing after several years. Regular check-ups keep them fitting well.',
+      },
+    ],
+  },
+
+  veneers: {
+    benefits: [
+      {
+        title: 'Natural-looking',
+        body: 'Shaped and shaded to suit your face and the teeth around them.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'Hides chips and stains',
+        body: 'Covers marks and discolouration that whitening cannot lift.',
+        Icon: SparkleIcon,
+      },
+      {
+        title: 'Closes small gaps',
+        body: 'Evens out spacing and uneven edges without braces, where suitable.',
+        Icon: ArrowsInIcon,
+      },
+      {
+        title: 'Planned with you',
+        body: 'You see and approve the shape before the final veneers are made.',
+        Icon: EyeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Porcelain veneers (laminates)',
+        body: 'Thin ceramic shells made in a lab; stain-resistant and long-lasting.',
+      },
+      {
+        title: 'Composite veneers',
+        body: 'Tooth-coloured resin shaped directly on the tooth, often in one visit.',
+      },
+      {
+        title: 'Minimal-preparation veneers',
+        body: 'Very thin veneers that need little or no enamel removed, where the case allows.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is the difference between veneers and laminates?',
+        answer:
+          'They are the same idea: thin shells bonded to the front of the teeth. "Laminate" is often used for very thin porcelain veneers.',
+      },
+      {
+        question: 'Do veneers damage my teeth?',
+        answer:
+          'Porcelain veneers usually need a thin layer of enamel removed; composite veneers often need little or none. We always aim to remove as little as possible.',
+      },
+      {
+        question: 'How long do veneers last?',
+        answer:
+          'Porcelain veneers often last ten years or more with good care; composite veneers usually need polishing or repair sooner.',
+      },
+      {
+        question: 'Can veneers stain?',
+        answer:
+          'Porcelain resists staining well. Composite can pick up stains over time, like natural teeth.',
+      },
+      {
+        question: 'How many visits does it take?',
+        answer:
+          'Composite veneers can often be done in one visit. Porcelain veneers usually take two or three visits after planning.',
+      },
+    ],
+  },
+
+  'tooth-coloured-fillings': {
+    benefits: [
+      {
+        title: 'Blends in',
+        body: 'Matched to your tooth shade, so the filling is hard to see.',
+        Icon: PaletteIcon,
+      },
+      {
+        title: 'Keeps more tooth',
+        body: 'The resin bonds to the tooth, so less healthy tooth needs removing.',
+        Icon: ToothIcon,
+      },
+      {
+        title: 'Metal-free',
+        body: 'No silver amalgam, and no dark show-through over time.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Usually one visit',
+        body: 'Most fillings are placed and polished in a single appointment.',
+        Icon: ClockIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'New cavities',
+        body: 'Repairing decay early, before it reaches the nerve.',
+      },
+      {
+        title: 'Replacing old silver fillings',
+        body: 'Swapping worn or broken metal fillings for tooth-coloured ones, where advised.',
+      },
+      {
+        title: 'Chipped or worn edges',
+        body: 'Rebuilding small chips and worn edges on front teeth.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does getting a filling hurt?',
+        answer:
+          'The tooth is usually numbed with local anaesthesia, so you should feel pressure but not pain.',
+      },
+      {
+        question: 'How long do tooth-coloured fillings last?',
+        answer:
+          'Often many years, depending on the size of the filling, your bite and how well you look after your teeth.',
+      },
+      {
+        question: 'Should I replace my old silver fillings?',
+        answer:
+          'Not automatically. If they are sound, they can stay. We suggest replacing them only if they are broken, leaking or you want a more natural look.',
+      },
+      {
+        question: 'Can I eat straight after?',
+        answer:
+          'Yes, the filling is hardened with light before you leave. Wait until the numbness wears off so you do not bite your cheek.',
+      },
+    ],
+  },
+
+  'root-canal': {
+    benefits: [
+      {
+        title: 'Relieves pain',
+        body: 'Removing the infected pulp stops the source of the pain.',
+        Icon: HandHeartIcon,
+      },
+      {
+        title: 'Keeps your own tooth',
+        body: 'Saving the natural tooth avoids the need for an implant or bridge.',
+        Icon: ToothIcon,
+      },
+      {
+        title: 'Stops the infection spreading',
+        body: 'Cleaning and sealing the canals keeps bacteria out of the bone.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Chew normally again',
+        body: 'With a crown on top, the tooth can work like any other.',
+        Icon: ForkKnifeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Single-visit root canal',
+        body: 'For suitable cases, the treatment is completed in one appointment.',
+      },
+      {
+        title: 'Multi-visit root canal',
+        body: 'For infected teeth that need medicine placed between visits.',
+      },
+      {
+        title: 'Laser-assisted disinfection',
+        body: 'Our NovoLase Gold laser can be used to help disinfect the canals.',
+      },
+      {
+        title: 'Crown after root canal',
+        body: 'A crown protects the treated tooth from cracking.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does a root canal hurt?',
+        answer:
+          'It is done under local anaesthesia and usually feels like having a filling. The tooth may be tender for a few days afterwards.',
+      },
+      {
+        question: 'How many visits will I need?',
+        answer: 'Often one or two, depending on the tooth and how much infection there is.',
+      },
+      {
+        question: 'Do I need a crown afterwards?',
+        answer:
+          'Usually, especially for back teeth. A root-canal-treated tooth is more brittle, and a crown helps stop it from cracking.',
+      },
+      {
+        question: 'Is it better to take the tooth out?',
+        answer:
+          'Keeping your own tooth is usually best. An extracted tooth needs replacing with an implant, bridge or denture to avoid other teeth shifting.',
+      },
+    ],
+  },
+
+  'full-mouth-rehabilitation': {
+    benefits: [
+      {
+        title: 'One complete plan',
+        body: 'Every tooth and your bite are planned together, not one problem at a time.',
+        Icon: MagicWandIcon,
+      },
+      {
+        title: 'Comfortable chewing',
+        body: 'Restores an even, stable bite so you can eat what you like.',
+        Icon: ForkKnifeIcon,
+      },
+      {
+        title: 'A confident smile',
+        body: 'Teeth are rebuilt to look natural and suit your face.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'Planned in stages',
+        body: 'Treatment can be spread over visits, with temporary teeth in between.',
+        Icon: CalendarCheckIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Crowns and bridges',
+        body: 'Rebuilding worn or broken teeth and replacing a few missing ones.',
+      },
+      {
+        title: 'Implant-supported teeth',
+        body: 'Fixed teeth on implants where several teeth are missing.',
+      },
+      {
+        title: 'Dentures',
+        body: 'Complete, partial or implant-retained dentures where they suit best.',
+      },
+      {
+        title: 'Bite correction',
+        body: 'Restoring the height and balance of the bite, for worn teeth from grinding.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Who needs full mouth rehabilitation?',
+        answer:
+          'People with many worn, broken or missing teeth, often from grinding, old dental work, decay or gum disease, where fixing one tooth at a time would not work.',
+      },
+      {
+        question: 'How long does it take?',
+        answer:
+          'It depends on the plan. Some cases take a few weeks; those with implants take several months. You get a staged timeline before you start.',
+      },
+      {
+        question: 'Will I be without teeth during treatment?',
+        answer: 'No. Temporary teeth are fitted between stages so you can eat and smile.',
+      },
+      {
+        question: 'Can it be done in stages to spread the cost?',
+        answer:
+          'Often, yes. Your prosthodontist can plan the treatment in phases and explain the cost of each.',
+      },
+    ],
+  },
+
+  'teeth-cleaning': {
+    benefits: [
+      {
+        title: 'Healthier gums',
+        body: 'Removing tartar reduces bleeding and helps prevent gum disease.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Fresher breath',
+        body: 'Clears the build-up that causes persistent bad breath.',
+        Icon: SparkleIcon,
+      },
+      {
+        title: 'Brighter teeth',
+        body: 'Polishing removes surface stains from tea, coffee and tobacco.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'Problems caught early',
+        body: 'A regular check finds decay and gum problems while they are small.',
+        Icon: EyeIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Scaling and polishing',
+        body: 'Routine cleaning to remove tartar and stains, usually every six months.',
+      },
+      {
+        title: 'Deep cleaning',
+        body: 'Cleaning below the gum line (root planing) for gum disease.',
+      },
+      {
+        title: 'Laser gum care',
+        body: 'Our NovoLase Gold laser can help disinfect gum pockets alongside a deep clean.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'How often should I have my teeth cleaned?',
+        answer:
+          'Usually every six months. If you have gum disease, your dentist may suggest more often.',
+      },
+      {
+        question: 'Does cleaning hurt?',
+        answer:
+          'Most people feel only mild discomfort. If your gums are sensitive, the area can be numbed.',
+      },
+      {
+        question: 'Will cleaning damage my enamel?',
+        answer: 'No. Professional scaling removes tartar, not enamel.',
+      },
+      {
+        question: 'My gums bled after cleaning. Is that normal?',
+        answer:
+          'A little bleeding is common when gums are inflamed. It usually settles within a few days as the gums heal.',
+      },
+    ],
+  },
+
+  'teeth-whitening': {
+    benefits: [
+      {
+        title: 'Visible result',
+        body: 'Teeth are usually several shades lighter after treatment.',
+        Icon: SparkleIcon,
+      },
+      {
+        title: 'Safe for enamel',
+        body: 'Done by a dentist with your gums protected throughout.',
+        Icon: ShieldCheckIcon,
+      },
+      {
+        title: 'Quick',
+        body: 'In-clinic whitening is usually done in a single visit.',
+        Icon: ClockIcon,
+      },
+      {
+        title: 'Even shade',
+        body: 'Professional gel lightens teeth more evenly than shop-bought kits.',
+        Icon: PaletteIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'In-clinic whitening',
+        body: 'Professional gel, activated in short cycles, in one visit.',
+      },
+      {
+        title: 'Home whitening trays',
+        body: 'Custom trays and gel to use at home over a couple of weeks.',
+      },
+      {
+        title: 'Whitening before veneers or crowns',
+        body: 'Setting the shade of your natural teeth before new work is matched to it.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is teeth whitening safe?',
+        answer:
+          'Yes, when done or supervised by a dentist. Your teeth and gums are checked first and protected during treatment.',
+      },
+      {
+        question: 'Will my teeth be sensitive?',
+        answer: 'Some people feel temporary sensitivity, which usually settles within a few days.',
+      },
+      {
+        question: 'How long do the results last?',
+        answer:
+          'Often one to three years, depending on diet and habits such as tea, coffee and smoking.',
+      },
+      {
+        question: 'Will it whiten my crowns or fillings?',
+        answer:
+          'No. Crowns, veneers and fillings keep their colour, so they may need replacing to match your new shade.',
+      },
+    ],
+  },
+
+  'smile-design': {
+    benefits: [
+      {
+        title: 'Planned before you commit',
+        body: 'Your new smile is designed and discussed with you before any tooth is changed.',
+        Icon: EyeIcon,
+      },
+      {
+        title: 'Natural proportions',
+        body: 'Tooth shape, length and shade are chosen to suit your face.',
+        Icon: SmileyIcon,
+      },
+      {
+        title: 'The least treatment first',
+        body: 'We start with the gentlest options, like whitening or aligning, where they are enough.',
+        Icon: ArrowsInIcon,
+      },
+      {
+        title: 'One coordinated plan',
+        body: 'Whitening, veneers, crowns and gum shaping are combined in the right order.',
+        Icon: MagicWandIcon,
+      },
+    ],
+    options: [
+      {
+        title: 'Teeth whitening',
+        body: 'Lightens natural teeth that have yellowed or stained over time.',
+      },
+      {
+        title: 'Veneers',
+        body: 'Thin porcelain or composite shells that change the shape, colour or size of front teeth.',
+      },
+      {
+        title: 'Crowns for front teeth',
+        body: 'For front teeth that are heavily filled, worn or broken.',
+      },
+      {
+        title: 'Gum reshaping',
+        body: 'Evens out the gum line so the teeth look balanced.',
+      },
+      {
+        title: 'Aligning first',
+        body: 'Straightening teeth with aligners can mean less shaping later on.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is smile design?',
+        answer:
+          'A planned approach to improving how your smile looks. We look at your teeth, gums, lips and face together, then suggest the treatments that will get you there.',
+      },
+      {
+        question: 'Can I see the result before treatment?',
+        answer:
+          'We plan your smile digitally and discuss it with you, and a trial mock-up can often be placed on your teeth so you can see and approve the shape.',
+      },
+      {
+        question: 'Do veneers damage my teeth?',
+        answer:
+          'Porcelain veneers usually need a thin layer of enamel removed; composite veneers often need little or none. We always aim to remove as little as possible.',
+      },
+      {
+        question: 'Will whitening make my teeth sensitive?',
+        answer:
+          'Some people feel temporary sensitivity during or after whitening. It usually settles within a few days. Crowns, veneers and fillings do not change colour.',
+      },
+      {
+        question: 'How many visits will I need?',
+        answer:
+          'It depends on the plan. Whitening may take one or two visits; veneers usually take two or three after planning. You get a timeline before you start.',
+      },
+    ],
+  },
+};

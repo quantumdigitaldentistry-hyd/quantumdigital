@@ -15,6 +15,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
+    "@expo-google-fonts/instrument-sans": "^0.4.2",
+    "@expo-google-fonts/sora": "^0.4.2",
     "@hookform/resolvers": "^5.9.1",
     "@quantam/shared": "workspace:*",
     "@quantam/supabase": "workspace:*",

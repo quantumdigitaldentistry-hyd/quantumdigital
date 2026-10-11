@@ -1,9 +1,9 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.dev/schema.json",
   "tasks": {
-    "build:web": {
-      "dependsOn": ["^build:web"],
-      "env": ["EXPO_PUBLIC_*"],
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
     "lint": {},

@@ -1,126 +1,120 @@
-# Quantam Dental
+# Quantum Digital Dentistry
 
-Dental clinic app for doctors to manage patient contacts and track appointments, with reminder agents (WhatsApp, SMS, voice calls) planned for both doctors and patients.
+**Your Complete Smile Destination. All your dental solutions, digitally advanced.**
 
-One React Native codebase ships as:
+The website and staff portal for Quantum Digital Dentistry, Hyderabad. Patients find treatments and book visits. Doctors and staff manage appointments, patients, festival offers and website content from one place, on a computer or a phone.
 
-| Target             | How                                                  |
-| ------------------ | ---------------------------------------------------- |
-| **Web** (main app) | `pnpm build:web` → static site in `apps/dental/dist` |
-| **Android `.apk`** | `pnpm build:apk` → EAS cloud build, download link    |
-| **iOS `.ipa`**     | `pnpm build:ipa` → EAS cloud build (no Mac needed)   |
+![Home page](docs/screenshots/home.webp)
 
-## Tech stack
+> Developers: setup, architecture and commands are in the **[Developer guide](DEVELOPERS.md)**.
 
-| Layer    | Choice                                                                                  |
-| -------- | --------------------------------------------------------------------------------------- |
-| Monorepo | pnpm workspaces + Turborepo                                                             |
-| App      | Expo SDK 57, React Native 0.86, React 19, TypeScript                                    |
-| Routing  | Expo Router (file-based, real URLs on web)                                              |
-| Styling  | Tailwind CSS v4 via [Uniwind](https://uniwind.dev) (same `className` on web and native) |
-| Data     | TanStack Query (server state), Zustand (client state)                                   |
-| Forms    | react-hook-form + zod (schemas shared in `@quantam/shared`)                             |
-| Backend  | Supabase (Postgres, Auth, Storage, Realtime, Edge Functions, pg_cron)                   |
-| Builds   | EAS Build (mobile), any static host for web (Vercel config included)                    |
-| CI       | GitHub Actions: typecheck, lint, web build                                              |
+---
 
-## Repo layout
+## For patients
 
-```
-apps/
-  dental/            Expo app → web + Android + iOS
-packages/
-  ui/                Shared components (Button, Card, Screen) styled with Tailwind
-  shared/            zod schemas, constants (appointment statuses, reminder channels)
-  supabase/          createSupabaseClient() + generated Database types
-  config/            Shared tsconfig base
-supabase/            Supabase CLI project: config.toml, migrations/, functions/
-```
+### Every treatment, explained clearly
 
-Packages export TypeScript source directly (`"main": "src/index.ts"`), so Metro compiles them along with the app with no build step. To use Tailwind classes in a new package, add an `@source` line to `apps/dental/src/global.css`.
+All 12 treatments the clinic offers, each with its own page: what it is, who it suits, the steps, recovery and common questions.
 
-## Getting started
+Braces · Clear aligners · Dental implants · Veneers and laminates · Tooth-coloured fillings · Smile designing · Root canal treatment · Full mouth rehabilitation · Dentures · Professional teeth cleaning · Teeth whitening · Crowns and bridges
 
-Requirements: Node ≥ 20.19 (22 recommended), pnpm 10 (`corepack enable`), and Git.
+| Treatments                                      | A treatment page                                                  |
+| ----------------------------------------------- | ----------------------------------------------------------------- |
+| ![Treatments](docs/screenshots/treatments.webp) | ![Dental implants page](docs/screenshots/treatment-implants.webp) |
 
-```bash
-git clone https://github.com/quantumdigitaldentistry-hyd/quantumdigital.git
-cd quantumdigital
-pnpm install
-cp apps/dental/.env.example apps/dental/.env   # add your Supabase URL + anon key
-pnpm web                                       # dev server in the browser
-pnpm android                                   # Expo dev server, then press "a" for an emulator/device
-```
+### Book in under a minute
 
-### AI agent skills (optional)
+- **Request an appointment** in three steps (treatment, preferred day and time, name and mobile number). The front desk calls back to confirm.
+- **Instant call back** button on every page.
+- **Map, directions and opening hours**, with WhatsApp and call buttons.
 
-The design and animation skills used with Claude Code and other coding agents are not committed. They're listed in `skills-lock.json`; restore them with:
+![Location, timings and booking form](docs/screenshots/location.webp)
 
-```bash
-npx skills experimental_install
-```
+### See the clinic before you come
 
-## Commands (run from the repo root)
+- **The Studio**: the treatment rooms, the NovoLase Gold laser and the specialists.
+- **Gallery** of photos and videos, viewable full screen.
+- **Smile results**: before and after cases (shown only with patient consent).
+- **Dental tourism** guide for patients travelling from abroad.
+- **Dental knowledge**: articles written by the clinic.
 
-| Command                                  | What it does                                                |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| `pnpm web` / `pnpm android` / `pnpm ios` | Start the Expo dev server for that platform                 |
-| `pnpm build:web`                         | Static web export to `apps/dental/dist`                     |
-| `pnpm build:apk`                         | Android .apk on EAS (`preview` profile)                     |
-| `pnpm build:ipa`                         | iOS .ipa on EAS (`preview` profile, ad-hoc)                 |
-| `pnpm typecheck` / `pnpm lint`           | Checks across every package (Turborepo)                     |
-| `pnpm format`                            | Prettier                                                    |
-| `pnpm db:types`                          | Regenerate Supabase types (after `pnpm exec supabase link`) |
+| The Studio                              | Gallery                                   |
+| --------------------------------------- | ----------------------------------------- |
+| ![Studio](docs/screenshots/studio.webp) | ![Gallery](docs/screenshots/gallery.webp) |
 
-## Supabase
+### Festival celebrations
 
-1. Create a free project at [supabase.com](https://supabase.com) and copy its **URL** and **anon key** into `apps/dental/.env`.
-2. Link the CLI: `pnpm exec supabase login`, then `pnpm exec supabase link --project-ref <ref>`.
-3. Add SQL migrations in `supabase/migrations/`, apply them with `pnpm exec supabase db push`, then run `pnpm db:types`.
+When the clinic switches on a festival (Diwali, Ganesh Chaturthi, Sankranti, Eid, Christmas and more), the whole site changes to that festival's colours. It shows the festival's deity or symbol, gentle festive lights and a greeting with the clinic's festival offer.
 
-Running Supabase locally (`supabase start`) needs Docker, but it's optional: the cloud project works on its own. Never put the `service_role` key in the app. `EXPO_PUBLIC_*` values are bundled into the client.
+| Festival banner                                         | Festival offer popup                                        |
+| ------------------------------------------------------- | ----------------------------------------------------------- |
+| ![Diwali banner](docs/screenshots/festival-banner.webp) | ![Diwali offer popup](docs/screenshots/festival-popup.webp) |
 
-## Security: what's never committed
+### Comfortable on any device
 
-`.gitignore` keeps these out of the repo:
+Built for phones first. It works in light and dark mode, and animations calm down for visitors who prefer reduced motion.
 
-- **Secrets:** `.env` files (only `.env.example` is committed), signing keys (`*.jks`, `*.keystore`, `*.p12`, `*.p8`, `*.pem`, `*.key`), provisioning profiles, and Firebase/Google service files
-- **Generated files:** `node_modules/`, `dist/`, `.expo/`, `.turbo/`, native `ios/` / `android/` folders, built `.apk` / `.aab` / `.ipa` files
-- **Local tool state:** Supabase CLI temp files, installed agent skills, OS/editor files
+| Dark mode                                     | Phone                                       |
+| --------------------------------------------- | ------------------------------------------- |
+| ![Dark mode](docs/screenshots/home-dark.webp) | ![Phone](docs/screenshots/home-mobile.webp) |
 
-If a secret is ever committed by mistake, **rotate it** (for example, regenerate the Supabase key). Deleting the file in a later commit doesn't remove it from git history.
+---
 
-## Mobile builds (EAS)
+## For doctors and staff: the staff portal
 
-1. Sign up for a free account at [expo.dev](https://expo.dev), then from `apps/dental` run `npx eas-cli@latest login` and `npx eas-cli@latest init`.
-2. `pnpm build:apk` builds an installable `.apk` you can sideload for free.
-3. `pnpm build:ipa` needs an **Apple Developer account ($99/yr)**. EAS asks for your Apple login and handles certificates. Ad-hoc builds only install on registered devices (`npx eas-cli@latest device:create`).
+Sign in at **`/staff/login`**. The link is deliberately not shown to patients, so ask the clinic admin for it. Accounts are invite-only.
 
-Bundle IDs are `com.quantamdental.app` (iOS and Android) and are set in `apps/dental/app.json`. **Change them before your first store build**, because they can't be changed after release.
+### Appointments and calendar
 
-Build profiles (`apps/dental/eas.json`):
+- New website requests appear instantly, with a count of requests waiting.
+- **Allocate** a doctor and time to confirm a request. The calendar is shared, so every doctor and staff member sees and can update every appointment live.
+- The calendar refuses to double-book a doctor.
+- One tap to **call**, **WhatsApp** or **SMS** the patient with a ready-made confirmation or a list of free slots.
+- The clinic gets an **email** for every new booking.
 
-- `development`: dev client, used to test native modules that Expo Go doesn't include
-- `preview`: internal `.apk` / ad-hoc `.ipa`
-- `production`: Play Store AAB / App Store `.ipa`, with auto-incremented build numbers
+![Staff calendar](docs/screenshots/staff-calendar.webp)
 
-## Web hosting
+### Patients
 
-Any static host works. For Vercel, import the repo and set the **Root Directory** to `apps/dental`; `vercel.json` handles the rest. Add the `EXPO_PUBLIC_SUPABASE_*` env vars in the Vercel dashboard. Netlify and Cloudflare Pages work too (build command `pnpm build:web`, output directory `apps/dental/dist`).
+Search by name or mobile number, and filter by treatment, date or status. Each patient shows their full visit history.
 
-## Costs: what's free and what isn't
+![Patients](docs/screenshots/staff-patients.webp)
 
-| Item                                                                                     | Cost                                                                              |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Expo, EAS Build free tier, Supabase free tier, Vercel/Netlify hobby tier, GitHub Actions | Free (with usage limits; free Supabase projects pause after a week of inactivity) |
-| Apple Developer Program (installable .ipa / App Store)                                   | $99 / year                                                                        |
-| Google Play publishing                                                                   | $25 one-time (sideloading the .apk is free)                                       |
-| WhatsApp Cloud API, SMS, voice-call agents                                               | Pay per message or minute (only trial credits are free)                           |
+### Festival offers
 
-## Roadmap
+Pick a festival, add an offer (discount, title, details, last date) and choose whether to show a welcome popup. The site updates for everyone immediately. The theme **stays on until you press "Remove festival theme"**, and an offer hides itself after its last date.
 
-1. Doctor auth and DB schema (`clinics`, `doctors`, `patients`, `appointments`, `reminders`) with row-level security
-2. Patient contacts and appointment calendar screens
-3. Reminder engine: pg_cron → Edge Function → WhatsApp Cloud API / SMS
-4. Voice-call reminder agent using the same reminder queue
-5. Public marketing pages (Expo web routes, or a separate `apps/site` if SEO needs it)
+![Festival and hours](docs/screenshots/staff-festival.webp)
+
+### Website content
+
+- **Gallery**: upload photos (location data is removed automatically) or add **YouTube / Google Drive video links**.
+- **Before & after**: publish smile results, only after ticking patient consent.
+- **Dental knowledge**: write and publish articles.
+- **Opening hours**: update the timings shown on the site.
+
+![Gallery manager](docs/screenshots/staff-gallery.webp)
+
+### Team and security
+
+| Who                              | Can                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------- |
+| **Staff**                        | Manage appointments, patients, festival, hours and website content                  |
+| **Doctors**                      | Everything staff can, plus add or remove doctors and staff                          |
+| **Super admin** (clinic account) | Everything, including making someone a super admin. Also has a calendar as a doctor |
+
+Strong passwords are required, nobody can change their own role, and signing out returns to the website. Patient data is protected by database-level security rules, not just by the screens.
+
+---
+
+## Contact
+
+**Quantum Digital Dentistry**, 3rd Floor, Flat No. 33/A, Sri Sai Govardhan Kunj, 7-1-397/101, 301/A, opposite Domino's Pizza, near Community Hall, Hyderabad, Telangana 500038
+Phone / WhatsApp: **+91 72070 11988**
+Monday to Saturday, 9:30 am to 9 pm
+
+Specialists: **Dr D Reddy Pradeep** (Orthodontics & Dentofacial Orthopaedics) · **Dr B Mohana Bindu** (Prosthodontics & Implantology, Fellowship in Laser Dentistry)
+
+Stock photos from [Unsplash](https://unsplash.com) (credited on the site) until the clinic's own photos are added.
+
+Website developed by [Jayanth](https://www.linkedin.com/in/gandhodijayanth/).

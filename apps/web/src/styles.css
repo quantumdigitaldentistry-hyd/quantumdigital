@@ -1,0 +1,844 @@
+@import 'tailwindcss';
+
+/*
+ * Quantam Dental design tokens: "Clinic Sky".
+ * From the clinic signage: aqua sky, the royal-blue tooth mark, sunshine-yellow pills
+ * with plum lettering. Rules: docs/design-system.md. Use these tokens, never raw hex in
+ * components. Every text/background pair is checked for WCAG AA (4.5:1) in both themes:
+ * run `pnpm check:contrast` after editing.
+ *
+ * Light values live in @theme. Dark values override them on [data-theme='dark'], which
+ * index.html sets before first paint. Festival campaigns repaint the festive-* tokens at
+ * runtime (src/lib/festive-themes.ts).
+ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  /* Backgrounds: cool white with a faint aqua cast */
+  --color-canvas: #f4f8fa; /* page background */
+  --color-surface: #ffffff; /* cards, sheets, rows */
+  --color-sunken: #e8f0f4; /* input wells, skeletons */
+  --color-line: #d5e2e9; /* hairlines, card borders */
+  --color-line-strong: #a9bdc8; /* input borders, visible dividers */
+  --color-logo-tile: #ffffff; /* behind art with a baked-in white background */
+  --color-elevation: #0d1b2a; /* shadow colour for floating elements (use with opacity) */
+  --color-scrim: #070d13; /* dark overlay on photos (use at 70%+ opacity) */
+  --color-on-scrim: #ffffff; /* text on scrim-covered photos */
+
+  /* Text: deep navy ink, never pure black */
+  --color-ink: #0d1b2a;
+  --color-ink-muted: #46586a;
+  --color-ink-subtle: #5d6e7e; /* 4.5:1 even on sunken */
+
+  /* Brand blue (the tooth mark): actions, links, focus, selection */
+  --color-brand: #1a5bc4;
+  --color-brand-strong: #13469b;
+  --color-on-brand: #ffffff;
+  --color-brand-soft: #e3eefb;
+  --color-on-brand-soft: #13469b;
+
+  /* Aqua (the signage sky): atmosphere only, never a button or text colour */
+  --color-aqua: #6dd3e6;
+  --color-on-aqua: #0d1b2a;
+  --color-aqua-soft: #ddf5fa;
+  --color-on-aqua-soft: #0b4f5c;
+
+  /* Top contact bar: deep brand blue strip above the nav */
+  --color-topbar: #13469b;
+  --color-on-topbar: #ffffff;
+
+  /* Hero gradient. on-hero passes on both stops. */
+  --color-hero-from: #a9e7f2;
+  --color-hero-to: #6dd3e6;
+  --color-on-hero: #0d1b2a;
+  --color-on-hero-muted: #1f3a4d;
+
+  /* Sunshine highlight (the yellow pills) with plum text */
+  --color-highlight: #ffe419;
+  --color-on-highlight: #4a1d6b;
+  --color-highlight-soft: #fff8c7;
+  --color-on-highlight-soft: #4a1d6b;
+
+  /* Status */
+  --color-success: #1c7a4a;
+  --color-success-soft: #e0f3e8;
+  --color-warning: #8a5300;
+  --color-warning-soft: #fcefd6;
+  --color-danger: #b3261e;
+  --color-on-danger: #ffffff;
+  --color-danger-soft: #fbe5e2;
+
+  /* Festive overlay: everyday ("clinic") values, replaced while a festival runs */
+  --color-festive: #ffe419;
+  --color-festive-end: #ffd60a;
+  --color-on-festive: #4a1d6b;
+  --color-festive-soft: #fff8c7;
+  --color-on-festive-soft: #4a1d6b;
+  --color-festive-accent: #6dd3e6;
+
+  /* Type: Sora (display, echoes the QUANTUM wordmark), Instrument Sans (text), Plex Mono (data) */
+  --font-display: 'Sora Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Type scale, mobile first. Use md:text-display-lg etc. to step up on wide screens. */
+  --text-display: 2rem;
+  --text-display--line-height: 2.5rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 3.75rem;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-title: 1.5rem;
+  --text-title--line-height: 2rem;
+  --text-title--letter-spacing: -0.01em;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.5rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.25rem;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+
+  /* Shape: pills for buttons/badges, 12px fields, 20px containers */
+  --radius-control: 12px;
+  --radius-container: 20px;
+
+  /* Motion: one easing family. Enter slower than exit. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root[data-theme='dark'] {
+  --color-canvas: #0a121a;
+  --color-surface: #111c26;
+  --color-sunken: #070d13;
+  --color-line: #1f2e3b;
+  --color-line-strong: #33475a;
+  --color-logo-tile: #ffffff;
+  --color-elevation: #000000;
+  --color-scrim: #070d13;
+  --color-on-scrim: #ffffff;
+
+  --color-ink: #e6eef4;
+  --color-ink-muted: #9db0c0;
+  --color-ink-subtle: #7f93a5;
+
+  --color-brand: #7fb2ff;
+  --color-brand-strong: #a3c8ff;
+  --color-on-brand: #06162e;
+  --color-brand-soft: #13284a;
+  --color-on-brand-soft: #b7d3ff;
+
+  --color-aqua: #5cc8dc;
+  --color-on-aqua: #04141a;
+  --color-aqua-soft: #0e2a33;
+  --color-on-aqua-soft: #a8e9f5;
+
+  --color-topbar: #070d13;
+  --color-on-topbar: #e6eef4;
+
+  --color-hero-from: #12394a;
+  --color-hero-to: #0b2533;
+  --color-on-hero: #e6eef4;
+  --color-on-hero-muted: #b5ccd8;
+
+  --color-highlight: #ffe419;
+  --color-on-highlight: #3a1556;
+  --color-highlight-soft: #2e2a0b;
+  --color-on-highlight-soft: #ffe97a;
+
+  --color-success: #5fd49a;
+  --color-success-soft: #0f2e20;
+  --color-warning: #f5be5c;
+  --color-warning-soft: #33260c;
+  --color-danger: #ff9580;
+  --color-on-danger: #2b0804;
+  --color-danger-soft: #3a1913;
+
+  --color-festive: #ffe419;
+  --color-festive-end: #ffc93c;
+  --color-on-festive: #3a1556;
+  --color-festive-soft: #2e2a0b;
+  --color-on-festive-soft: #ffe97a;
+  --color-festive-accent: #5cc8dc;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-body text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  ::selection {
+    @apply bg-brand-soft text-on-brand-soft;
+  }
+}
+
+/*
+ * Dialogs (components/ui/dialog.tsx) use the native <dialog> element: focus trap, Esc and
+ * the top layer for free. Entry/exit are CSS transitions via @starting-style.
+ * Sheets rise from the bottom on phones; drawers slide in from the right.
+ */
+@layer components {
+  .dialog {
+    opacity: 0;
+    transition:
+      opacity 200ms var(--ease-out),
+      translate 280ms var(--ease-out),
+      overlay 280ms allow-discrete,
+      display 280ms allow-discrete;
+  }
+  .dialog[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .dialog-sheet {
+    translate: 0 32px;
+  }
+  .dialog-drawer {
+    translate: 100% 0;
+  }
+  @starting-style {
+    .dialog-fade[open] {
+      opacity: 0;
+    }
+    .dialog-sheet[open] {
+      opacity: 0;
+      translate: 0 32px;
+    }
+    .dialog-drawer[open] {
+      opacity: 0;
+      translate: 100% 0;
+    }
+  }
+  /* Panels that grow out of their button (see Dialog's origin): no slide, the scale
+     animation does the work, and the measured position stays true. */
+  .dialog-origin,
+  .dialog-origin[open] {
+    translate: none;
+  }
+  @starting-style {
+    .dialog-origin[open] {
+      translate: none;
+    }
+  }
+  .dialog::backdrop {
+    background: rgb(7 13 19 / 0);
+    transition:
+      background 280ms var(--ease-out),
+      overlay 280ms allow-discrete,
+      display 280ms allow-discrete;
+  }
+  .dialog[open]::backdrop {
+    background: rgb(7 13 19 / 0.5);
+  }
+  @starting-style {
+    .dialog[open]::backdrop {
+      background: rgb(7 13 19 / 0);
+    }
+  }
+}
+
+/* Accordion (components/ui/accordion.tsx): animate <details> height where supported. */
+@layer components {
+  .accordion {
+    interpolate-size: allow-keywords;
+  }
+  .accordion::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 320ms var(--ease-out),
+      content-visibility 320ms allow-discrete;
+  }
+  .accordion[open]::details-content {
+    block-size: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .accordion::details-content {
+    transition: none;
+  }
+}
+
+/* Keep the page still behind an open dialog. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Chat bubble attention ring. */
+@keyframes chat-ping {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+/* Lightbox photo swap. */
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+/* Floating actions pop in once, just after the page settles. */
+@keyframes fab-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+}
+
+/* Brand kit loader "F · Dots": rise 8px and brighten, 1100ms loop, staggered 150ms. */
+@keyframes dot-rise {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(var(--dot-lift, -8px));
+    opacity: 1;
+  }
+}
+
+/*
+ * Scroll reveal (components/reveal.tsx): tied to the element entering the viewport, so it
+ * costs no JavaScript. Without scroll-timeline support the content is simply visible.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 45%);
+    }
+  }
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+/*
+ * Landing effects. Time-based ones are plain CSS animations; scroll-linked ones use
+ * scroll timelines (no JavaScript). Every effect degrades to static, fully visible
+ * content without support, and is off for reduced motion.
+ */
+
+/* Headline words rise in one after another (`--i` = word index). */
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em) rotate(2deg);
+    filter: blur(6px);
+  }
+}
+.word-reveal > span {
+  display: inline-block;
+  animation: word-rise 900ms var(--ease-out) both;
+  animation-delay: calc(120ms + var(--i, 0) * 70ms);
+}
+
+/* Gentle hover-in-place for the floating chips around the 3D tooth. */
+@keyframes float-y {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.float-y {
+  animation: float-y 6s var(--ease-in-out) infinite;
+}
+
+/* Endless ticker; the track holds the content twice, so -50% loops seamlessly. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-track[data-direction='reverse'] {
+  animation-direction: reverse;
+}
+
+/* Scroll cue: a dot travelling down a short line. */
+@keyframes cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The hero art sinks back and fades as the hero scrolls away. */
+    .hero-exit {
+      animation: hero-exit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    /* Image drifts inside its frame while the frame crosses the viewport. */
+    .parallax-img {
+      animation: parallax linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    /* Vertical progress line that fills while its section scrolls through. */
+    .line-fill {
+      transform-origin: top;
+      animation: line-fill linear both;
+      animation-timeline: --journey;
+      animation-range: cover 15% cover 75%;
+    }
+    .journey-timeline {
+      view-timeline: --journey block;
+    }
+    /* Gallery photos unveil as they scroll in: clip opens, image rises and settles. */
+    .gallery-item {
+      animation: gallery-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+/*
+ * Treatment pages. Same rules: scroll-linked with no JavaScript, static without support
+ * or with reduced motion.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Thin reading-progress bar across the top of the page. */
+    .read-progress {
+      transform-origin: left;
+      animation: grow-x linear both;
+      animation-timeline: scroll(root block);
+    }
+    /* The connector between numbered steps draws down as the list scrolls through. */
+    .steps-timeline {
+      view-timeline: --steps block;
+    }
+    .steps-line {
+      transform-origin: top;
+      animation: line-fill linear both;
+      animation-timeline: --steps;
+      animation-range: cover 20% cover 70%;
+    }
+    /* Step numbers pop in as they arrive. */
+    .step-pop {
+      animation: step-pop linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 70%;
+    }
+    /* Cards tilt up into place (stagger with --reveal-start, as for .reveal). */
+    .tilt-in {
+      animation: tilt-in linear both;
+      animation-timeline: view();
+      animation-range: entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 55%);
+    }
+    /* Slide in from the reading-start or reading-end side. */
+    .slide-in-start,
+    .slide-in-end {
+      animation: slide-in-start linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+    .slide-in-end {
+      animation-name: slide-in-end;
+    }
+  }
+}
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes step-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes tilt-in {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(16deg) translateY(40px) scale(0.96);
+  }
+}
+@keyframes slide-in-start {
+  from {
+    opacity: 0;
+    transform: translateX(-56px);
+  }
+}
+@keyframes slide-in-end {
+  from {
+    opacity: 0;
+    transform: translateX(56px);
+  }
+}
+
+/*
+ * 3D pointer effects (lib/use-pointer-fx.ts). Variables are written by script on
+ * mouse/trackpad devices only; elsewhere they stay at 0 and nothing moves.
+ */
+.tilt {
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 600ms var(--ease-out);
+}
+.tilt[data-active] {
+  transition-duration: 120ms;
+}
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    rgb(255 255 255 / 0.42),
+    transparent 55%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+}
+.tilt[data-active] .tilt-glare {
+  opacity: 1;
+}
+/* Hero layers drift by depth with the pointer (--px / --py from usePointerParallax). */
+.depth-1 {
+  translate: calc(var(--px, 0) * -8px) calc(var(--py, 0) * -6px);
+}
+.depth-2 {
+  translate: calc(var(--px, 0) * 14px) calc(var(--py, 0) * 10px);
+}
+.depth-3 {
+  translate: calc(var(--px, 0) * 26px) calc(var(--py, 0) * 18px);
+}
+
+/* Section headings flip up in 3D as they scroll in. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .heading-3d {
+      transform-origin: 50% 100%;
+      animation: heading-flip linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+  }
+}
+@keyframes heading-flip {
+  from {
+    opacity: 0;
+    transform: perspective(700px) rotateX(-62deg) translateY(0.4em);
+  }
+}
+
+/*
+ * Festival mode (html[data-festival], set from the active festival package). Colours come
+ * from the festive tokens, so each festival lights the site in its own palette.
+ */
+html[data-festival] body {
+  background-image:
+    radial-gradient(
+      60vw 50vh at 8% 12%,
+      color-mix(in oklab, var(--color-festive) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50vw 45vh at 95% 70%,
+      color-mix(in oklab, var(--color-festive-accent) 14%, transparent),
+      transparent 70%
+    );
+  background-attachment: fixed;
+}
+html[data-festival] .tilt-glare {
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    color-mix(in oklab, var(--color-festive) 55%, white),
+    transparent 55%
+  );
+}
+html[data-festival] .heading-3d {
+  text-shadow: 0 0 28px color-mix(in oklab, var(--color-festive) 35%, transparent);
+}
+
+/* Medallion: rotating festive ring with a soft glow. */
+.festival-ring {
+  background: conic-gradient(
+    from 0deg,
+    var(--color-festive),
+    var(--color-festive-accent),
+    var(--color-festive-end),
+    var(--color-festive)
+  );
+  box-shadow: 0 0 18px color-mix(in oklab, var(--color-festive) 60%, transparent);
+  animation: festival-spin 8s linear infinite;
+}
+.festival-medallion img {
+  transition: scale 300ms var(--ease-out);
+}
+.festival-medallion:hover img {
+  scale: 1.08;
+}
+
+/* Shrine: halo behind the arch and a sheen across the image. */
+.festival-halo {
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--color-festive-accent) 75%, white),
+    transparent
+  );
+  filter: blur(14px);
+  opacity: 0.85;
+  animation: festival-breathe 4s var(--ease-in-out) infinite;
+}
+.festival-shrine {
+  animation: float-y 7s var(--ease-in-out) infinite;
+}
+.festival-sheen {
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.38) 50%,
+    transparent 65%
+  );
+  background-size: 250% 100%;
+  animation: festival-sheen 5s var(--ease-in-out) infinite;
+}
+/* Banner: slow light sweep and warm glow. */
+.festival-sweep {
+  background:
+    radial-gradient(40% 70% at 15% 30%, rgb(255 255 255 / 0.22), transparent 70%),
+    linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.18) 48%, transparent 66%);
+  background-size:
+    100% 100%,
+    260% 100%;
+  animation: festival-sheen 7s var(--ease-in-out) infinite;
+}
+/* Discount: shimmering metallic text. */
+.festival-shimmer {
+  /* Explicit colours: currentColor would be the transparent text colour itself. */
+  background: linear-gradient(
+    100deg,
+    var(--color-on-festive) 20%,
+    color-mix(in oklab, var(--color-on-festive) 35%, white) 45%,
+    var(--color-on-festive) 70%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: festival-shimmer 3.5s linear infinite;
+}
+@keyframes festival-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+/* Popup: swings up in 3D with a glow. */
+.festival-popup[open] .festival-popup-card {
+  animation: festival-pop 700ms var(--ease-out) both;
+}
+.festival-popup::backdrop {
+  animation: lightbox-in 300ms var(--ease-out) both;
+}
+@keyframes festival-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes festival-breathe {
+  50% {
+    opacity: 0.55;
+    scale: 1.06;
+  }
+}
+@keyframes festival-sheen {
+  from {
+    background-position:
+      0 0,
+      120% 0;
+  }
+  to {
+    background-position:
+      0 0,
+      -120% 0;
+  }
+}
+@keyframes festival-pop {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) rotateX(22deg) translateY(60px) scale(0.92);
+    box-shadow: 0 0 0 transparent;
+  }
+  60% {
+    box-shadow: 0 0 80px color-mix(in oklab, var(--color-festive) 60%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .festival-ring,
+  .festival-halo,
+  .festival-shrine,
+  .festival-sheen,
+  .festival-sweep,
+  .festival-shimmer,
+  .festival-popup[open] .festival-popup-card {
+    animation: none;
+  }
+}
+
+/* Load-time cascade for hero content: set --d (0, 1, 2…) for the order. */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+.enter {
+  animation: enter-up 700ms var(--ease-out) both;
+  animation-delay: calc(80ms + var(--d, 0) * 90ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
+  }
+}
+
+@keyframes gallery-in {
+  from {
+    opacity: 0;
+    clip-path: inset(14% 8% 0 8% round 24px);
+    transform: translateY(48px) scale(0.94);
+  }
+}
+@keyframes hero-exit {
+  to {
+    opacity: 0;
+    transform: translateY(18%) scale(0.88);
+  }
+}
+@keyframes parallax {
+  from {
+    transform: translateY(-8%) scale(1.16);
+  }
+  to {
+    transform: translateY(8%) scale(1.16);
+  }
+}
+@keyframes line-fill {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-reveal > span,
+  .float-y,
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/*
+ * Page transitions (View Transitions API). Forward: the old page sinks back and softens
+ * while the new one rises in. Back (html[data-nav='back'], lib/navigation.ts): reversed.
+ * The header has its own name, so it holds still instead of fading with the page.
+ * Shared elements (treatment titles and photos, doctor photos) morph between pages via
+ * matching view-transition-name values.
+ */
+::view-transition-old(root) {
+  animation: 320ms var(--ease-in-out) both vt-page-out;
+}
+::view-transition-new(root) {
+  animation: 520ms var(--ease-out) both vt-page-in;
+}
+html[data-nav='back']::view-transition-old(root) {
+  animation-name: vt-page-out-back;
+}
+html[data-nav='back']::view-transition-new(root) {
+  animation-name: vt-page-in-back;
+}
+::view-transition-group(site-header),
+::view-transition-group(quick-actions),
+::view-transition-group(chat-bubble) {
+  animation: none;
+}
+::view-transition-group(*) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out);
+}
+@keyframes vt-page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.98);
+    filter: blur(6px);
+  }
+}
+@keyframes vt-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+}
+@keyframes vt-page-out-back {
+  to {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+}
+@keyframes vt-page-in-back {
+  from {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.98);
+    filter: blur(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after,
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
