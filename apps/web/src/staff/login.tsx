@@ -2,7 +2,7 @@ import { ArrowLeftIcon } from '@phosphor-icons/react';
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router';
 
-import { LogoMark } from '@/components/brand/logo';
+import { LogoMark, Wordmark } from '@/components/brand/logo';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 
@@ -93,6 +93,7 @@ export default function StaffLogin() {
       >
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoMark className="h-12 w-auto" />
+          <Wordmark className="h-10" />
           <h1 className="font-display text-heading font-semibold">
             {mode === 'reset' ? 'Reset your password' : 'Team sign in'}
           </h1>

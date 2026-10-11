@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 
-import { LogoMark } from '@/components/brand/logo';
+import { LogoMark, Wordmark } from '@/components/brand/logo';
 import { PageLoader } from '@/components/ui/page-loader';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -49,6 +49,7 @@ export default function SetPassword() {
       >
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoMark className="h-12 w-auto" />
+          <Wordmark className="h-10" />
           <h1 className="font-display text-heading font-semibold">Choose your password</h1>
           <p className="text-small text-ink-muted">{session.user.email}</p>
         </div>
