@@ -8,6 +8,7 @@ import { cx } from '@/lib/cx';
 
 import { AppointmentEditor, type EditorTarget } from './appointment-editor';
 import {
+  formatPhone,
   statusClass,
   statusLabel,
   treatmentName,
@@ -265,7 +266,7 @@ export default function PatientsPage() {
                 <div className="flex min-w-0 flex-col gap-0.5">
                   <span className="font-display font-semibold">{patient.name}</span>
                   <span className="text-small text-ink-muted">
-                    {patient.phone} · {patient.visits.length} visit
+                    {formatPhone(patient.phone)} · {patient.visits.length} visit
                     {patient.visits.length === 1 ? '' : 's'}
                     {patient.last ? ` · last ${fmtDate(patient.last)}` : ''}
                   </span>

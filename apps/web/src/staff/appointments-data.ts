@@ -200,3 +200,9 @@ export const whatsappLink = (phone: string, text: string) =>
 
 export const smsLink = (phone: string, text: string) =>
   `sms:${phone}?body=${encodeURIComponent(text)}`;
+
+/** "+919876543210" → "+91 98765 43210" for display (stored numbers are always +91 and 10 digits). */
+export const formatPhone = (phone: string) => {
+  const match = /^\+91(\d{5})(\d{5})$/.exec(phone);
+  return match ? `+91 ${match[1]} ${match[2]}` : phone;
+};

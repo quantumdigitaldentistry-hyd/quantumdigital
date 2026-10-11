@@ -193,7 +193,7 @@ function Calendar({
       <div className="overflow-x-auto rounded-3xl border border-line bg-surface">
         <div
           className="grid min-w-[44rem] md:min-w-0"
-          style={{ gridTemplateColumns: `3.5rem repeat(${days}, minmax(0, 1fr))` }}
+          style={{ gridTemplateColumns: `4.5rem repeat(${days}, minmax(0, 1fr))` }}
         >
           {/* Header row */}
           <div className="border-b border-line" />
@@ -214,7 +214,7 @@ function Calendar({
               i % 2 === 0 ? (
                 <span
                   key={i}
-                  className="absolute right-2 -translate-y-1/2 text-caption text-ink-muted"
+                  className="absolute right-2 -translate-y-1/2 whitespace-nowrap text-caption text-ink-muted"
                   style={{ top: i * ROW_PX }}
                 >
                   {fmtTime(addMinutes(startOfDay(anchor), open + i * SLOT_MINUTES))}

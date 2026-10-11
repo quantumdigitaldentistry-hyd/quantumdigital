@@ -19,6 +19,7 @@ import { useClinicHours } from '@/lib/clinic-hours';
 import {
   confirmationText,
   freeSlots,
+  formatPhone,
   slotsText,
   smsLink,
   statusLabel,
@@ -250,7 +251,7 @@ function EditorBody({
               href={`tel:${request.patient_phone}`}
               className={buttonClass('secondary', 'min-h-9 px-3 text-small')}
             >
-              <PhoneIcon size={16} aria-hidden /> Call {request.patient_phone}
+              <PhoneIcon size={16} aria-hidden /> Call {formatPhone(request.patient_phone)}
             </a>
           </div>
         </div>

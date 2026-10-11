@@ -114,7 +114,7 @@ function FestivalPicker() {
             <span className="text-ink-muted">
               Every visitor sees this theme until it’s removed
               {currentOffer?.validUntil
-                ? `. The offer hides itself after ${currentOffer.validUntil}; the theme stays.`
+                ? `. The offer hides itself after ${new Date(`${currentOffer.validUntil}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}; the theme stays.`
                 : '.'}
             </span>
           </p>

@@ -1,119 +1,120 @@
-# Quantam Dental
+# Quantum Digital Dentistry
 
-Web app for **Quantum Digital Dentistry**: a public clinic site now, with doctor tools for patient contacts, appointments and reminders (WhatsApp, SMS, voice) planned next. It's built mobile first and scales up to tablets and desktops.
+**Your Complete Smile Destination. All your dental solutions, digitally advanced.**
 
-## Tech stack
+The website and staff portal for Quantum Digital Dentistry, Hyderabad. Patients find treatments and book visits. Doctors and staff manage appointments, patients, festival offers and website content from one place, on a computer or a phone.
 
-| Layer          | Choice                                                                                           |
-| -------------- | ------------------------------------------------------------------------------------------------ |
-| Monorepo       | pnpm workspaces + Turborepo                                                                      |
-| App            | React 19, TypeScript 6, Vite 8                                                                   |
-| Routing        | React Router 8 (data mode, every page lazy-loaded, View Transitions)                             |
-| Styling        | Tailwind CSS v4 with the "Clinic Sky" design tokens                                              |
-| 3D             | three.js (plain, tree-shaken), loaded only when cheap enough                                     |
-| Data           | TanStack Query (server state), Zustand (client state), zod (schemas shared in `@quantam/shared`) |
-| Backend        | Supabase (Postgres, Auth, Storage, Realtime, Edge Functions, pg_cron)                            |
-| Icons and type | Phosphor icons; Sora, Instrument Sans and IBM Plex Mono self-hosted via Fontsource               |
-| Hosting        | Any static host; Vercel config included                                                          |
-| CI             | GitHub Actions: typecheck, lint, contrast check, build                                           |
+![Home page](docs/screenshots/home.webp)
 
-## Repo layout
+> Developers: setup, architecture and commands are in the **[Developer guide](DEVELOPERS.md)**.
 
-```
-apps/
-  web/               React web app (Vite)
-packages/
-  shared/            zod schemas and constants (appointment statuses, festivals, campaigns)
-  supabase/          createSupabaseClient() + generated Database types
-  config/            Shared tsconfig base
-supabase/            Supabase CLI project: config.toml, migrations/, functions/
-docs/                Design system and brand kit
-```
+---
 
-`apps/dental` (the earlier Expo mobile app) and `packages/ui` (its React Native components) are set aside: they're excluded from the workspace in `pnpm-workspace.yaml` and aren't built. They can be deleted, or brought back when mobile apps are needed.
+## For patients
 
-**Design system:** "Clinic Sky", built from the clinic signage, with light/dark themes and Indian festival themes for offers. See [docs/design-system.md](docs/design-system.md), open `/design` in the running app to see it live, and run `pnpm check:contrast` after any colour change.
+### Every treatment, explained clearly
 
-Packages export TypeScript source directly (`"main": "src/index.ts"`), so Vite compiles them along with the app with no build step.
+All 12 treatments the clinic offers, each with its own page: what it is, who it suits, the steps, recovery and common questions.
 
-## Getting started
+Braces · Clear aligners · Dental implants · Veneers and laminates · Tooth-coloured fillings · Smile designing · Root canal treatment · Full mouth rehabilitation · Dentures · Professional teeth cleaning · Teeth whitening · Crowns and bridges
 
-Requirements: Node ≥ 22.22, pnpm 10 (`corepack enable`), and Git.
+| Treatments                                      | A treatment page                                                  |
+| ----------------------------------------------- | ----------------------------------------------------------------- |
+| ![Treatments](docs/screenshots/treatments.webp) | ![Dental implants page](docs/screenshots/treatment-implants.webp) |
 
-```bash
-git clone https://github.com/quantumdigitaldentistry-hyd/quantumdigital.git
-cd quantumdigital
-pnpm install
-cp apps/web/.env.example apps/web/.env   # add your Supabase URL + anon key
-pnpm dev                                 # http://localhost:5173
-```
+### Book in under a minute
 
-### AI agent skills (optional)
+- **Request an appointment** in three steps (treatment, preferred day and time, name and mobile number). The front desk calls back to confirm.
+- **Instant call back** button on every page.
+- **Map, directions and opening hours**, with WhatsApp and call buttons.
 
-The design and animation skills used with Claude Code and other coding agents aren't committed. They're listed in `skills-lock.json`; restore them with:
+![Location, timings and booking form](docs/screenshots/location.webp)
 
-```bash
-npx skills experimental_install
-```
+### See the clinic before you come
 
-## Commands (run from the repo root)
+- **The Studio**: the treatment rooms, the NovoLase Gold laser and the specialists.
+- **Gallery** of photos and videos, viewable full screen.
+- **Smile results**: before and after cases (shown only with patient consent).
+- **Dental tourism** guide for patients travelling from abroad.
+- **Dental knowledge**: articles written by the clinic.
 
-| Command                        | What it does                                                |
-| ------------------------------ | ----------------------------------------------------------- |
-| `pnpm dev`                     | Vite dev server                                             |
-| `pnpm build`                   | Production build to `apps/web/dist` (Turborepo, cached)     |
-| `pnpm preview`                 | Serve the production build locally                          |
-| `pnpm typecheck` / `pnpm lint` | Checks across every package (Turborepo)                     |
-| `pnpm check:contrast`          | WCAG AA check of every colour pair, including festivals     |
-| `pnpm format`                  | Prettier                                                    |
-| `pnpm db:types`                | Regenerate Supabase types (after `pnpm exec supabase link`) |
+| The Studio                              | Gallery                                   |
+| --------------------------------------- | ----------------------------------------- |
+| ![Studio](docs/screenshots/studio.webp) | ![Gallery](docs/screenshots/gallery.webp) |
 
-## Dependency policy
+### Festival celebrations
 
-`pnpm-workspace.yaml` sets `minimumReleaseAge: 20160`, so pnpm only installs versions that have been public for **14 days**, including transitive dependencies. New releases are where regressions and compromised packages usually show up. If an install fails with `ERR_PNPM_NO_MATCHING_VERSION`, pick the newest version older than 14 days rather than turning the rule off.
+When the clinic switches on a festival (Diwali, Ganesh Chaturthi, Sankranti, Eid, Christmas and more), the whole site changes to that festival's colours. It shows the festival's deity or symbol, gentle festive lights and a greeting with the clinic's festival offer.
 
-The install, build and browser console currently show **no warnings and no deprecations**. Keep it that way: treat a new warning as a bug.
+| Festival banner                                         | Festival offer popup                                        |
+| ------------------------------------------------------- | ----------------------------------------------------------- |
+| ![Diwali banner](docs/screenshots/festival-banner.webp) | ![Diwali offer popup](docs/screenshots/festival-popup.webp) |
 
-## Performance
+### Comfortable on any device
 
-- The first load is about 114 kB of gzipped JavaScript. Each page is a separate chunk.
-- The 3D hero never blocks first paint: the logo shows instantly, and three.js loads only after idle, when the hero is visible, on devices with WebGL2 and enough memory, and not on data saver.
-- Images are AVIF/WebP (the logo dropped from 279 kB to 17 kB), fonts are self-hosted, and hashed assets are cached for a year.
-- Details and budgets are in [docs/design-system.md](docs/design-system.md#performance-budget).
+Built for phones first. It works in light and dark mode, and animations calm down for visitors who prefer reduced motion.
 
-## Supabase
+| Dark mode                                     | Phone                                       |
+| --------------------------------------------- | ------------------------------------------- |
+| ![Dark mode](docs/screenshots/home-dark.webp) | ![Phone](docs/screenshots/home-mobile.webp) |
 
-1. Create a free project at [supabase.com](https://supabase.com) and copy its **URL** and **anon key** into `apps/web/.env`.
-2. Link the CLI: `pnpm exec supabase login`, then `pnpm exec supabase link --project-ref <ref>`.
-3. Add SQL migrations in `supabase/migrations/`, apply them with `pnpm exec supabase db push`, then run `pnpm db:types`.
+---
 
-Running Supabase locally (`supabase start`) needs Docker, but it's optional: the cloud project works on its own. Never put the `service_role` key in the app. `VITE_*` values are bundled into the site.
+## For doctors and staff: the staff portal
 
-## Security: what's never committed
+Sign in at **`/staff/login`**. The link is deliberately not shown to patients, so ask the clinic admin for it. Accounts are invite-only.
 
-`.gitignore` keeps these out of the repo:
+### Appointments and calendar
 
-- **Secrets:** `.env` files (only `.env.example` is committed), signing keys and service-account files
-- **Generated files:** `node_modules/`, `dist/`, `.turbo/`
-- **Local tool state:** Supabase CLI temp files, installed agent skills, OS/editor files
+- New website requests appear instantly, with a count of requests waiting.
+- **Allocate** a doctor and time to confirm a request. The calendar is shared, so every doctor and staff member sees and can update every appointment live.
+- The calendar refuses to double-book a doctor.
+- One tap to **call**, **WhatsApp** or **SMS** the patient with a ready-made confirmation or a list of free slots.
+- The clinic gets an **email** for every new booking.
 
-If a secret is ever committed by mistake, **rotate it** (for example, regenerate the Supabase key). Deleting the file in a later commit doesn't remove it from git history.
+![Staff calendar](docs/screenshots/staff-calendar.webp)
 
-## Hosting
+### Patients
 
-Any static host works. For Vercel, import the repo and set the **Root Directory** to `apps/web`; `vercel.json` handles the install, build, SPA routing and asset caching. Add the `VITE_SUPABASE_*` env vars in the Vercel dashboard. Netlify and Cloudflare Pages also work (build command `pnpm build`, output directory `apps/web/dist`, and a rewrite of all paths to `/index.html`).
+Search by name or mobile number, and filter by treatment, date or status. Each patient shows their full visit history.
 
-## Costs: what's free and what isn't
+![Patients](docs/screenshots/staff-patients.webp)
 
-| Item                                                          | Cost                                                                              |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Supabase free tier, Vercel/Netlify hobby tier, GitHub Actions | Free (with usage limits; free Supabase projects pause after a week of inactivity) |
-| WhatsApp Cloud API, SMS, voice-call agents                    | Pay per message or minute (only trial credits are free)                           |
+### Festival offers
 
-## Roadmap
+Pick a festival, add an offer (discount, title, details, last date) and choose whether to show a welcome popup. The site updates for everyone immediately. The theme **stays on until you press "Remove festival theme"**, and an offer hides itself after its last date.
 
-1. Doctor auth and DB schema (`clinics`, `doctors`, `patients`, `appointments`, `reminders`, `campaigns`) with row-level security
-2. Patient contacts and appointment calendar
-3. Online booking from the public site
-4. Festival campaigns managed by the clinic (drives the festive theme and offer banners)
-5. Reminder engine: pg_cron → Edge Function → WhatsApp Cloud API / SMS, then a voice-call agent on the same queue
+![Festival and hours](docs/screenshots/staff-festival.webp)
+
+### Website content
+
+- **Gallery**: upload photos (location data is removed automatically) or add **YouTube / Google Drive video links**.
+- **Before & after**: publish smile results, only after ticking patient consent.
+- **Dental knowledge**: write and publish articles.
+- **Opening hours**: update the timings shown on the site.
+
+![Gallery manager](docs/screenshots/staff-gallery.webp)
+
+### Team and security
+
+| Who                              | Can                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------- |
+| **Staff**                        | Manage appointments, patients, festival, hours and website content                  |
+| **Doctors**                      | Everything staff can, plus add or remove doctors and staff                          |
+| **Super admin** (clinic account) | Everything, including making someone a super admin. Also has a calendar as a doctor |
+
+Strong passwords are required, nobody can change their own role, and signing out returns to the website. Patient data is protected by database-level security rules, not just by the screens.
+
+---
+
+## Contact
+
+**Quantum Digital Dentistry**, 3rd Floor, Flat No. 33/A, Sri Sai Govardhan Kunj, 7-1-397/101, 301/A, opposite Domino's Pizza, near Community Hall, Hyderabad, Telangana 500038
+Phone / WhatsApp: **+91 72070 11988**
+Monday to Saturday, 9:30 am to 9 pm
+
+Specialists: **Dr D Reddy Pradeep** (Orthodontics & Dentofacial Orthopaedics) · **Dr B Mohana Bindu** (Prosthodontics & Implantology, Fellowship in Laser Dentistry)
+
+Stock photos from [Unsplash](https://unsplash.com) (credited on the site) until the clinic's own photos are added.
+
+Website developed by [Jayanth](https://www.linkedin.com/in/gandhodijayanth/).
