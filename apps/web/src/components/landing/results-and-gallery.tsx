@@ -8,6 +8,7 @@ import { DepthField } from '@/components/fx/depth-field';
 import { Container } from '@/components/ui/container';
 import { resultCases } from '@/content/clinic';
 import { galleryPhotos } from '@/content/photos';
+import { useLiveGallery, useLiveResults } from '@/lib/live-content';
 
 /**
  * Smile results (before/after slider) and a gallery preview.
@@ -17,6 +18,8 @@ import { galleryPhotos } from '@/content/photos';
  * result is ever implied that didn't happen.
  */
 export function SmileResults() {
+  const live = useLiveResults().data ?? [];
+  const real = live.length > 0;
   return (
     <section aria-labelledby="results-title" className="relative isolate overflow-hidden bg-canvas">
       <DepthField className="-z-10" density={0.6} />
@@ -32,16 +35,20 @@ export function SmileResults() {
             See the difference.
           </h2>
           <p className="max-w-[42ch] text-ink-muted">
-            Pick a case, then drag the handle to compare. Real cases from the clinic will appear
-            here, shared with each patient&apos;s consent.
+            Pick a case, then drag the handle to compare.{' '}
+            {real
+              ? 'Real cases from the clinic, shared with each patient’s consent.'
+              : 'Real cases from the clinic will appear here, shared with each patient’s consent.'}
           </p>
-          <p className="flex max-w-[44ch] items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
-            <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
-            Demo only: each case uses one photo with a filter, to show how the comparison works.
-          </p>
+          {real ? null : (
+            <p className="flex max-w-[44ch] items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
+              <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+              Demo only: each case uses one photo with a filter, to show how the comparison works.
+            </p>
+          )}
         </Reveal>
         <Reveal step={1}>
-          <ResultsShowcase cases={resultCases} />
+          <ResultsShowcase cases={real ? live : resultCases} />
         </Reveal>
       </Container>
     </section>
@@ -49,6 +56,7 @@ export function SmileResults() {
 }
 
 export function GalleryPreview() {
+  const live = useLiveGallery().data ?? [];
   return (
     <section aria-labelledby="gallery-title" className="border-y border-line bg-surface">
       <Container className="flex flex-col gap-8 py-16 md:py-24">
@@ -77,7 +85,7 @@ export function GalleryPreview() {
             />
           </Link>
         </Reveal>
-        <PhotoGallery items={galleryPhotos.slice(0, 6)} />
+        <PhotoGallery items={(live.length ? live : galleryPhotos).slice(0, 6)} />
       </Container>
     </section>
   );

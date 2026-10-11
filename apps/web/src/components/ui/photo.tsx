@@ -24,7 +24,7 @@ export function Photo({
 }) {
   return (
     <picture className={className}>
-      <source type="image/avif" srcSet={photo.avif} sizes={sizes} />
+      {photo.avif ? <source type="image/avif" srcSet={photo.avif} sizes={sizes} /> : null}
       <source type="image/webp" srcSet={photo.webp} sizes={sizes} />
       <img
         src={photo.fallback}

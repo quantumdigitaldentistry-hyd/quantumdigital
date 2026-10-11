@@ -58,6 +58,15 @@ export function SiteHeader() {
         <div className="ml-2 hidden lg:block">
           <ThemeSwitcher />
         </div>
+        {/* Team entry: looks like a decorative dot on purpose. Security is the sign-in and
+            the database rules, not this; it just keeps the public menu uncluttered. */}
+        <Link
+          to="/staff/login"
+          aria-label="Team sign in"
+          className="ml-1 hidden size-6 place-items-center rounded-full lg:grid"
+        >
+          <span className="size-1.5 rounded-full bg-line-strong/70 transition-colors hover:bg-brand" />
+        </Link>
 
         <IconButton
           label="Open menu"
@@ -122,7 +131,17 @@ export function SiteHeader() {
           <PhoneLink className="text-brand" />
           <ContactOptions />
           <SocialLinks className="-ml-2.5 text-brand" />
-          <ThemeSwitcher className="self-start" />
+          <div className="flex items-center justify-between">
+            <ThemeSwitcher />
+            <Link
+              to="/staff/login"
+              aria-label="Team sign in"
+              onClick={() => setMenuOpen(false)}
+              className="grid size-8 place-items-center rounded-full"
+            >
+              <span className="size-1.5 rounded-full bg-line-strong/70" />
+            </Link>
+          </div>
         </div>
       </Dialog>
     </header>

@@ -6,7 +6,7 @@ import 'lenis/dist/lenis.css';
 import './styles.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StrictMode } from 'react';
+import { StrictMode, type ComponentType } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, redirect } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
@@ -15,8 +15,38 @@ import { PageLoader } from '@/components/ui/page-loader';
 import { RootLayout } from '@/routes/root-layout';
 import { RouteError } from '@/routes/route-error';
 
-// Every page is its own chunk: visitors download only the route they open.
+const staffPage = (load: () => Promise<{ default: ComponentType }>) => async () => ({
+  Component: (await load()).default,
+});
+
+// Every page is its own chunk: visitors download only the route they open. The staff
+// area is separate (own layout, own chunks), so visitors never download any of it.
 const router = createBrowserRouter([
+  {
+    path: 'staff/login',
+    lazy: staffPage(() => import('@/staff/login')),
+    HydrateFallback: () => <PageLoader />,
+  },
+  {
+    path: 'staff/set-password',
+    lazy: staffPage(() => import('@/staff/set-password')),
+    HydrateFallback: () => <PageLoader />,
+  },
+  {
+    path: 'staff',
+    lazy: staffPage(() => import('@/staff/layout')),
+    HydrateFallback: () => <PageLoader />,
+    ErrorBoundary: RouteError,
+    children: [
+      { index: true, lazy: staffPage(() => import('@/staff/appointments')) },
+      { path: 'festival', lazy: staffPage(() => import('@/staff/festival')) },
+      { path: 'articles', lazy: staffPage(() => import('@/staff/articles')) },
+      { path: 'results', lazy: staffPage(() => import('@/staff/results')) },
+      { path: 'gallery', lazy: staffPage(() => import('@/staff/gallery')) },
+      { path: 'team', lazy: staffPage(() => import('@/staff/team')) },
+      { path: 'account', lazy: staffPage(() => import('@/staff/account')) },
+    ],
+  },
   {
     Component: RootLayout,
     ErrorBoundary: RouteError,
@@ -53,6 +83,10 @@ const router = createBrowserRouter([
       {
         path: 'patient-safety',
         lazy: async () => ({ Component: (await import('@/routes/patient-safety')).default }),
+      },
+      {
+        path: 'dental-knowledge/:slug',
+        lazy: async () => ({ Component: (await import('@/routes/article')).default }),
       },
       {
         path: 'dental-knowledge',

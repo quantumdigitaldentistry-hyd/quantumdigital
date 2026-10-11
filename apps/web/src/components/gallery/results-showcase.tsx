@@ -60,10 +60,10 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
     <div className={cx('flex flex-col gap-4', className)}>
       <div key={current.id} className="relative animate-[lightbox-in_420ms_var(--ease-out)_both]">
         <BeforeAfter
-          before={current.photo}
+          before={current.before ?? current.photo}
           after={current.photo}
-          beforeClassName={current.beforeFilter}
-          label={`Compare before and after: ${current.title} (demo)`}
+          beforeClassName={current.before ? undefined : current.beforeFilter}
+          label={`Compare before and after: ${current.title}${current.demo === false ? '' : ' (demo)'}`}
         />
         <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-2">
           <p className="rounded-2xl bg-scrim/70 px-3 py-2 text-on-scrim backdrop-blur-sm">
@@ -72,9 +72,11 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
             </span>
             <span className="font-display font-semibold">{current.title}</span>
           </p>
-          <span className="rounded-full bg-highlight px-2.5 py-1 text-label font-semibold text-on-highlight">
-            Demo
-          </span>
+          {current.demo === false ? null : (
+            <span className="rounded-full bg-highlight px-2.5 py-1 text-label font-semibold text-on-highlight">
+              Demo
+            </span>
+          )}
         </div>
       </div>
 

@@ -18,6 +18,7 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { leadDoctor, resultCases, treatments } from '@/content/clinic';
 import { treatmentDetails } from '@/content/treatment-details';
+import { useLiveResults } from '@/lib/live-content';
 import { useQuickActions } from '@/lib/quick-actions';
 import { usePointerParallax } from '@/lib/use-pointer-fx';
 import { vtNames } from '@/lib/transition-names';
@@ -34,7 +35,10 @@ export default function TreatmentPage() {
   const { slug } = useParams();
   const show = useQuickActions((s) => s.show);
   const treatment = treatments.find((item) => item.slug === slug)!;
-  const cases = resultCases.filter((item) => item.treatment === treatment.slug);
+  const live = useLiveResults(treatment.slug).data ?? [];
+  const cases = live.length
+    ? live
+    : resultCases.filter((item) => item.treatment === treatment.slug);
   const others = treatments.filter((item) => item.slug !== treatment.slug);
   const doctor = leadDoctor(treatment);
   const details = treatmentDetails[treatment.slug];
@@ -205,10 +209,14 @@ export default function TreatmentPage() {
               >
                 {treatment.name} results.
               </h2>
-              <p className="flex items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
-                <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
-                Demo cases until the clinic adds real ones, shared with patient consent.
-              </p>
+              {live.length ? (
+                <p className="text-ink-muted">Real cases, shared with each patient’s consent.</p>
+              ) : (
+                <p className="flex items-start gap-2 rounded-control bg-highlight-soft p-3 text-small text-on-highlight-soft">
+                  <InfoIcon size={18} weight="fill" className="mt-0.5 shrink-0" aria-hidden />
+                  Demo cases until the clinic adds real ones, shared with patient consent.
+                </p>
+              )}
             </Reveal>
             <Reveal step={1}>
               <ResultsShowcase cases={cases} />

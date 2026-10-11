@@ -382,6 +382,10 @@ export type ResultCase = {
   photo: Photo;
   /** Tailwind arbitrary filter that stands in for "before" in the demo. */
   beforeFilter: string;
+  /** Real cases: the separate "before" photo. Demos reuse `photo` with a filter. */
+  before?: Photo;
+  /** False for real, consented cases from the staff area. Demo when absent. */
+  demo?: boolean;
 };
 
 /**
