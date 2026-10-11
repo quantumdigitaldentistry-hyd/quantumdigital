@@ -1,11 +1,9 @@
 // One-time: create the clinic's super admin account in a Supabase project.
 // The database trigger gives quantumdigitaldentistry@gmail.com the super_admin role.
 //
-// Run from your own computer (never in CI, never commit the values):
-//   SUPABASE_URL=https://<project>.supabase.co \
-//   SUPABASE_SERVICE_ROLE_KEY=<service role key from Dashboard > Settings > API> \
-//   SUPER_ADMIN_PASSWORD='<a strong password>' \
-//   node scripts/create-super-admin.mjs
+// Run from your own computer (never in CI): copy .env.example to .env in the repo root
+// (git-ignored), fill in the three values, then run
+//   pnpm admin:create
 //
 // The service role key bypasses all security rules: keep it out of the website, git,
 // chat and email. The password is only sent to Supabase Auth.
@@ -16,7 +14,9 @@ const password = process.env.SUPER_ADMIN_PASSWORD;
 const email = 'quantumdigitaldentistry@gmail.com';
 
 if (!url || !key || !password) {
-  console.error('Set SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and SUPER_ADMIN_PASSWORD.');
+  console.error(
+    'Set SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and SUPER_ADMIN_PASSWORD in .env (see .env.example).',
+  );
   process.exit(1);
 }
 if (

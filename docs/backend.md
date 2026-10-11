@@ -52,9 +52,10 @@ VITE_SUPABASE_ANON_KEY=<ANON_KEY from status>
 Create the local super admin and serve the functions:
 
 ```bash
-SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_SERVICE_ROLE_KEY=<SERVICE_ROLE_KEY> \
-SUPER_ADMIN_PASSWORD='<password>' node scripts/create-super-admin.mjs
+cp .env.example .env    # local URL, SERVICE_ROLE_KEY from status, a password
+pnpm admin:create
 
+cp supabase/functions/.env.example supabase/functions/.env   # fill in (see below)
 npx supabase functions serve --env-file supabase/functions/.env
 ```
 
@@ -74,19 +75,28 @@ npx supabase functions serve --env-file supabase/functions/.env
    - URL configuration: Site URL `https://<your domain>`, redirect URLs `https://<your domain>/staff/**`.
    - Sign-ups: turn **off** "Allow new users to sign up".
    - SMTP: set a custom SMTP sender (the same Gmail account works: `smtp.gmail.com`, port 465, the app password below), so invite and reset emails are delivered reliably.
-3. **Secrets for the functions**:
+3. **Secrets for the functions**: copy `supabase/functions/.env.example` to `supabase/functions/.env.production` (git-ignored), fill it in for the live domain, then upload it:
    ```bash
-   npx supabase secrets set \
-     ALLOWED_ORIGINS=https://<your domain> \
-     SITE_URL=https://<your domain> \
-     RATE_LIMIT_SALT=<long random string> \
-     CLINIC_EMAIL=quantumdigitaldentistry@gmail.com \
-     SMTP_USER=quantumdigitaldentistry@gmail.com \
-     SMTP_PASS=<Google app password>
+   npx supabase secrets set --env-file supabase/functions/.env.production
+   npx supabase secrets list      # shows names only, never values
    ```
+   A file keeps the values out of your terminal history. They can also be edited in Dashboard › Edge Functions › Secrets.
    The **Google app password** comes from the clinic Google account › Security › 2-Step Verification › App passwords (2-Step Verification must be on). It is not the account password, and it can be revoked at any time.
-4. **Create the super admin** with `scripts/create-super-admin.mjs` (see the comments in it), using the project's URL and service role key.
+4. **Create the super admin**: put the project's URL, service role key and a new password in the root `.env` (from `.env.example`), run `pnpm admin:create`, then remove the key and password from `.env`.
 5. **Website env** (Vercel › Project › Environment Variables): `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from Dashboard › Settings › API. **Never** the service role key.
+
+## Secrets and where they live
+
+No secret is committed. Real values live only in git-ignored `.env` files on your computer and in the hosting providers' secret stores. Each template (`.env.example`) lists the names. `pnpm check:secrets` (also run in CI) fails if a `.env` file, key file or secret-looking value is ever tracked by git.
+
+| Value                                                                         | Local file (git-ignored)                            | Production                                                                | Secret?                                                              |
+| ----------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`                                 | `apps/web/.env.local`                               | Vercel › Settings › Environment Variables                                 | No, public by design (built into the website; RLS protects the data) |
+| `ALLOWED_ORIGINS`, `SITE_URL`, `CLINIC_EMAIL`, `SMTP_USER`                    | `supabase/functions/.env`                           | Supabase › Edge Functions › Secrets                                       | No (config)                                                          |
+| `RATE_LIMIT_SALT`, `SMTP_PASS`, `MSG91_AUTH_KEY`, `MSG91_CONFIRM_TEMPLATE_ID` | `supabase/functions/.env`                           | Supabase › Edge Functions › Secrets                                       | **Yes**                                                              |
+| `SUPABASE_SERVICE_ROLE_KEY`, `SUPER_ADMIN_PASSWORD`                           | root `.env`, only while running `pnpm admin:create` | Nowhere. Supabase gives the functions their own service key automatically | **Yes, highest risk**                                                |
+
+If a secret is ever pushed or shared, treat it as leaked: rotate it (new app password, new MSG91 key, or Dashboard › Settings › API › roll the service key). Deleting the commit isn't enough.
 
 ## Festival packages
 

@@ -10,6 +10,8 @@
 *.keystore
 *.p8
 *.p12
+*service-account*.json
+*serviceAccount*.json
 *.mobileprovision
 *.cer
 credentials.json
