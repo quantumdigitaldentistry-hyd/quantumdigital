@@ -39,6 +39,7 @@ const router = createBrowserRouter([
     ErrorBoundary: RouteError,
     children: [
       { index: true, lazy: staffPage(() => import('@/staff/appointments')) },
+      { path: 'patients', lazy: staffPage(() => import('@/staff/patients')) },
       { path: 'festival', lazy: staffPage(() => import('@/staff/festival')) },
       { path: 'articles', lazy: staffPage(() => import('@/staff/articles')) },
       { path: 'results', lazy: staffPage(() => import('@/staff/results')) },

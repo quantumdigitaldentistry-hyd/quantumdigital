@@ -297,7 +297,7 @@ create policy "team updates site settings" on public.site_settings
 
 insert into public.site_settings (key, value) values
   ('festival', '{"theme": null}'::jsonb),
-  ('clinic_hours', '[null, null, null, null, null, null, null]'::jsonb);
+  ('clinic_hours', '[null, {"open":"09:30","close":"21:00"}, {"open":"09:30","close":"21:00"}, {"open":"09:30","close":"21:00"}, {"open":"09:30","close":"21:00"}, {"open":"09:30","close":"21:00"}, {"open":"09:30","close":"21:00"}]'::jsonb);
 
 -- ---------------------------------------------------------------------------------------
 -- Content: dental knowledge articles, before/after cases, gallery

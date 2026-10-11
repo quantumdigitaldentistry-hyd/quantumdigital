@@ -1,6 +1,5 @@
 import { FestivalBanner } from '@/components/brand/festival-banner';
 import { ClinicLocation } from '@/components/contact/clinic-location';
-import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { LandingHero } from '@/components/landing/landing-hero';
 import { GalleryPreview, SmileResults } from '@/components/landing/results-and-gallery';
@@ -34,7 +33,6 @@ export default function HomePage() {
       >
         <DoctorList />
       </Section>
-      <ClosingCta />
       <ClinicLocation />
     </>
   );

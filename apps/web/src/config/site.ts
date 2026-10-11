@@ -49,10 +49,20 @@ export const clinic = {
 export type DayHours = { open: string; close: string } | 'closed' | null;
 
 /**
- * TODO(clinic): fill in the regular weekly hours (24-hour "HH:MM"). Google Maps only showed
- * a holiday Sunday (3–8 pm) when this was set up. Staff can also edit them in the dashboard.
+ * Regular weekly hours from the clinic's Google Maps listing (24-hour "HH:MM"), Sunday first.
+ * Sunday isn't listed apart from a festival day (Bathukamma, 3–8 pm), so it shows "call to
+ * confirm". Staff can change these in the dashboard (Festival & hours).
  */
-export const defaultHours: DayHours[] = [null, null, null, null, null, null, null];
+const weekday = { open: '09:30', close: '21:00' };
+export const defaultHours: DayHours[] = [
+  null,
+  weekday,
+  weekday,
+  weekday,
+  weekday,
+  weekday,
+  weekday,
+];
 
 /** `tel:` link for the clinic, or null while the number isn't configured. */
 export const clinicTelHref = clinic.phone.tel ? `tel:${clinic.phone.tel}` : null;

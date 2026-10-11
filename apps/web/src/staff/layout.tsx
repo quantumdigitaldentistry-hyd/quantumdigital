@@ -1,4 +1,5 @@
 import {
+  AddressBookIcon,
   ArrowSquareOutIcon,
   BookOpenTextIcon,
   CalendarDotsIcon,
@@ -25,6 +26,7 @@ import { Notice } from './ui';
 
 const nav: { to: string; label: string; Icon: typeof CalendarDotsIcon; managers?: boolean }[] = [
   { to: '/staff', label: 'Appointments', Icon: CalendarDotsIcon },
+  { to: '/staff/patients', label: 'Patients', Icon: AddressBookIcon },
   { to: '/staff/festival', label: 'Festival & hours', Icon: SparkleIcon },
   { to: '/staff/articles', label: 'Dental knowledge', Icon: BookOpenTextIcon },
   { to: '/staff/results', label: 'Before & after', Icon: SplitHorizontalIcon },
