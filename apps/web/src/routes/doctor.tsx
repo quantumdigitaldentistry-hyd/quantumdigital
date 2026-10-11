@@ -94,7 +94,7 @@ export default function DoctorPage() {
             </p>
             <h2
               id="specialty-title"
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               What is {doctor.specialty.toLowerCase()}?
             </h2>

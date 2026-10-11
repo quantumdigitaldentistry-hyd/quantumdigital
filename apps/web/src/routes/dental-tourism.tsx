@@ -141,7 +141,7 @@ export default function DentalTourismPage() {
             </p>
             <h2
               id="intro-title"
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               Specialist care, without the guesswork.
             </h2>
@@ -174,7 +174,7 @@ export default function DentalTourismPage() {
             </p>
             <h2
               id="steps-title"
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               Five steps, from home to home.
             </h2>

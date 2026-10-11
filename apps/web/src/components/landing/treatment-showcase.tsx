@@ -2,6 +2,7 @@ import { ArrowUpRightIcon } from '@phosphor-icons/react';
 import { useRef, type CSSProperties } from 'react';
 import { Link } from 'react-router';
 
+import { DepthBackdrop } from '@/components/fx/depth-field';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { treatments } from '@/content/clinic';
@@ -38,7 +39,12 @@ export function TreatmentShowcase() {
   });
 
   return (
-    <section ref={section} aria-labelledby="treatments-title" className="bg-canvas">
+    <section
+      ref={section}
+      aria-labelledby="treatments-title"
+      className="relative isolate bg-canvas"
+    >
+      <DepthBackdrop density={0.6} />
       <Container className="grid gap-10 py-16 md:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
           <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
@@ -46,7 +52,7 @@ export function TreatmentShowcase() {
           </p>
           <h2
             id="treatments-title"
-            className="font-display text-title font-bold text-balance md:text-display"
+            className="heading-3d font-display text-title font-bold text-balance md:text-display"
           >
             Your complete smile destination.
           </h2>

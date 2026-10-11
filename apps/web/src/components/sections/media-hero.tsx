@@ -1,9 +1,11 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 
 import { BackButton } from '@/components/back-button';
+import { DepthField } from '@/components/fx/depth-field';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import type { Photo as PhotoData } from '@/content/photos';
+import { usePointerParallax } from '@/lib/use-pointer-fx';
 
 /**
  * Split hero for inner pages: text on the left, a large photo on the right with an
@@ -29,8 +31,14 @@ export function MediaHero({
   /** Actions under the description. */
   children?: ReactNode;
 }) {
+  const hero = useRef<HTMLElement>(null);
+  usePointerParallax(hero);
   return (
-    <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
+    <section
+      ref={hero}
+      className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero"
+    >
+      <DepthField className="-z-10" density={0.9} />
       <Container className="grid items-center gap-10 py-8 md:grid-cols-[1.05fr_1fr] md:py-16">
         <div className="flex flex-col gap-5">
           {back ? <BackButton fallback={back} /> : null}
@@ -46,7 +54,7 @@ export function MediaHero({
           {children ? <div className="flex flex-wrap gap-3">{children}</div> : null}
         </div>
         <div className="relative mx-auto w-full max-w-md pb-8 md:max-w-none">
-          <div className="aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25 md:aspect-4/3">
+          <div className="depth-1 aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25 md:aspect-4/3">
             <Photo
               photo={photo}
               sizes="(min-width: 768px) 45vw, 90vw"
@@ -55,7 +63,7 @@ export function MediaHero({
             />
           </div>
           {inset ? (
-            <div className="float-y absolute -bottom-2 -left-4 aspect-4/3 w-[46%] overflow-hidden rounded-3xl border-4 border-surface shadow-xl shadow-elevation/25 md:-left-10">
+            <div className="depth-3 float-y absolute -bottom-2 -left-4 aspect-4/3 w-[46%] overflow-hidden rounded-3xl border-4 border-surface shadow-xl shadow-elevation/25 md:-left-10">
               <Photo
                 photo={inset}
                 sizes="(min-width: 768px) 20vw, 45vw"

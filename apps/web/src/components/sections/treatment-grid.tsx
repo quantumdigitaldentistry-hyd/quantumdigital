@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from '@phosphor-icons/react';
 import { Link } from 'react-router';
 
+import { Tilt } from '@/components/fx/tilt';
 import { Reveal } from '@/components/reveal';
 import { Photo } from '@/components/ui/photo';
 import { treatments, type Treatment } from '@/content/clinic';
@@ -69,7 +70,9 @@ export function TreatmentGrid({ items = treatments }: { items?: Treatment[] }) {
           className="w-full sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]"
         >
           <Reveal step={index % 3} className="h-full" variant="tilt">
-            <TreatmentCard treatment={treatment} />
+            <Tilt className="h-full rounded-container">
+              <TreatmentCard treatment={treatment} />
+            </Tilt>
           </Reveal>
         </li>
       ))}

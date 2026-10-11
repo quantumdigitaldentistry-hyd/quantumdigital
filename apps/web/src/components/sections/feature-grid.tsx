@@ -1,5 +1,6 @@
 import type { Icon } from '@phosphor-icons/react';
 
+import { Tilt } from '@/components/fx/tilt';
 import { Reveal } from '@/components/reveal';
 import { Photo } from '@/components/ui/photo';
 import type { Photo as PhotoData } from '@/content/photos';
@@ -40,30 +41,32 @@ export function FeatureGrid({
       {features.map(({ title, body, photo, Icon, kicker }, index) => (
         <li key={title} className={cx('w-full', widths[columns])}>
           <Reveal step={index % columns} className="h-full" variant="tilt">
-            <article className="group flex h-full flex-col overflow-hidden rounded-container border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua">
-              {photo ? (
-                <div className="aspect-4/3 overflow-hidden">
-                  <Photo
-                    photo={photo}
-                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
-                    className="block size-full"
-                    imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
+            <Tilt className="h-full rounded-container">
+              <article className="group flex h-full flex-col overflow-hidden rounded-container border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua">
+                {photo ? (
+                  <div className="aspect-4/3 overflow-hidden">
+                    <Photo
+                      photo={photo}
+                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+                      className="block size-full"
+                      imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-1 flex-col gap-2 p-5 md:p-6">
+                  {Icon && !photo ? (
+                    <span className="mb-1 grid size-12 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 group-hover:-rotate-6">
+                      <Icon size={24} weight="duotone" aria-hidden />
+                    </span>
+                  ) : null}
+                  {kicker ? (
+                    <span className="font-mono text-caption font-medium text-brand">{kicker}</span>
+                  ) : null}
+                  <h3 className="font-display text-heading font-semibold">{title}</h3>
+                  <p className="text-small text-ink-muted">{body}</p>
                 </div>
-              ) : null}
-              <div className="flex flex-1 flex-col gap-2 p-5 md:p-6">
-                {Icon && !photo ? (
-                  <span className="mb-1 grid size-12 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 group-hover:-rotate-6">
-                    <Icon size={24} weight="duotone" aria-hidden />
-                  </span>
-                ) : null}
-                {kicker ? (
-                  <span className="font-mono text-caption font-medium text-brand">{kicker}</span>
-                ) : null}
-                <h3 className="font-display text-heading font-semibold">{title}</h3>
-                <p className="text-small text-ink-muted">{body}</p>
-              </div>
-            </article>
+              </article>
+            </Tilt>
           </Reveal>
         </li>
       ))}

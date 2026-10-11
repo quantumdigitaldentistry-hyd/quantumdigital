@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { ResultsShowcase } from '@/components/gallery/results-showcase';
 import { PhotoGallery } from '@/components/gallery/photo-gallery';
 import { Reveal } from '@/components/reveal';
+import { DepthField } from '@/components/fx/depth-field';
 import { Container } from '@/components/ui/container';
 import { resultCases } from '@/content/clinic';
 import { galleryPhotos } from '@/content/photos';
@@ -17,7 +18,8 @@ import { galleryPhotos } from '@/content/photos';
  */
 export function SmileResults() {
   return (
-    <section aria-labelledby="results-title" className="bg-canvas">
+    <section aria-labelledby="results-title" className="relative isolate overflow-hidden bg-canvas">
+      <DepthField className="-z-10" density={0.6} />
       <Container className="grid gap-10 py-16 *:min-w-0 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 md:py-24">
         <Reveal className="flex flex-col gap-4">
           <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
@@ -25,7 +27,7 @@ export function SmileResults() {
           </p>
           <h2
             id="results-title"
-            className="font-display text-title font-bold text-balance md:text-display"
+            className="heading-3d font-display text-title font-bold text-balance md:text-display"
           >
             See the difference.
           </h2>
@@ -57,7 +59,7 @@ export function GalleryPreview() {
             </p>
             <h2
               id="gallery-title"
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               Inside modern dentistry.
             </h2>

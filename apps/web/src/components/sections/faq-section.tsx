@@ -40,7 +40,7 @@ export function FaqSection({
           </p>
           <h2
             id={headingId}
-            className="font-display text-title font-bold text-balance md:text-display"
+            className="heading-3d font-display text-title font-bold text-balance md:text-display"
           >
             {title}
           </h2>

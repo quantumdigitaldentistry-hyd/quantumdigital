@@ -8,6 +8,7 @@ import {
 import { useId } from 'react';
 import { Link } from 'react-router';
 
+import { Tilt } from '@/components/fx/tilt';
 import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
@@ -73,11 +74,13 @@ export function LaserSpotlight({
       />
       <Container className="grid items-center gap-12 py-16 *:min-w-0 md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:py-24">
         <Reveal className="mx-auto flex w-full max-w-md flex-col gap-3">
-          <Photo
-            photo={laserPhotos.unit}
-            sizes="(min-width: 768px) 28rem, 90vw"
-            className="block aspect-4/5 overflow-hidden rounded-4xl ring-1 ring-on-scrim/10"
-          />
+          <Tilt className="rounded-4xl" max={8}>
+            <Photo
+              photo={laserPhotos.unit}
+              sizes="(min-width: 768px) 28rem, 90vw"
+              className="block aspect-4/5 overflow-hidden rounded-4xl ring-1 ring-on-scrim/10"
+            />
+          </Tilt>
           <div className="grid grid-cols-2 gap-3">
             {[laserPhotos.screen, laserPhotos.pedal].map((detail) => (
               <Photo
@@ -97,7 +100,7 @@ export function LaserSpotlight({
             </p>
             <h2
               id={headingId}
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               NovoLase Gold, our dual-wavelength laser.
             </h2>

@@ -77,7 +77,7 @@ export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
             </p>
             <h2
               id={headingId}
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               Find the clinic.
             </h2>

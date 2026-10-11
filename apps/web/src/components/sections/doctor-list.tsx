@@ -1,6 +1,7 @@
 import { ArrowUpRightIcon } from '@phosphor-icons/react';
 import { Link } from 'react-router';
 
+import { Tilt } from '@/components/fx/tilt';
 import { Reveal } from '@/components/reveal';
 import { Photo } from '@/components/ui/photo';
 import { doctors, specialtyIllustration, type Doctor } from '@/content/clinic';
@@ -102,7 +103,9 @@ export function DoctorList() {
       {doctors.map((doctor, index) => (
         <li key={doctor.slug}>
           <Reveal step={index} className="h-full">
-            <DoctorCard doctor={doctor} />
+            <Tilt className="h-full rounded-4xl" max={5}>
+              <DoctorCard doctor={doctor} />
+            </Tilt>
           </Reveal>
         </li>
       ))}

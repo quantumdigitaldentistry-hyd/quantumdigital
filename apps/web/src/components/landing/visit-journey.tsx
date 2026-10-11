@@ -39,7 +39,7 @@ export function VisitJourney() {
             </p>
             <h2
               id="journey-title"
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               From first visit to final smile.
             </h2>

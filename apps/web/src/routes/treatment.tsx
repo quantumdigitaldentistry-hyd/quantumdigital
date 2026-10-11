@@ -1,8 +1,9 @@
 import { ArrowUpRightIcon, CalendarPlusIcon, CheckIcon, InfoIcon } from '@phosphor-icons/react';
-import type { CSSProperties } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import { Link, useParams, type LoaderFunctionArgs } from 'react-router';
 
 import { BackButton } from '@/components/back-button';
+import { DepthField } from '@/components/fx/depth-field';
 import { ResultsShowcase } from '@/components/gallery/results-showcase';
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
@@ -18,6 +19,7 @@ import { Photo } from '@/components/ui/photo';
 import { leadDoctor, resultCases, treatments } from '@/content/clinic';
 import { treatmentDetails } from '@/content/treatment-details';
 import { useQuickActions } from '@/lib/quick-actions';
+import { usePointerParallax } from '@/lib/use-pointer-fx';
 import { vtNames } from '@/lib/transition-names';
 
 /** Unknown treatment slugs become the site's 404 page. */
@@ -37,6 +39,8 @@ export default function TreatmentPage() {
   const doctor = leadDoctor(treatment);
   const details = treatmentDetails[treatment.slug];
   const label = treatment.shortName ?? treatment.name;
+  const hero = useRef<HTMLElement>(null);
+  usePointerParallax(hero);
 
   return (
     <>
@@ -44,7 +48,11 @@ export default function TreatmentPage() {
         aria-hidden
         className="read-progress pointer-events-none fixed inset-x-0 top-0 z-50 h-1 bg-brand"
       />
-      <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
+      <section
+        ref={hero}
+        className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero"
+      >
+        <DepthField className="-z-10" density={0.9} />
         <Container className="grid items-center gap-10 py-8 md:grid-cols-[1.05fr_1fr] md:py-16">
           <div className="hero-exit flex flex-col gap-5">
             <BackButton fallback="/treatments" />
@@ -91,7 +99,7 @@ export default function TreatmentPage() {
           <div className="hero-exit relative mx-auto w-full max-w-md">
             <div
               style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
-              className="aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
+              className="depth-1 aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
             >
               <Photo
                 photo={treatment.photo}
@@ -103,7 +111,7 @@ export default function TreatmentPage() {
             </div>
             {/* The treatment's illustration floats over the photo's corner. */}
             <div
-              className="float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40"
+              className="depth-3 float-y absolute -bottom-6 -left-4 grid size-32 place-items-center rounded-full bg-surface shadow-xl shadow-elevation/20 md:-left-10 md:size-40"
               style={{ viewTransitionName: vtNames.treatmentIllustration(treatment.slug) }}
             >
               <Photo
@@ -125,7 +133,7 @@ export default function TreatmentPage() {
             </p>
             <h2
               id="about-title"
-              className="font-display text-title font-bold text-balance md:text-display"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
               What to expect.
             </h2>
@@ -193,7 +201,7 @@ export default function TreatmentPage() {
               </p>
               <h2
                 id="cases-title"
-                className="font-display text-title font-bold text-balance md:text-display"
+                className="heading-3d font-display text-title font-bold text-balance md:text-display"
               >
                 {treatment.name} results.
               </h2>
@@ -219,7 +227,7 @@ export default function TreatmentPage() {
 
       <section aria-labelledby="others-title" className="border-t border-line bg-surface">
         <Container className="flex flex-col gap-6 py-14 md:py-20">
-          <h2 id="others-title" className="font-display text-title font-bold">
+          <h2 id="others-title" className="heading-3d font-display text-title font-bold">
             Other treatments
           </h2>
           <ul className="grid gap-4 sm:grid-cols-3">

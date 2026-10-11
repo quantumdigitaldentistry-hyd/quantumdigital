@@ -40,7 +40,7 @@ export function Section({
           <h2
             id={headingId}
             className={cx(
-              'font-display text-title text-balance',
+              'heading-3d font-display text-title text-balance',
               eyebrow ? 'font-bold md:text-display' : 'font-semibold',
             )}
           >

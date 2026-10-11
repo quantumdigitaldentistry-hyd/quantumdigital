@@ -1,6 +1,7 @@
 import { ArrowLeftIcon, ArrowRightIcon, ArrowsOutIcon, XIcon } from '@phosphor-icons/react';
 import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 
+import { Tilt } from '@/components/fx/tilt';
 import { Photo } from '@/components/ui/photo';
 import type { Photo as PhotoData } from '@/content/photos';
 import { cx } from '@/lib/cx';
@@ -20,30 +21,32 @@ export function PhotoGallery({ items, className }: { items: PhotoData[]; classNa
       <ul className={cx('columns-2 gap-3 md:columns-3 md:gap-4', className)}>
         {items.map((item, index) => (
           <li key={item.fallback} className="gallery-item mb-3 break-inside-avoid md:mb-4">
-            <button
-              type="button"
-              onClick={(event) => {
-                const img = event.currentTarget.querySelector('img');
-                setOpen({
-                  index,
-                  origin: img ? { rect: img.getBoundingClientRect(), src: img.currentSrc } : null,
-                });
-              }}
-              aria-label={`View larger: ${item.alt}`}
-              className="group relative block w-full overflow-hidden rounded-container"
-            >
-              <Photo
-                photo={item}
-                sizes="(min-width: 768px) 33vw, 50vw"
-                className="block"
-                imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <span className="absolute inset-0 grid place-items-center bg-scrim/0 transition-colors duration-300 group-hover:bg-scrim/30 group-focus-visible:bg-scrim/30">
-                <span className="grid size-11 scale-75 place-items-center rounded-full bg-surface text-ink opacity-0 transition-[opacity,scale] duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
-                  <ArrowsOutIcon size={20} aria-hidden />
+            <Tilt className="rounded-container" max={6}>
+              <button
+                type="button"
+                onClick={(event) => {
+                  const img = event.currentTarget.querySelector('img');
+                  setOpen({
+                    index,
+                    origin: img ? { rect: img.getBoundingClientRect(), src: img.currentSrc } : null,
+                  });
+                }}
+                aria-label={`View larger: ${item.alt}`}
+                className="group relative block w-full overflow-hidden rounded-container"
+              >
+                <Photo
+                  photo={item}
+                  sizes="(min-width: 768px) 33vw, 50vw"
+                  className="block"
+                  imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <span className="absolute inset-0 grid place-items-center bg-scrim/0 transition-colors duration-300 group-hover:bg-scrim/30 group-focus-visible:bg-scrim/30">
+                  <span className="grid size-11 scale-75 place-items-center rounded-full bg-surface text-ink opacity-0 transition-[opacity,scale] duration-300 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100">
+                    <ArrowsOutIcon size={20} aria-hidden />
+                  </span>
                 </span>
-              </span>
-            </button>
+              </button>
+            </Tilt>
           </li>
         ))}
       </ul>
