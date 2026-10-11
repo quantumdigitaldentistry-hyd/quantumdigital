@@ -36,7 +36,7 @@ packages/
   config/                 Shared tsconfig base
 supabase/
   migrations/             Database schema, RLS policies, functions (applied in order)
-  functions/              Edge Functions: book-appointment, team-invite, send-message
+  functions/              Edge Functions: book-appointment, team-invite, send-message, password-reset
   config.toml             Local Supabase settings (localhost only)
 scripts/                  create-super-admin.mjs, check-secrets.mjs
 docs/                     Backend guide, design system, brand kit, README screenshots

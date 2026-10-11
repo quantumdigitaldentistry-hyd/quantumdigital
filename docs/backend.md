@@ -67,9 +67,10 @@ npx supabase functions serve --env-file supabase/functions/.env
    ```bash
    npx supabase link --project-ref <ref>
    npx supabase db push
-   npx supabase functions deploy book-appointment --no-verify-jwt
-   npx supabase functions deploy team-invite
-   npx supabase functions deploy send-message
+   npx supabase functions deploy book-appointment --no-verify-jwt --use-api
+   npx supabase functions deploy team-invite --use-api
+   npx supabase functions deploy send-message --use-api
+   npx supabase functions deploy password-reset --no-verify-jwt --use-api
    ```
 2. **Auth settings** (Dashboard › Authentication):
    - URL configuration: Site URL `https://<your domain>`, redirect URLs `https://<your domain>/staff/**`.

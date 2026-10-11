@@ -1,5 +1,7 @@
+import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
 import {
   useId,
+  useState,
   type InputHTMLAttributes,
   type ReactNode,
   type SelectHTMLAttributes,
@@ -65,8 +67,10 @@ export type FieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'pre
     prefix?: ReactNode;
   };
 
-/** Labelled text input. */
-export function Field({ label, hint, error, prefix, className, ...rest }: FieldProps) {
+/** Labelled text input. A password input gets a button to show or hide what's typed. */
+export function Field({ label, hint, error, prefix, className, type, ...rest }: FieldProps) {
+  const [revealed, setRevealed] = useState(false);
+  const isPassword = type === 'password';
   return (
     <FieldShell label={label} hint={hint} error={error} className={className}>
       {({ id, describedBy, invalid }) => (
@@ -79,8 +83,24 @@ export function Field({ label, hint, error, prefix, className, ...rest }: FieldP
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
             className="h-12 w-full min-w-0 bg-transparent px-3 text-body outline-none placeholder:text-ink-subtle"
+            type={isPassword && revealed ? 'text' : type}
             {...rest}
           />
+          {isPassword ? (
+            <button
+              type="button"
+              onClick={() => setRevealed(!revealed)}
+              aria-label={revealed ? 'Hide password' : 'Show password'}
+              aria-pressed={revealed}
+              className="grid size-12 shrink-0 place-items-center rounded-control text-ink-muted transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-brand"
+            >
+              {revealed ? (
+                <EyeSlashIcon className="size-5" aria-hidden />
+              ) : (
+                <EyeIcon className="size-5" aria-hidden />
+              )}
+            </button>
+          ) : null}
         </div>
       )}
     </FieldShell>

@@ -415,8 +415,8 @@ enabled = true
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
 
-# Clinic Edge Functions. book-appointment is public (validated, rate-limited, honeypot);
-# the others check the caller's team role themselves.
+# Clinic Edge Functions. book-appointment and password-reset are public (validated,
+# rate-limited); the others check the caller's team role themselves.
 [functions.book-appointment]
 verify_jwt = false
 
@@ -425,3 +425,6 @@ verify_jwt = true
 
 [functions.send-message]
 verify_jwt = true
+
+[functions.password-reset]
+verify_jwt = false

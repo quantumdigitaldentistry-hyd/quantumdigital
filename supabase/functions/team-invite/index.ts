@@ -7,6 +7,7 @@
 import { z } from 'npm:zod@4.1.5';
 
 import { adminClient, json, preflight, teamCaller } from '../_shared/http.ts';
+import { temporaryPassword } from '../_shared/password.ts';
 
 const bodySchema = z.object({
   email: z.email().transform((value) => value.trim().toLowerCase()),
@@ -19,20 +20,6 @@ const bodySchema = z.object({
     .or(z.literal('').transform(() => undefined)),
   mode: z.enum(['invite', 'password']).default('invite'),
 });
-
-/** 16 characters with upper, lower, digit and symbol (meets the project's policy). */
-function temporaryPassword() {
-  const sets = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%^&*?'];
-  const all = sets.join('');
-  const pick = (chars: string) =>
-    chars[crypto.getRandomValues(new Uint32Array(1))[0]! % chars.length]!;
-  const chars = [...sets.map(pick), ...Array.from({ length: 12 }, () => pick(all))];
-  for (let i = chars.length - 1; i > 0; i--) {
-    const j = crypto.getRandomValues(new Uint32Array(1))[0]! % (i + 1);
-    [chars[i], chars[j]] = [chars[j]!, chars[i]!];
-  }
-  return chars.join('');
-}
 
 Deno.serve(async (request) => {
   const early = preflight(request);

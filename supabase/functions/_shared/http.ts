@@ -65,3 +65,16 @@ export const escapeHtml = (value: string) =>
     /[&<>"']/g,
     (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!,
   );
+
+/** Salted SHA-256, so rate-limit keys never store an IP or email in the clear. */
+export async function saltedHash(value: string) {
+  const salt = Deno.env.get('RATE_LIMIT_SALT') ?? 'quantum-local-salt';
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(`${salt}:${value}`),
+  );
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+export const clientIp = (request: Request) =>
+  request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';

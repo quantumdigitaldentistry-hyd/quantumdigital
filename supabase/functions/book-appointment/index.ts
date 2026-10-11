@@ -10,13 +10,10 @@
 //   RATE_LIMIT_SALT   any long random string
 //   ALLOWED_ORIGINS   comma-separated site origins
 
-import nodemailer from 'npm:nodemailer@6.9.16';
 import { z } from 'npm:zod@4.1.5';
 
-import { adminClient, escapeHtml, json, preflight } from '../_shared/http.ts';
-
-/** Supabase Edge Runtime: keeps background work (the clinic email) alive after the reply. */
-declare const EdgeRuntime: { waitUntil(promise: Promise<unknown>): void } | undefined;
+import { adminClient, clientIp, escapeHtml, json, preflight, saltedHash } from '../_shared/http.ts';
+import { gmail, inBackground } from '../_shared/mail.ts';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -48,18 +45,10 @@ const requestSchema = z.object({
 const label = (slug?: string) =>
   slug ? slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'Not sure yet';
 
-async function clientHash(request: Request) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const salt = Deno.env.get('RATE_LIMIT_SALT') ?? 'quantum-local-salt';
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${salt}:${ip}`));
-  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
-}
-
 async function emailClinic(details: z.infer<typeof requestSchema>, id: string) {
-  const user = Deno.env.get('SMTP_USER');
-  const pass = Deno.env.get('SMTP_PASS');
+  const mail = gmail();
   const to = Deno.env.get('CLINIC_EMAIL') ?? 'quantumdigitaldentistry@gmail.com';
-  if (!user || !pass) {
+  if (!mail) {
     console.warn('book-appointment: SMTP_USER / SMTP_PASS not set, email skipped for', id);
     return false;
   }
@@ -82,15 +71,8 @@ async function emailClinic(details: z.infer<typeof requestSchema>, id: string) {
 <p style="font-family:sans-serif;color:#555">Open the staff area to confirm a time. Reference: ${id}</p>`;
   const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n') + `\n\nReference: ${id}`;
 
-  // Port 465 (implicit TLS): Supabase Edge Functions block outbound 587.
-  const transport = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: { user, pass },
-  });
-  await transport.sendMail({
-    from: `"Quantum website" <${user}>`,
+  await mail.transport.sendMail({
+    from: `"Quantum website" <${mail.from}>`,
     to,
     subject: `New ${details.kind === 'callback' ? 'call back' : 'appointment'} request: ${details.name}`,
     text,
@@ -116,7 +98,7 @@ Deno.serve(async (request) => {
 
   const admin = adminClient();
   const { data: allowed, error: limitError } = await admin.rpc('allow_booking', {
-    hash: await clientHash(request),
+    hash: await saltedHash(clientIp(request)),
   });
   if (limitError) {
     console.error('rate limit', limitError);
@@ -151,7 +133,6 @@ Deno.serve(async (request) => {
     console.error('email', mailError);
     return false;
   });
-  if (typeof EdgeRuntime !== 'undefined') EdgeRuntime.waitUntil(email);
-  else await email;
+  await inBackground(email);
   return json(request, 200, { ok: true, id: row.id });
 });

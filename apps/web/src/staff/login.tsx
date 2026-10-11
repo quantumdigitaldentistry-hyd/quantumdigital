@@ -1,5 +1,6 @@
+import { ArrowLeftIcon } from '@phosphor-icons/react';
 import { useState, type FormEvent } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router';
 
 import { LogoMark } from '@/components/brand/logo';
 import { Button } from '@/components/ui/button';
@@ -36,11 +37,25 @@ export default function StaffLogin() {
     setBusy(true);
     setError('');
     if (mode === 'reset') {
-      await backend.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/staff/set-password`,
+      // Emails a temporary password; signing in with it leads to "Choose your password".
+      const { error: resetError } = await backend.functions.invoke('password-reset', {
+        body: { email: email.trim() },
       });
       setBusy(false);
-      // Same answer whether or not the email exists.
+      if (resetError) {
+        let message = 'Couldn’t send it. Try again in a minute.';
+        try {
+          const body = await (resetError as { context?: Response }).context?.json();
+          if (body?.error) message = body.error;
+        } catch {
+          // keep the generic message
+        }
+        return setError(message);
+      }
+      // Same answer whether or not the email exists. Back to sign in, email kept, ready
+      // for the temporary password.
+      setPassword('');
+      setMode('sign-in');
       return setSent(true);
     }
     const { error: signInError } = await backend.auth.signInWithPassword({
@@ -60,7 +75,18 @@ export default function StaffLogin() {
   };
 
   return (
-    <div className="grid min-h-dvh place-items-center bg-canvas p-4 text-ink">
+    <div className="relative grid min-h-dvh place-items-center bg-canvas p-4 pt-20 text-ink">
+      <Link
+        to="/"
+        className="group absolute top-4 left-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-surface/70 py-2 pr-4 pl-3 text-small font-semibold text-ink shadow-sm shadow-elevation/10 backdrop-blur-md transition-colors hover:bg-surface"
+      >
+        <ArrowLeftIcon
+          size={18}
+          aria-hidden
+          className="transition-transform duration-300 ease-out group-hover:-translate-x-1"
+        />
+        Back to website
+      </Link>
       <form
         onSubmit={submit}
         className="flex w-full max-w-sm flex-col gap-5 rounded-4xl border border-line bg-surface p-6 shadow-xl shadow-elevation/10 md:p-8"
@@ -91,10 +117,13 @@ export default function StaffLogin() {
         ) : null}
         {error ? <Notice tone="error">{error}</Notice> : null}
         {sent ? (
-          <Notice tone="success">If that email is on the team, a reset link is on its way.</Notice>
+          <Notice tone="success">
+            If that email is on the team, a temporary password is on its way. Sign in with it and
+            you’ll choose a new one.
+          </Notice>
         ) : null}
         <Button type="submit" loading={busy} className="w-full">
-          {mode === 'reset' ? 'Send reset link' : 'Sign in'}
+          {mode === 'reset' ? 'Email me a temporary password' : 'Sign in'}
         </Button>
         <button
           type="button"
