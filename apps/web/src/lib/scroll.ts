@@ -20,3 +20,12 @@ export function scrollToElement(element: HTMLElement, offset = 80) {
 export function setActiveLenis(lenis: Lenis | null) {
   active = lenis;
 }
+
+/** Scrolls the page to `y` (px from the top), through Lenis when it is running. */
+export function scrollToY(y: number) {
+  if (active) {
+    active.scrollTo(y, { duration: 0.8 });
+    return;
+  }
+  window.scrollTo({ top: y, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+}

@@ -381,6 +381,14 @@ html:has(dialog[open]) {
     }
   }
 }
+/* While the page scroll drives the row (TreatmentShowcase), it doesn't scroll itself. */
+.treatment-row.is-pinned {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+.treatment-row.is-pinned .slide-card {
+  animation: none;
+}
 @keyframes slide-card {
   from {
     opacity: 0.35;
