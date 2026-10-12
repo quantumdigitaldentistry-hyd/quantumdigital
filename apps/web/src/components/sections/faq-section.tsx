@@ -4,6 +4,7 @@ import { Reveal } from '@/components/reveal';
 import { Accordion, AccordionItem } from '@/components/ui/accordion';
 import { Container } from '@/components/ui/container';
 import { cx } from '@/lib/cx';
+import { RevealWords } from '@/components/reveal-words';
 
 export type Faq = { question: string; answer: string };
 
@@ -42,7 +43,7 @@ export function FaqSection({
             id={headingId}
             className="heading-3d font-display text-title font-bold text-balance md:text-display"
           >
-            {title}
+            <RevealWords text={title} />
           </h2>
           {intro ? <p className="text-ink-muted">{intro}</p> : null}
           {aside ? <div className="hidden md:block">{aside}</div> : null}

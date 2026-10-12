@@ -429,3 +429,22 @@ export const resultCases: ResultCase[] = [
     beforeFilter: '[filter:saturate(1.6)_hue-rotate(-12deg)_brightness(0.9)]',
   },
 ];
+
+/**
+ * Demo cases for one treatment: its own entries above, or else one made from the
+ * treatment's photo, so every treatment page has a before/after to show (labelled Demo)
+ * until the clinic adds real cases for it.
+ */
+export function demoCasesFor(treatment: Treatment): ResultCase[] {
+  const own = resultCases.filter((item) => item.treatment === treatment.slug);
+  if (own.length) return own;
+  return [
+    {
+      id: `demo-${treatment.slug}`,
+      treatment: treatment.slug,
+      title: treatment.name,
+      photo: treatment.photo,
+      beforeFilter: '[filter:sepia(0.5)_saturate(0.7)_brightness(0.88)]',
+    },
+  ];
+}

@@ -10,7 +10,7 @@ import { PageHero } from '@/components/sections/page-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
 import { Card } from '@/components/ui/card';
-import { useQuickActions } from '@/lib/quick-actions';
+import { BookLink } from '@/components/contact/book-link';
 
 function ContactCard({
   icon,
@@ -33,7 +33,6 @@ function ContactCard({
 }
 
 export default function ContactUsPage() {
-  const show = useQuickActions((s) => s.show);
   return (
     <>
       <PageHero
@@ -62,13 +61,9 @@ export default function ContactUsPage() {
                 icon={<CalendarPlusIcon size={24} weight="duotone" aria-hidden />}
                 title="Appointments"
               >
-                <button
-                  type="button"
-                  className={buttonClass('secondary', 'self-start')}
-                  onClick={() => show('book')}
-                >
+                <BookLink className={buttonClass('secondary', 'self-start')}>
                   Book an appointment
-                </button>
+                </BookLink>
               </ContactCard>
             </Reveal>
           </li>

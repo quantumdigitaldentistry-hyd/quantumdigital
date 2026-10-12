@@ -54,7 +54,7 @@ export function PhotoGallery({ items, className }: { items: GalleryEntry[]; clas
                     photo={item}
                     sizes="(min-width: 768px) 33vw, 50vw"
                     className="block"
-                    imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-105"
+                    imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-110 group-focus-visible:scale-110"
                   />
                 )}
                 {item.video ? (
@@ -105,7 +105,7 @@ function VideoThumb({ video }: { video: VideoRef }) {
           decoding="async"
           referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
-          className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
       )}
     </span>

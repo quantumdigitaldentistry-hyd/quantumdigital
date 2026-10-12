@@ -47,7 +47,7 @@ export function SiteHeader() {
                 viewTransition
                 className={({ isActive }) =>
                   cx(
-                    'rounded-full px-3.5 py-2 text-small font-medium whitespace-nowrap transition-colors',
+                    'rounded-full px-2.5 py-2 text-small font-medium whitespace-nowrap xl:px-3.5 transition-colors',
                     isActive ? 'bg-brand-soft text-on-brand-soft' : 'text-ink-muted hover:text-ink',
                   )
                 }

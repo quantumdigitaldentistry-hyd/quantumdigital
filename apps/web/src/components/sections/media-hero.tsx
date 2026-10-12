@@ -6,6 +6,7 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import type { Photo as PhotoData } from '@/content/photos';
 import { usePointerParallax } from '@/lib/use-pointer-fx';
+import { RevealWords } from '@/components/reveal-words';
 
 /**
  * Split hero for inner pages: text on the left, a large photo on the right with an
@@ -45,8 +46,8 @@ export function MediaHero({
           <p className="text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase">
             {eyebrow}
           </p>
-          <h1 className="font-display text-[clamp(2.4rem,8vw,4rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance">
-            {title}
+          <h1 className="hero-words font-display text-[clamp(2.4rem,8vw,4rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance">
+            <RevealWords text={title} />
           </h1>
           <p className="max-w-[48ch] text-on-hero-muted md:text-heading md:font-normal">
             {description}

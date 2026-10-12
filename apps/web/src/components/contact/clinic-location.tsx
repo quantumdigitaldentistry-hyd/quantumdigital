@@ -14,6 +14,7 @@ import { clinic, clinicTelHref, type DayHours } from '@/config/site';
 import { useClinicHours } from '@/lib/clinic-hours';
 import { cx } from '@/lib/cx';
 import { useNearViewport } from '@/lib/use-near-viewport';
+import { RevealWords } from '@/components/reveal-words';
 
 // The form (and its validation) loads as this section approaches, not on first paint.
 const AppointmentForm = lazy(() => import('@/components/contact/appointment-form'));
@@ -35,7 +36,7 @@ const describe = (hours: DayHours) =>
       : 'Call to confirm';
 
 const mapEmbed = `https://www.google.com/maps?q=${clinic.address.lat},${clinic.address.lng}(${encodeURIComponent(clinic.name)})&z=17&output=embed`;
-const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
+export const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
 
 /** Same footprint as the form, so nothing jumps when it arrives. */
 function FormPlaceholder() {
@@ -48,7 +49,7 @@ function FormPlaceholder() {
 }
 
 /** This week's timings, today highlighted. */
-function Timings() {
+export function Timings() {
   const hours = useClinicHours();
   const today = new Date().getDay();
   return (
@@ -106,6 +107,7 @@ export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
     <section
       ref={section}
       id="book"
+      data-booking
       aria-labelledby={headingId}
       className={cx('scroll-mt-20', tinted && 'border-y border-line bg-surface')}
     >
@@ -143,7 +145,7 @@ export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
                 id={headingId}
                 className="heading-3d font-display text-title font-bold text-balance md:text-display"
               >
-                Find the clinic.
+                <RevealWords text={'Find the clinic.'} />
               </h2>
             </div>
             <address className="flex gap-3 not-italic">

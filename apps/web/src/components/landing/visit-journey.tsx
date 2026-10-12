@@ -2,6 +2,7 @@ import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { photos } from '@/content/photos';
+import { RevealWords } from '@/components/reveal-words';
 
 // TODO(clinic): review this copy with the doctors so it matches how the clinic works.
 const steps = [
@@ -41,11 +42,11 @@ export function VisitJourney() {
               id="journey-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              From first visit to final smile.
+              <RevealWords text={'From first visit to final smile.'} />
             </h2>
           </div>
           <div className="grid grid-cols-[1.4fr_1fr] gap-3">
-            <div className="aspect-4/3 overflow-hidden rounded-container">
+            <div className="photo-reveal aspect-4/3 overflow-hidden rounded-container">
               <Photo
                 photo={photos.consult}
                 sizes="(min-width: 1024px) 26vw, 58vw"
@@ -53,7 +54,7 @@ export function VisitJourney() {
                 imgClassName="parallax-img"
               />
             </div>
-            <div className="mt-10 aspect-3/4 overflow-hidden rounded-container">
+            <div className="photo-reveal mt-10 aspect-3/4 overflow-hidden rounded-container">
               <Photo
                 photo={photos.xray}
                 sizes="(min-width: 1024px) 18vw, 40vw"

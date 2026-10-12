@@ -5,10 +5,10 @@ import { FestivalAmbience } from '@/components/fx/festival-ambience';
 import { Tilt } from '@/components/fx/tilt';
 import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
+import { BookLink } from '@/components/contact/book-link';
 import { useActiveFestival } from '@/lib/active-festival';
 import { greetingFor, type FestivalPack } from '@/lib/festival-packs';
 import { markPopupSeen, popupSeen, useFestivalPopup } from '@/lib/festival-popup';
-import { useQuickActions } from '@/lib/quick-actions';
 import { useSiteSettings, type FestivalOffer } from '@/lib/site-settings';
 
 const validity = (offer: FestivalOffer) =>
@@ -87,7 +87,6 @@ function OfferCard({ offer, compact = false }: { offer: FestivalOffer; compact?:
 export function FestivalBanner({ className }: { className?: string }) {
   const pack = useActiveFestival();
   const offer = useSiteSettings((s) => s.offer);
-  const show = useQuickActions((s) => s.show);
   const setOpen = useFestivalPopup((s) => s.setOpen);
   if (!pack) return null;
 
@@ -113,14 +112,10 @@ export function FestivalBanner({ className }: { className?: string }) {
                   {pack.blessing}
                 </p>
                 <div className="mt-1 flex flex-wrap justify-center gap-3 md:justify-start">
-                  <button
-                    type="button"
-                    onClick={() => show('book')}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-on-festive px-5 font-semibold text-festive transition-transform active:scale-[0.97]"
-                  >
+                  <BookLink className="inline-flex min-h-11 items-center gap-2 rounded-full bg-on-festive px-5 font-semibold text-festive transition-transform active:scale-[0.97]">
                     <CalendarPlusIcon size={20} aria-hidden />
                     {offer ? 'Book with this offer' : 'Book a visit'}
-                  </button>
+                  </BookLink>
                   {offer ? (
                     <button
                       type="button"
@@ -160,7 +155,6 @@ export function FestivalBanner({ className }: { className?: string }) {
 function FestivalPopup({ pack }: { pack: FestivalPack }) {
   const offer = useSiteSettings((s) => s.offer);
   const { open, setOpen } = useFestivalPopup();
-  const show = useQuickActions((s) => s.show);
   const ref = useRef<HTMLDialogElement>(null);
 
   // First visit during the festival: open after a short pause, if the offer asks for it.
@@ -217,17 +211,13 @@ function FestivalPopup({ pack }: { pack: FestivalPack }) {
               <p className="opacity-90 md:text-heading md:font-normal">{pack.blessing}</p>
               {offer ? <OfferCard offer={offer} compact /> : null}
               <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-                <button
-                  type="button"
-                  onClick={() => {
-                    close();
-                    show('book');
-                  }}
+                <BookLink
+                  onClick={close}
                   className="inline-flex min-h-12 items-center gap-2 rounded-full bg-on-festive px-6 font-semibold text-festive transition-transform active:scale-[0.97]"
                 >
                   <CalendarPlusIcon size={20} aria-hidden />
                   {offer ? 'Book with this offer' : 'Book a visit'}
-                </button>
+                </BookLink>
                 <button
                   type="button"
                   onClick={close}

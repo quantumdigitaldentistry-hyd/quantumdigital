@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { GalleryEntry } from '@/components/gallery/photo-gallery';
 import type { ResultCase } from '@/content/clinic';
 import type { Photo } from '@/content/photos';
-import { supabase } from '@/lib/supabase';
+import { getSupabase, hasBackend, publicMediaUrl } from '@/lib/backend';
 import { thumbnailUrl } from '@/lib/video-links';
 
 /**
@@ -15,8 +15,7 @@ import { thumbnailUrl } from '@/lib/video-links';
 
 export type Article = Database['public']['Tables']['articles']['Row'];
 
-const publicUrl = (path: string) =>
-  supabase ? supabase.storage.from('media').getPublicUrl(path).data.publicUrl : '';
+const publicUrl = publicMediaUrl;
 
 /** A stored image as a Photo (single WebP; no AVIF variant). */
 export const storedPhoto = (path: string, alt: string, width = 1600, height = 1200): Photo => ({
@@ -31,9 +30,10 @@ export const storedPhoto = (path: string, alt: string, width = 1600, height = 12
 export function useArticles() {
   return useQuery({
     queryKey: ['articles', 'list'],
-    enabled: !!supabase,
+    enabled: hasBackend,
     queryFn: async () => {
-      const { data, error } = await supabase!
+      const supabase = (await getSupabase())!;
+      const { data, error } = await supabase
         .from('articles')
         .select('id, slug, kind, title, excerpt, cover_path, cover_alt, published_at')
         .eq('status', 'published')
@@ -47,9 +47,10 @@ export function useArticles() {
 export function useArticle(slug: string | undefined) {
   return useQuery({
     queryKey: ['articles', 'one', slug],
-    enabled: !!supabase && !!slug,
+    enabled: hasBackend && !!slug,
     queryFn: async () => {
-      const { data, error } = await supabase!
+      const supabase = (await getSupabase())!;
+      const { data, error } = await supabase
         .from('articles')
         .select('*')
         .eq('slug', slug!)
@@ -65,9 +66,10 @@ export function useArticle(slug: string | undefined) {
 export function useLiveResults(treatment?: string) {
   return useQuery({
     queryKey: ['results', treatment ?? 'all'],
-    enabled: !!supabase,
+    enabled: hasBackend,
     queryFn: async (): Promise<ResultCase[]> => {
-      let query = supabase!
+      const supabase = (await getSupabase())!;
+      let query = supabase
         .from('result_cases')
         .select('id, treatment_slug, title, before_path, after_path')
         .eq('published', true)
@@ -93,9 +95,10 @@ export function useLiveResults(treatment?: string) {
 export function useLiveGallery() {
   return useQuery({
     queryKey: ['gallery'],
-    enabled: !!supabase,
+    enabled: hasBackend,
     queryFn: async (): Promise<GalleryEntry[]> => {
-      const { data, error } = await supabase!
+      const supabase = (await getSupabase())!;
+      const { data, error } = await supabase
         .from('gallery_items')
         .select('id, kind, image_path, video_id, alt, width, height')
         .eq('published', true)

@@ -3,7 +3,6 @@ import {
   BookOpenTextIcon,
   BuildingsIcon,
   GraduationCapIcon,
-  ImagesIcon,
   FacebookLogoIcon,
   GoogleLogoIcon,
   HouseIcon,
@@ -11,6 +10,7 @@ import {
   MapPinIcon,
   ShieldCheckIcon,
   ToothIcon,
+  UsersThreeIcon,
   WhatsappLogoIcon,
   YoutubeLogoIcon,
   type Icon,
@@ -72,8 +72,18 @@ export type SocialLink = { id: string; label: string; Icon: Icon; href: string |
 /** Shown as icons now; each becomes a link as soon as its `href` is filled in. */
 export const socialLinks: SocialLink[] = [
   { id: 'whatsapp', label: 'WhatsApp', Icon: WhatsappLogoIcon, href: 'https://wa.me/917207011988' },
-  { id: 'instagram', label: 'Instagram', Icon: InstagramLogoIcon, href: null },
-  { id: 'facebook', label: 'Facebook', Icon: FacebookLogoIcon, href: null },
+  {
+    id: 'instagram',
+    label: 'Instagram',
+    Icon: InstagramLogoIcon,
+    href: 'https://www.instagram.com/quantumdigitaldentistry/',
+  },
+  {
+    id: 'facebook',
+    label: 'Facebook',
+    Icon: FacebookLogoIcon,
+    href: 'https://www.facebook.com/people/Quantum-Digital-Dentistry/61591626561368/',
+  },
   { id: 'youtube', label: 'YouTube', Icon: YoutubeLogoIcon, href: null },
   { id: 'google', label: 'Google reviews', Icon: GoogleLogoIcon, href: null },
 ];
@@ -105,13 +115,13 @@ export const learnLinks: NavLinkItem[] = [
     description: 'Clear answers about your teeth',
     Icon: BookOpenTextIcon,
   },
-  { to: '/gallery', label: 'Gallery', description: 'Inside modern dentistry', Icon: ImagesIcon },
 ];
 
 /** Main navigation, in menu order. Home is the dashboard. */
 export const navItems: NavItem[] = [
   { to: '/', label: 'Home', Icon: HouseIcon },
   { to: '/treatments', label: 'Treatments', Icon: ToothIcon, menu: 'treatments' },
+  { to: '/about-us', label: 'About us', Icon: UsersThreeIcon },
   { to: '/studio', label: 'Studio', Icon: BuildingsIcon },
   { to: '/dental-tourism', label: 'Dental tourism', Icon: AirplaneTiltIcon },
   { to: '/dental-knowledge', label: 'Learn', Icon: GraduationCapIcon, menu: learnLinks },

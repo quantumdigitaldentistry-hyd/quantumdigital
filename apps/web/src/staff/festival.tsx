@@ -6,7 +6,7 @@ import { LogoMark } from '@/components/brand/logo';
 import type { DayHours } from '@/config/site';
 import { festivalPacks, greetingFor } from '@/lib/festival-packs';
 import { festiveThemes } from '@/lib/festive-themes';
-import { useSiteSettings, type FestivalOffer } from '@/lib/site-settings';
+import { localToday, useSiteSettings, type FestivalOffer } from '@/lib/site-settings';
 import { cx } from '@/lib/cx';
 
 import { useStaffDocument } from './document';
@@ -15,11 +15,20 @@ import { Notice, Panel, StaffPage, Toggle } from './ui';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+const longDate = (iso: string) =>
+  new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+
 function FestivalPicker() {
   const current = useSiteSettings((s) => s.festivalId);
   const currentOffer = useSiteSettings((s) => s.offer);
+  const currentUntil = useSiteSettings((s) => s.festivalUntil);
   const setFestival = useSiteSettings((s) => s.setFestival);
   const [selected, setSelected] = useState<string | null>(current);
+  const [until, setUntil] = useState(currentUntil);
   const [offer, setOffer] = useState<FestivalOffer>(
     () => currentOffer ?? { title: '', discount: '', details: '', validUntil: '', popup: true },
   );
@@ -42,12 +51,13 @@ function FestivalPicker() {
     setMessage(null);
     const { error } = await backend
       .from('site_settings')
-      .update({ value: { theme: null, offer: null } })
+      .update({ value: { theme: null, until: '', offer: null } })
       .eq('key', 'festival');
     setRemoving(false);
     if (error) return setMessage({ tone: 'error', text: errorMessage(error) });
     setFestival(null, null);
     setSelected(null);
+    setUntil('');
     setMessage({
       tone: 'success',
       text: `${livePack.label} theme removed. Back to the everyday look.`,
@@ -64,21 +74,23 @@ function FestivalPicker() {
             title: offer.title.trim(),
             discount: offer.discount.trim(),
             details: offer.details.trim(),
-            validUntil: offer.validUntil,
+            // The offer can't outlast the theme it's shown on.
+            validUntil:
+              until && (!offer.validUntil || offer.validUntil > until) ? until : offer.validUntil,
             popup: offer.popup,
           }
         : null;
     const { error } = await backend
       .from('site_settings')
-      .update({ value: { theme: selected, offer: cleanOffer } })
+      .update({ value: { theme: selected, until: selected ? until : '', offer: cleanOffer } })
       .eq('key', 'festival');
     setSaving(false);
     if (error) return setMessage({ tone: 'error', text: errorMessage(error) });
-    setFestival(selected, cleanOffer);
+    setFestival(selected, cleanOffer, until);
     setMessage({
       tone: 'success',
       text: selected
-        ? `${pack?.label} is live on the website${cleanOffer ? ' with the offer' : ''}.`
+        ? `${pack?.label} is live on the website${cleanOffer ? ' with the offer' : ''}${until ? ` until ${longDate(until)}` : ''}.`
         : 'Back to the everyday look.',
     });
   };
@@ -96,7 +108,8 @@ function FestivalPicker() {
         <p className="text-small text-ink-muted">
           Lights the whole website in the festival’s colours with its deity or symbol, festive
           particles, the greeting banner, loader and browser icon. Add an offer to show it on the
-          banner and in a welcome popup. It stays on until you remove it here.
+          banner and in a welcome popup. It stays on until the end date you set, or until you remove
+          it here.
         </p>
       </div>
       {livePack ? (
@@ -112,10 +125,12 @@ function FestivalPicker() {
             <span className="font-semibold text-success">Live now: {livePack.label}</span>
             <br />
             <span className="text-ink-muted">
-              Every visitor sees this theme until it’s removed
-              {currentOffer?.validUntil
-                ? `. The offer hides itself after ${new Date(`${currentOffer.validUntil}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}; the theme stays.`
-                : '.'}
+              {currentUntil
+                ? `Every visitor sees this theme until ${longDate(currentUntil)}, then the website goes back to the everyday look by itself.`
+                : 'Every visitor sees this theme until it’s removed.'}
+              {currentOffer?.validUntil && currentOffer.validUntil !== currentUntil
+                ? ` The offer hides itself after ${longDate(currentOffer.validUntil)}.`
+                : ''}
             </span>
           </p>
           <Button
@@ -176,6 +191,39 @@ function FestivalPicker() {
       </ul>
 
       {pack ? (
+        <div className="flex flex-col gap-1.5 border-t border-line pt-5">
+          <label htmlFor="festival-until" className="text-label font-medium">
+            Show the theme until
+          </label>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              id="festival-until"
+              type="date"
+              className={cx(input, 'w-full sm:max-w-60')}
+              value={until}
+              min={localToday()}
+              onChange={(e) => setUntil(e.target.value)}
+              aria-describedby="festival-until-hint"
+            />
+            {until ? (
+              <button
+                type="button"
+                className="text-small font-medium text-brand"
+                onClick={() => setUntil('')}
+              >
+                No end date
+              </button>
+            ) : null}
+          </div>
+          <p id="festival-until-hint" className="text-caption text-ink-muted">
+            {until
+              ? `The theme shows through ${longDate(until)}. The next day the website goes back to the everyday look by itself.`
+              : 'Leave empty to keep the theme on until you remove it.'}
+          </p>
+        </div>
+      ) : null}
+
+      {pack ? (
         <div className="grid gap-5 border-t border-line pt-5 lg:grid-cols-[1fr_1fr]">
           <div className="flex flex-col gap-3">
             <h3 className="font-display font-semibold">Festival offer (optional)</h3>
@@ -216,7 +264,8 @@ function FestivalPicker() {
                 type="date"
                 className={cx(input, 'sm:max-w-60')}
                 value={offer.validUntil}
-                min={new Date().toISOString().slice(0, 10)}
+                min={localToday()}
+                max={until || undefined}
                 onChange={(e) => setField('validUntil', e.target.value)}
               />
             </label>

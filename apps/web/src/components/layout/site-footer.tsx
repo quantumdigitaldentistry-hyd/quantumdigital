@@ -21,7 +21,7 @@ export function SiteFooter() {
           <p className="text-label font-semibold tracking-[0.08em] text-ink-subtle uppercase">
             Explore
           </p>
-          {navItems.map(({ to, label }) => (
+          {[...navItems, { to: '/gallery', label: 'Gallery' }].map(({ to, label }) => (
             <Link key={to} to={to} viewTransition className="text-small hover:text-brand">
               {label}
             </Link>

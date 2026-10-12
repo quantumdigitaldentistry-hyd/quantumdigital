@@ -41,6 +41,7 @@ export function ClosingCta({
     <section
       ref={section}
       id="book"
+      data-booking
       aria-labelledby="closing-title"
       className="relative isolate scroll-mt-20 overflow-hidden"
     >

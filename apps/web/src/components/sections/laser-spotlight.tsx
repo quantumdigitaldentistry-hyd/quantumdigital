@@ -14,6 +14,7 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { doctors } from '@/content/clinic';
 import { laserPhotos } from '@/content/photos';
+import { RevealWords } from '@/components/reveal-words';
 
 const PRODUCT_URL = 'https://novolase.in/products/novolase-gold';
 
@@ -102,7 +103,7 @@ export function LaserSpotlight({
               id={headingId}
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              NovoLase Gold, our dual-wavelength laser.
+              <RevealWords text={'NovoLase Gold, our dual-wavelength laser.'} />
             </h2>
             <p className="text-on-scrim/80 md:text-heading md:font-normal">
               Our laser treatments use the NovoLase Gold diode laser. It sends two wavelengths of

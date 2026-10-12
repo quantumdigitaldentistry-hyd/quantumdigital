@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { HeroVisual } from '@/components/three/hero-visual';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
+import { BookLink } from '@/components/contact/book-link';
 import { featuredTreatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
@@ -80,10 +81,10 @@ export function LandingHero() {
             each treatment.
           </p>
           <div className="flex flex-wrap gap-3">
-            <button type="button" className={buttonClass()} onClick={() => show('book')}>
+            <BookLink className={buttonClass()}>
               <CalendarPlusIcon size={20} aria-hidden />
               Book appointment
-            </button>
+            </BookLink>
             <button
               type="button"
               className={buttonClass('callback')}

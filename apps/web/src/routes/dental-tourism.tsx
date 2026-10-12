@@ -17,9 +17,10 @@ import { TreatmentGrid } from '@/components/sections/treatment-grid';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
+import { BookLink } from '@/components/contact/book-link';
 import { treatments } from '@/content/clinic';
 import { photos } from '@/content/photos';
-import { useQuickActions } from '@/lib/quick-actions';
+import { RevealWords } from '@/components/reveal-words';
 
 const reasons: Feature[] = [
   {
@@ -109,7 +110,6 @@ const travelTreatments = [
   .filter((treatment) => treatment !== undefined);
 
 export default function DentalTourismPage() {
-  const show = useQuickActions((s) => s.show);
   return (
     <>
       <MediaHero
@@ -119,10 +119,10 @@ export default function DentalTourismPage() {
         photo={photos.charminar}
         inset={photos.planeWindow}
       >
-        <button type="button" className={buttonClass('primary')} onClick={() => show('book')}>
+        <BookLink className={buttonClass('primary')}>
           <CalendarPlusIcon size={20} aria-hidden />
           Plan a consultation
-        </button>
+        </BookLink>
       </MediaHero>
 
       <section aria-labelledby="intro-title" className="bg-surface">
@@ -143,7 +143,7 @@ export default function DentalTourismPage() {
               id="intro-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              Specialist care, without the guesswork.
+              <RevealWords text={'Specialist care, without the guesswork.'} />
             </h2>
             <p className="text-ink-muted md:text-heading md:font-normal">
               Many patients from other cities and countries combine treatment with a visit to family
@@ -176,7 +176,7 @@ export default function DentalTourismPage() {
               id="steps-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              Five steps, from home to home.
+              <RevealWords text={'Five steps, from home to home.'} />
             </h2>
             <div className="overflow-hidden rounded-4xl shadow-xl shadow-elevation/20">
               <Photo

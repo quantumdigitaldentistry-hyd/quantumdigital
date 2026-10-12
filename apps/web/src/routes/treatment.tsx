@@ -16,12 +16,13 @@ import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
-import { leadDoctor, resultCases, treatments } from '@/content/clinic';
+import { BookLink } from '@/components/contact/book-link';
+import { demoCasesFor, leadDoctor, treatments } from '@/content/clinic';
 import { treatmentDetails } from '@/content/treatment-details';
 import { useLiveResults } from '@/lib/live-content';
-import { useQuickActions } from '@/lib/quick-actions';
 import { usePointerParallax } from '@/lib/use-pointer-fx';
 import { vtNames } from '@/lib/transition-names';
+import { RevealWords } from '@/components/reveal-words';
 
 /** Unknown treatment slugs become the site's 404 page. */
 export function loader({ params }: LoaderFunctionArgs) {
@@ -33,12 +34,10 @@ export function loader({ params }: LoaderFunctionArgs) {
 
 export default function TreatmentPage() {
   const { slug } = useParams();
-  const show = useQuickActions((s) => s.show);
   const treatment = treatments.find((item) => item.slug === slug)!;
   const live = useLiveResults(treatment.slug).data ?? [];
-  const cases = live.length
-    ? live
-    : resultCases.filter((item) => item.treatment === treatment.slug);
+  // Every treatment shows a before/after: real cases once the clinic adds them, a demo until then.
+  const cases = live.length ? live : demoCasesFor(treatment);
   const others = treatments.filter((item) => item.slug !== treatment.slug);
   const doctor = leadDoctor(treatment);
   const details = treatmentDetails[treatment.slug];
@@ -89,15 +88,14 @@ export default function TreatmentPage() {
                 </li>
               ))}
             </ul>
-            <button
-              type="button"
+            <BookLink
               className={buttonClass('primary', 'enter w-fit')}
               style={{ '--d': 3 } as CSSProperties}
-              onClick={() => show('book')}
+              treatment={treatment.slug}
             >
               <CalendarPlusIcon size={20} aria-hidden />
               Book a consultation
-            </button>
+            </BookLink>
           </div>
 
           <div className="hero-exit relative mx-auto w-full max-w-md">
@@ -139,7 +137,7 @@ export default function TreatmentPage() {
               id="about-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              What to expect.
+              <RevealWords text={'What to expect.'} />
             </h2>
             <p className="text-ink-muted md:text-heading md:font-normal">{treatment.intro}</p>
             {doctor ? (
@@ -207,7 +205,7 @@ export default function TreatmentPage() {
                 id="cases-title"
                 className="heading-3d font-display text-title font-bold text-balance md:text-display"
               >
-                {treatment.name} results.
+                <RevealWords text={`${treatment.name} results.`} />
               </h2>
               {live.length ? (
                 <p className="text-ink-muted">Real cases, shared with each patient’s consent.</p>
@@ -233,10 +231,13 @@ export default function TreatmentPage() {
         />
       ) : null}
 
-      <section aria-labelledby="others-title" className="border-t border-line bg-surface">
+      <section
+        aria-labelledby="others-title"
+        className="overflow-x-clip border-t border-line bg-surface"
+      >
         <Container className="flex flex-col gap-6 py-14 md:py-20">
           <h2 id="others-title" className="heading-3d font-display text-title font-bold">
-            Other treatments
+            <RevealWords text={'Other treatments'} />
           </h2>
           <ul className="grid gap-4 sm:grid-cols-3">
             {others.map((item, index) => (

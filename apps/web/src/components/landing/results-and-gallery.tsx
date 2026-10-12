@@ -9,6 +9,7 @@ import { Container } from '@/components/ui/container';
 import { resultCases } from '@/content/clinic';
 import { galleryPhotos } from '@/content/photos';
 import { useLiveGallery, useLiveResults } from '@/lib/live-content';
+import { RevealWords } from '@/components/reveal-words';
 
 /**
  * Smile results (before/after slider) and a gallery preview.
@@ -32,7 +33,7 @@ export function SmileResults() {
             id="results-title"
             className="heading-3d font-display text-title font-bold text-balance md:text-display"
           >
-            See the difference.
+            <RevealWords text={'See the difference.'} />
           </h2>
           <p className="max-w-[42ch] text-ink-muted">
             Pick a case, then drag the handle to compare.{' '}
@@ -69,7 +70,7 @@ export function GalleryPreview() {
               id="gallery-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              Inside modern dentistry.
+              <RevealWords text={'Inside modern dentistry.'} />
             </h2>
           </div>
           <Link

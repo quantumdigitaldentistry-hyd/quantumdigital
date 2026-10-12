@@ -15,7 +15,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 
-import { LogoMark } from '@/components/brand/logo';
+import { LogoMark, Wordmark } from '@/components/brand/logo';
 import { PageLoader } from '@/components/ui/page-loader';
 import { cx } from '@/lib/cx';
 import { useSiteSettings } from '@/lib/site-settings';
@@ -60,9 +60,9 @@ function Shell({ me, children }: { me: TeamMember; children: ReactNode }) {
         <div className="flex items-center justify-between gap-3 p-4">
           <Link to="/staff" className="flex items-center gap-2.5">
             <LogoMark className="h-8 w-auto" />
-            <span className="font-display leading-tight font-semibold">
-              Quantum
-              <span className="block text-caption font-medium text-ink-muted">Staff area</span>
+            <span className="flex flex-col gap-1">
+              <Wordmark className="h-6" />
+              <span className="text-caption font-medium text-ink-muted">Staff area</span>
             </span>
           </Link>
           <button

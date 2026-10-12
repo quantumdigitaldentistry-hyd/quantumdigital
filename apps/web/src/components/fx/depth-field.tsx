@@ -8,7 +8,9 @@ type Bubble = { x: number; y: number; z: number; r: number; phase: number; hue: 
  * A field of glossy bubbles at different depths, drifting slowly upward. Near bubbles are
  * larger, brighter and move more with the pointer (parallax), far ones are small and
  * faint, so the layer reads as 3D space. Drawn on a 2D canvas with perspective maths:
- * no WebGL context, so it's cheap to use on several sections. Pauses off screen and in
+ * no WebGL context, so it's cheap to use on several sections. Each colour's bubble is
+ * painted once to a small sprite and stamped, rather than building gradients every frame.
+ * Touch devices get fewer bubbles at 30 fps and a 1× canvas. Pauses off screen and in
  * background tabs; with reduced motion it draws once and stays still.
  */
 export function DepthField({
@@ -31,6 +33,8 @@ export function DepthField({
     const ctx = context;
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    // Phones and tablets: lighter field, half the frame rate, no hi-DPI canvas.
+    const light = !finePointer;
 
     // Colours from the theme tokens, so the field follows light/dark and festival themes.
     const styles = getComputedStyle(document.documentElement);
@@ -45,7 +49,9 @@ export function DepthField({
     const random = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
 
     const populate = () => {
-      const count = Math.round(Math.min(70, ((width * height) / 26000) * density));
+      const count = Math.round(
+        Math.min(light ? 24 : 70, ((width * height) / 26000) * density * (light ? 0.55 : 1)),
+      );
       bubbles = Array.from({ length: count }, () => ({
         x: random(),
         y: random(),
@@ -59,7 +65,7 @@ export function DepthField({
     };
 
     const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio, 1.5);
+      const ratio = light ? 1 : Math.min(window.devicePixelRatio, 1.5);
       width = canvas.clientWidth;
       height = canvas.clientHeight;
       canvas.width = Math.round(width * ratio);
@@ -68,10 +74,30 @@ export function DepthField({
       populate();
     };
 
+    // One sprite per colour: a lit sphere (highlight up-left, body colour, soft edge),
+    // drawn at full strength and faded per bubble with globalAlpha.
+    const SPRITE = 64;
+    const sprites = palette.map((colour) => {
+      const sprite = document.createElement('canvas');
+      sprite.width = sprite.height = SPRITE;
+      const g = sprite.getContext('2d')!;
+      const c = SPRITE / 2;
+      const gradient = g.createRadialGradient(c * 0.65, c * 0.6, c * 0.08, c, c, c);
+      gradient.addColorStop(0, 'rgba(255,255,255,1)');
+      gradient.addColorStop(0.35, withAlpha(colour, 0.44));
+      gradient.addColorStop(1, withAlpha(colour, 0));
+      g.fillStyle = gradient;
+      g.beginPath();
+      g.arc(c, c, c, 0, Math.PI * 2);
+      g.fill();
+      return sprite;
+    });
+
     const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     let time = 0;
 
     const draw = () => {
+      ctx.globalAlpha = 1;
       ctx.clearRect(0, 0, width, height);
       ctx.globalCompositeOperation = tone === 'dark' ? 'lighter' : 'source-over';
       for (const bubble of bubbles) {
@@ -83,23 +109,8 @@ export function DepthField({
         const py = y * height + pointer.y * 24 * depth;
         const radius = bubble.r * (0.35 + depth);
         const alpha = (tone === 'dark' ? 0.32 : 0.34) * depth * depth + 0.05;
-        const colour = palette[bubble.hue]!;
-        // A lit sphere: bright highlight up-left, body colour, soft dark edge.
-        const gradient = ctx.createRadialGradient(
-          px - radius * 0.35,
-          py - radius * 0.4,
-          radius * 0.08,
-          px,
-          py,
-          radius,
-        );
-        gradient.addColorStop(0, `rgba(255,255,255,${Math.min(1, alpha * 3.2)})`);
-        gradient.addColorStop(0.35, withAlpha(colour, alpha * 1.4));
-        gradient.addColorStop(1, withAlpha(colour, 0));
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(px, py, radius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.globalAlpha = Math.min(1, alpha * 3.2);
+        ctx.drawImage(sprites[bubble.hue]!, px - radius, py - radius, radius * 2, radius * 2);
       }
     };
 
@@ -108,6 +119,11 @@ export function DepthField({
     let visible = false;
     const tick = (now: number) => {
       frame = 0;
+      // Touch devices draw every other frame (~30 fps): the drift is slow enough not to show.
+      if (light && last && now - last < 30) {
+        if (visible && !document.hidden) frame = requestAnimationFrame(tick);
+        return;
+      }
       const dt = Math.min(0.05, (now - (last || now)) / 1000);
       last = now;
       time += dt;

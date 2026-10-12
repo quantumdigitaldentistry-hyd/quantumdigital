@@ -11,7 +11,7 @@ import {
   SunIcon,
   UserIcon,
 } from '@phosphor-icons/react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 
 import { PhoneLink } from '@/components/contact/phone-link';
 import { AccordionItem } from '@/components/ui/accordion';
@@ -20,6 +20,7 @@ import { ChoiceChips, type Choice } from '@/components/ui/choice-chips';
 import { Field, TextAreaField } from '@/components/ui/field';
 import { Photo } from '@/components/ui/photo';
 import { treatments } from '@/content/clinic';
+import { BOOKING_TREATMENT_EVENT, takeBookingTreatment } from '@/lib/booking';
 import { CallbackNotConnectedError, requestAppointment } from '@/lib/callback';
 import { cx } from '@/lib/cx';
 
@@ -71,11 +72,19 @@ function Group({ step, title, children }: { step: number; title: string; childre
  * field). Until the backend exists the request is not sent, and the form says so
  * plainly with the clinic's number instead of faking a confirmation.
  */
-export default function AppointmentForm({ plain = false }: { plain?: boolean }) {
+export default function AppointmentForm({
+  plain = false,
+  initialTreatment = '',
+}: {
+  plain?: boolean;
+  /** A treatment slug to start with already chosen. */
+  initialTreatment?: string;
+}) {
   const [values, setValues] = useState({
     name: '',
     phone: '',
-    treatment: '',
+    // A Book button on this page may have chosen a treatment before the form loaded.
+    treatment: takeBookingTreatment() || initialTreatment,
     preferredDate: '',
     preferredTime: '' as TimeOfDay | '',
     message: '',
@@ -89,6 +98,17 @@ export default function AppointmentForm({ plain = false }: { plain?: boolean }) 
 
   const set = (key: keyof typeof values) => (value: string) =>
     setValues((current) => ({ ...current, [key]: value }));
+
+  // …or after it loaded: take the treatment from the button that scrolled here.
+  useEffect(() => {
+    const choose = (event: Event) => {
+      const treatment = (event as CustomEvent<string>).detail;
+      takeBookingTreatment();
+      setValues((current) => ({ ...current, treatment }));
+    };
+    window.addEventListener(BOOKING_TREATMENT_EVENT, choose);
+    return () => window.removeEventListener(BOOKING_TREATMENT_EVENT, choose);
+  }, []);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
