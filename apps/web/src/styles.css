@@ -415,6 +415,112 @@ html:has(dialog[open]) {
 }
 
 /*
+ * Opening titles (components/brand/intro-reveal.tsx), once per browser. A dark stage
+ * with slowly turning light; the mark swings in from depth (0–0.9 s), the wordmark tilts
+ * upright and a beam crosses it (0.5–1.6 s), the tagline fades up. On "leaving" the camera
+ * pushes into the logo and the stage closes like an iris onto the site (0.7 s).
+ */
+.intro-stage {
+  background: radial-gradient(ellipse at 50% 42%, #14335f 0%, #081426 55%, #03070e 100%);
+  perspective: 1100px;
+  clip-path: circle(150% at 50% 45%);
+}
+.intro-rays {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgb(127 178 255 / 0.12) 20deg,
+    transparent 45deg,
+    transparent 120deg,
+    rgb(95 208 224 / 0.1) 140deg,
+    transparent 170deg,
+    transparent 240deg,
+    rgb(127 178 255 / 0.1) 260deg,
+    transparent 290deg
+  );
+  animation: intro-rays 9s linear infinite;
+}
+.intro-camera {
+  transform-style: preserve-3d;
+}
+.intro-mark {
+  animation: intro-mark 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.intro-word {
+  transform-origin: 50% 100%;
+  animation: intro-word 1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+}
+/* Glows sit on the images, not the moving wrappers: a filter on an element mid 3D-turn
+   paints a dark box around it in Chrome. */
+.intro-mark img {
+  filter: drop-shadow(0 18px 30px rgb(0 0 0 / 0.45)) drop-shadow(0 0 26px rgb(95 208 224 / 0.35));
+}
+.intro-word img {
+  filter: drop-shadow(1px 1px 0 #1a5bc4) drop-shadow(1px 1px 0 #1a5bc4)
+    drop-shadow(0 0 18px rgb(127 178 255 / 0.5));
+}
+.intro-shine {
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.95) 50%, transparent 65%)
+    no-repeat;
+  background-size: 250% 100%;
+  background-position: 150% 0;
+  animation: wordmark-shine 1.1s cubic-bezier(0.22, 1, 0.36, 1) 1s both;
+}
+.intro-tagline {
+  animation: intro-fade 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.1s both;
+}
+.intro-stage[data-phase='leaving'] {
+  animation: intro-iris 0.7s cubic-bezier(0.77, 0, 0.175, 1) both;
+}
+.intro-stage[data-phase='leaving'] .intro-camera {
+  animation: intro-push 0.7s cubic-bezier(0.55, 0, 0.1, 1) both;
+}
+@keyframes intro-rays {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes intro-mark {
+  from {
+    opacity: 0;
+    transform: translateZ(-600px) rotateY(-110deg) rotateX(18deg) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+  }
+}
+@keyframes intro-word {
+  from {
+    opacity: 0;
+    transform: rotateX(80deg) translateY(30px) scale(0.92);
+  }
+}
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@keyframes intro-push {
+  to {
+    transform: translateZ(380px) scale(1.15);
+    opacity: 0;
+  }
+}
+@keyframes intro-iris {
+  from {
+    clip-path: circle(150% at 50% 45%);
+  }
+  to {
+    clip-path: circle(0% at 50% 45%);
+  }
+}
+
+/*
  * Clinic wordmark (components/brand/logo.tsx). The artwork is white letters with a yellow
  * M, made for dark backgrounds. On light surfaces --wordmark-ink (an SVG colour matrix in
  * the component) turns the white letters ink and leaves the yellow untouched. Stacked 1px

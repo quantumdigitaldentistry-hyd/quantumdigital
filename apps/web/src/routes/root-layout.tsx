@@ -3,6 +3,7 @@ import { Outlet, ScrollRestoration, useLocation, useNavigation } from 'react-rou
 
 import { QuickActionsHost } from '@/components/actions/quick-actions-host';
 import { FestivalLayer } from '@/components/brand/festival-experience';
+import { IntroReveal } from '@/components/brand/intro-reveal';
 import { ChatBubble } from '@/components/chat/chat-bubble';
 import { FloatingActions } from '@/components/layout/floating-actions';
 import { SiteFooter } from '@/components/layout/site-footer';
@@ -60,6 +61,7 @@ export function RootLayout() {
       <FestivalLayer />
       <QuickActionsHost />
       <SmoothScroll />
+      <IntroReveal />
       {/*
         One saved position per history entry, so Back returns to the exact spot. Fresh page
         loads all share the key "default", so those fall back to the path.
