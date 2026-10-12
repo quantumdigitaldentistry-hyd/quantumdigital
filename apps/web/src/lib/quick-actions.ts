@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 
 /**
- * The site-wide pop-up actions (call back, chat). Booking has its own page
- * (lib/booking.ts). Any button anywhere can open one; the
- * panels themselves are mounted once in the root layout.
+ * The site-wide pop-up actions (call back, chat, the booking form that is offered once
+ * a visitor has been on the site a little while, and the clear aligner consultation
+ * offer on the aligners page). Booking also has its own page
+ * (lib/booking.ts). Any button anywhere can open one; the panels themselves are mounted
+ * once in the root layout.
  */
-export type QuickAction = 'callback' | 'chat';
+export type QuickAction = 'callback' | 'chat' | 'book' | 'aligner-offer';
 
 /** Where a panel was opened from (the button's box on screen), so it can grow out of it. */
 export type ActionOrigin = { x: number; y: number; width: number; height: number };

@@ -26,8 +26,10 @@ import type { ScrollSceneProps } from './types';
 
 /**
  * "Straightening, step by step": an upper arch of 12 teeth that starts crowded and
- * crooked. Scroll progress 0 → 1: brackets appear, the archwire draws in, then the teeth
- * glide and rotate into a smooth arch. Renders only when progress or size changes.
+ * crooked. Scroll progress 0 → 1: the appliance goes on, then the teeth glide and rotate
+ * into a smooth arch. Braces: brackets appear and the archwire draws in. Aligner: a clear
+ * tray settles down over the teeth and moves with them. Renders only when progress or
+ * size changes.
  */
 
 const MATERIALS = { enamel: 0xffffff, gum: 0xe79aa6, metal: 0xc5ced6 };
@@ -76,7 +78,18 @@ function toothGeometry(width: number, height: number) {
 
 const phase = (p: number, a: number, b: number) => MathUtils.smoothstep(p, a, b);
 
-export default function OrthoScene({ ref, onReady }: ScrollSceneProps) {
+type Appliance = 'braces' | 'aligner';
+
+/** The same story with a clear aligner instead of braces. */
+export function AlignerScene(props: ScrollSceneProps) {
+  return <OrthoScene {...props} appliance="aligner" />;
+}
+
+export default function OrthoScene({
+  ref,
+  onReady,
+  appliance = 'braces',
+}: ScrollSceneProps & { appliance?: Appliance }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const setProgressRef = useRef<(progress: number) => void>(() => {});
   const onReadyRef = useRef(onReady);
@@ -138,25 +151,49 @@ export default function OrthoScene({ ref, onReady }: ScrollSceneProps) {
     const gum = new Mesh(new TubeGeometry(archCurve, 120, 0.2, 12), gumMaterial);
     gum.scale.set(1, 0.6, 1);
 
+    // A clear aligner: glossy, faintly blue, see-through plastic.
+    const aligner = appliance === 'aligner';
+    const clear = new MeshPhysicalMaterial({
+      color: 0xc6ebff,
+      roughness: 0.06,
+      metalness: 0,
+      clearcoat: 1,
+      clearcoatRoughness: 0.04,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+    });
+
     // Teeth: incisors narrow, canines pointed-ish, premolars/molars wider.
     const widths = [0.42, 0.4, 0.34, 0.3, 0.27, 0.3, 0.3, 0.27, 0.3, 0.34, 0.4, 0.42];
     const teeth = widths.map((w, i) => {
       const group = new Group();
-      const tooth = new Mesh(toothGeometry(w, i === 5 || i === 6 ? 0.62 : 0.55), enamel);
-      const bracket = new Mesh(new BoxGeometry(0.13, 0.11, 0.05), metal);
-      bracket.position.set(0, -0.05, w * 0.36);
-      group.add(tooth, bracket);
+      const height = i === 5 || i === 6 ? 0.62 : 0.55;
+      group.add(new Mesh(toothGeometry(w, height), enamel));
+      // Each tooth carries its part of the appliance, so it moves with the tooth.
+      const part = aligner
+        ? new Mesh(toothGeometry(w * 1.14, height * 1.05), clear)
+        : new Mesh(new BoxGeometry(0.13, 0.11, 0.05), metal);
+      if (aligner) part.position.y = -0.02;
+      else part.position.set(0, -0.05, w * 0.36);
+      group.add(part);
       scene.add(group);
-      return { group, slot: archSlot(i), offset: crooked[i]! };
+      return { group, part, slot: archSlot(i), offset: crooked[i]! };
     });
 
-    // Archwire through the bracket line, drawn in with progress.
-    const wirePoints = Array.from({ length: 60 }, (_, i) => {
-      const { x, z } = archPoint((i / 59) * 2 - 1, 0.17);
-      return new Vector3(x, -0.05, z);
+    // Braces: the archwire through the bracket line, drawn in with progress.
+    // Aligner: a clear band along the biting edge joins the shells into one tray.
+    const linePoints = Array.from({ length: 60 }, (_, i) => {
+      const { x, z } = archPoint((i / 59) * 2 - 1, aligner ? 0 : 0.17);
+      return new Vector3(x, aligner ? -0.3 : -0.05, z);
     });
-    const wireGeometry = new TubeGeometry(new CatmullRomCurve3(wirePoints), 180, 0.018, 6);
-    const wire = new Mesh(wireGeometry, metal);
+    const wireGeometry = new TubeGeometry(
+      new CatmullRomCurve3(linePoints),
+      180,
+      aligner ? 0.05 : 0.018,
+      aligner ? 10 : 6,
+    );
+    const wire = new Mesh(wireGeometry, aligner ? clear : metal);
     const wireIndexCount = wireGeometry.index?.count ?? 0;
     scene.add(gum, wire);
 
@@ -167,12 +204,19 @@ export default function OrthoScene({ ref, onReady }: ScrollSceneProps) {
       // 0.05 → 0.3: brackets and wire appear. 0.3 → 0.95: teeth align.
       const fit = phase(p, 0.05, 0.3);
       const align = phase(p, 0.3, 0.95);
-      metal.opacity = fit;
-      wireGeometry.setDrawRange(0, Math.floor((wireIndexCount * fit) / 3) * 3);
-      for (const { group, slot, offset } of teeth) {
+      if (aligner) {
+        // The tray fades in as it drops down onto the teeth.
+        clear.opacity = fit * 0.58;
+        wire.position.y = (1 - fit) * 0.5;
+      } else {
+        metal.opacity = fit;
+        wireGeometry.setDrawRange(0, Math.floor((wireIndexCount * fit) / 3) * 3);
+      }
+      for (const { group, part, slot, offset } of teeth) {
         const k = 1 - align;
         group.position.set(slot.x + offset.dx * k, offset.dy * k, slot.z + offset.dz * k);
         group.rotation.set(0, slot.rotationY + offset.ry * k, offset.rz * k);
+        if (aligner) part.position.y = -0.02 + (1 - fit) * 0.5;
       }
       // Camera starts low and front-on, rises to show the whole arch.
       const narrow = camera.aspect < 0.9;

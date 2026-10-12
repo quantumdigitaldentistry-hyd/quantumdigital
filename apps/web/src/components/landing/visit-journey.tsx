@@ -36,7 +36,7 @@ export function VisitJourney() {
         <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
           <div className="flex flex-col gap-2">
             <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
-              03 · Your visit
+              02 · Your visit
             </p>
             <h2
               id="journey-title"

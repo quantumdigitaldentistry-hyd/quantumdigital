@@ -196,6 +196,36 @@ export const photos = {
     [800, 1000],
     'Close-up of a bright, white smile',
   ),
+  smileDesign: photo(
+    'smile-design',
+    [480, 800],
+    [800, 1000],
+    'Close-up of an even, natural-looking smile',
+  ),
+  /**
+   * Invisalign's own campaign photo (the clinic is an official Invisalign partner in
+   * India). Cropped from a screenshot, so it is small: TODO(clinic) replace with the
+   * original from the Invisalign partner portal, keeping the name.
+   */
+  invisalignOffer: photo(
+    'invisalign-offer',
+    [400, 524],
+    [524, 332],
+    'Smiling woman holding her Invisalign aligners in their case',
+  ),
+  kidsSmile: photo(
+    'kids-smile',
+    [480, 800],
+    [800, 1000],
+    'A little girl laughing with a happy smile',
+  ),
+  /** Cut out on a transparent background, for the call-back panel's banner. */
+  callbackDoctor: photo(
+    'callback-doctor',
+    [360, 720],
+    [720, 1091],
+    'Smiling doctor in a white coat with a stethoscope',
+  ),
 } satisfies Record<string, Photo>;
 
 /**
@@ -277,6 +307,9 @@ export const photoCredits = [
   'Kanishq Kancharla',
   'Caroline LM',
   'Swipe',
+  'Tony Litvyak',
+  'Vigneshwar Rajkumar',
+  'Fotos (call-back doctor)',
   'Round Icons (illustrations)',
   'unDraw (doctor illustrations)',
   // Festival deities and symbols (lib/festival-packs.ts)

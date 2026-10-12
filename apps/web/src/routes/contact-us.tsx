@@ -1,4 +1,9 @@
-import { CalendarPlusIcon, PhoneIcon, ShareNetworkIcon } from '@phosphor-icons/react';
+import {
+  CalendarPlusIcon,
+  EnvelopeSimpleIcon,
+  PhoneIcon,
+  ShareNetworkIcon,
+} from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 
 import { ClinicLocation } from '@/components/contact/clinic-location';
@@ -10,6 +15,7 @@ import { PageHero } from '@/components/sections/page-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
 import { Card } from '@/components/ui/card';
+import { clinic } from '@/config/site';
 import { BookLink } from '@/components/contact/book-link';
 
 function ContactCard({
@@ -44,14 +50,22 @@ export default function ContactUsPage() {
       </PageHero>
 
       <Section title="Ways to reach us">
-        <ul className="grid gap-4 md:grid-cols-3">
+        {/* Two to a row on tablets (social media full width under them), three on laptops. */}
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <li>
             <Reveal step={0} className="h-full">
               <ContactCard
                 icon={<PhoneIcon size={24} weight="duotone" aria-hidden />}
-                title="Phone"
+                title="Call or email"
               >
                 <PhoneLink className="text-brand" />
+                <a
+                  href={`mailto:${clinic.email}`}
+                  className="inline-flex w-fit items-center gap-2 text-small font-medium break-all text-brand hover:underline"
+                >
+                  <EnvelopeSimpleIcon size={16} weight="fill" className="shrink-0" aria-hidden />
+                  {clinic.email}
+                </a>
               </ContactCard>
             </Reveal>
           </li>
@@ -67,13 +81,13 @@ export default function ContactUsPage() {
               </ContactCard>
             </Reveal>
           </li>
-          <li>
+          <li className="sm:col-span-2 lg:col-span-1">
             <Reveal step={2} className="h-full">
               <ContactCard
                 icon={<ShareNetworkIcon size={24} weight="duotone" aria-hidden />}
                 title="Social media"
               >
-                <SocialLinks className="-ml-2.5 text-brand" />
+                <SocialLinks className="-ml-2.5 flex-wrap text-brand" />
               </ContactCard>
             </Reveal>
           </li>

@@ -10,7 +10,9 @@ import { lazy, Suspense, useId, useRef } from 'react';
 import { Reveal } from '@/components/reveal';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
+import { Photo } from '@/components/ui/photo';
 import { clinic, clinicTelHref, type DayHours } from '@/config/site';
+import { photos } from '@/content/photos';
 import { useClinicHours } from '@/lib/clinic-hours';
 import { cx } from '@/lib/cx';
 import { useNearViewport } from '@/lib/use-near-viewport';
@@ -39,11 +41,12 @@ const mapEmbed = `https://www.google.com/maps?q=${clinic.address.lat},${clinic.a
 export const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
 
 /** Same footprint as the form, so nothing jumps when it arrives. */
+/** Holds the form's place while it loads: the same height (measured), so nothing jumps. */
 function FormPlaceholder() {
   return (
     <div
       aria-hidden
-      className="h-288 rounded-4xl border border-line bg-surface shadow-xl shadow-elevation/10 sm:h-242"
+      className="h-254 rounded-4xl border border-line bg-surface shadow-xl shadow-elevation/10 sm:h-216 lg:h-223 xl:h-216"
     />
   );
 }
@@ -97,8 +100,16 @@ export function Timings() {
  * "Visit or book": the map with this week's timings under it, and beside them the
  * address, quick actions and the appointment form. The map (a third-party embed) and the
  * form load only as the section nears the viewport, so neither slows the first paint.
+ * `backdrop`: the clinic's reception lounge behind it all, softened under a veil of the
+ * page colour so the text and cards stay crisp (home page).
  */
-export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
+export function ClinicLocation({
+  tinted = false,
+  backdrop = false,
+}: {
+  tinted?: boolean;
+  backdrop?: boolean;
+}) {
   const headingId = useId();
   const section = useRef<HTMLElement>(null);
   const near = useNearViewport(section, '50% 0px');
@@ -109,8 +120,26 @@ export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
       id="book"
       data-booking
       aria-labelledby={headingId}
-      className={cx('scroll-mt-20', tinted && 'border-y border-line bg-surface')}
+      className={cx(
+        'scroll-mt-20',
+        tinted && 'border-y border-line bg-surface',
+        backdrop && 'relative isolate overflow-clip',
+      )}
     >
+      {backdrop ? (
+        <div aria-hidden className="absolute inset-0 -z-10">
+          <Photo
+            photo={photos.receptionLounge}
+            sizes="100vw"
+            className="block size-full"
+            imgClassName="scale-105 blur-[1px]"
+          />
+          {/* Veil: fades into the page at the top and bottom edges, light in between so the
+              room shows; the heading side gets a little more for contrast. */}
+          <div className="absolute inset-0 bg-linear-to-b from-canvas via-canvas/45 to-canvas" />
+          <div className="absolute inset-0 bg-linear-to-l from-canvas/75 via-canvas/20 to-transparent" />
+        </div>
+      ) : null}
       <Container className="grid gap-8 py-14 *:min-w-0 md:py-20 lg:grid-cols-[1fr_1.1fr] lg:gap-12">
         {/* Left: map, timings under it. */}
         <div className="order-2 flex flex-col gap-5 lg:sticky lg:top-24 lg:order-1 lg:self-start">

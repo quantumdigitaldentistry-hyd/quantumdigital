@@ -363,12 +363,11 @@ html:has(dialog[open]) {
     }
   }
 }
+/* Opacity and transform only, so it runs on the compositor and never janks the scroll. */
 @keyframes photo-reveal {
   from {
-    clip-path: inset(16% 8% 16% 8% round 24px);
-  }
-  to {
-    clip-path: inset(0 round 0);
+    opacity: 0.2;
+    transform: translateY(32px) scale(0.9);
   }
 }
 @keyframes word-rise {
@@ -385,32 +384,80 @@ html:has(dialog[open]) {
 }
 
 /* Gentle hover-in-place for the floating chips around the 3D tooth. */
+/* Looping animations hold still while off screen (components/fx/offscreen-pause.tsx). */
+[data-offscreen] {
+  animation-play-state: paused !important;
+}
+
 /*
- * Home treatments row: each card eases up to full size as it slides into the row from
- * the side, driven by the row's own horizontal scroll (view(inline)). Static without
- * support or with reduced motion.
+ * Home hero (components/landing/landing-hero.tsx, components/three/hero-visual.tsx).
+ * On load the 3D logo settles in from slightly below and tilted back. As the hero
+ * scrolls away the text lifts and fades first, and the logo drifts back more slowly,
+ * tilting away, so the two separate in depth. Static with reduced motion; the scroll
+ * part needs scroll-driven animations (browsers without them simply keep it in place).
  */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-logo-in {
+    animation: hero-logo-in 1100ms var(--ease-out) 150ms both;
+  }
+}
+@keyframes hero-logo-in {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) translateY(28px) rotateX(14deg) scale(0.92);
+  }
+}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .treatment-row .slide-card {
-      animation: slide-card linear both;
-      animation-timeline: view(inline);
-      animation-range: entry 0% entry 100%;
+    .hero-logo-scroll {
+      animation: hero-logo-scroll linear both;
+      animation-timeline: view();
+      animation-range: exit -10% exit 100%;
+    }
+    .hero-text-scroll {
+      animation: hero-text-scroll linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 80%;
+    }
+    /*
+     * Home treatment cards fade and rise in from below, a column at a time
+     * (--reveal-start), and fade and lift away as they leave at the top, so the grid
+     * hands over smoothly from one row to the next. Opacity and transform only: both
+     * run on the compositor, off the main thread, so scrolling stays smooth.
+     */
+    .card-rise {
+      animation:
+        card-rise linear both,
+        card-leave linear forwards;
+      animation-timeline: view(), view();
+      animation-range:
+        entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 60%),
+        exit 35% exit 100%;
     }
   }
 }
-/* While the page scroll drives the row (TreatmentShowcase), it doesn't scroll itself. */
-.treatment-row.is-pinned {
-  overflow: visible;
-  scroll-snap-type: none;
+@keyframes hero-logo-scroll {
+  to {
+    opacity: 0.15;
+    transform: perspective(1000px) translateY(22%) rotateX(22deg) scale(0.86);
+  }
 }
-.treatment-row.is-pinned .slide-card {
-  animation: none;
+@keyframes hero-text-scroll {
+  to {
+    opacity: 0;
+    transform: translateY(-48px);
+  }
 }
-@keyframes slide-card {
+@keyframes card-rise {
   from {
-    opacity: 0.35;
-    transform: scale(0.9);
+    opacity: 0;
+    transform: translateY(56px) scale(0.95);
+  }
+}
+@keyframes card-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-32px) scale(0.96);
   }
 }
 
@@ -521,18 +568,28 @@ html:has(dialog[open]) {
 }
 
 /*
+ * Header logo (components/brand/logo.tsx): lifted off the bar by a soft shadow straight
+ * below it, so it reads as floating.
+ */
+.logo-float {
+  filter: drop-shadow(0 6px 4px rgb(13 27 42 / 0.16));
+}
+[data-theme='dark'] .logo-float {
+  filter: drop-shadow(0 6px 5px rgb(0 0 0 / 0.55));
+}
+/*
  * Clinic wordmark (components/brand/logo.tsx). The artwork is white letters with a yellow
  * M, made for dark backgrounds. On light surfaces --wordmark-ink (an SVG colour matrix in
- * the component) turns the white letters ink and leaves the yellow untouched. Stacked 1px
- * drop-shadows build a short 3D edge in the brand blue; a soft one lifts the name.
+ * the component) turns the letters ink and the M a deeper gold, and a crisp one-pixel
+ * navy edge below and to the right gives every letter a 3D extrusion and outlines the
+ * gold M against white. No blur, so the letters stay sharp; the soft lift comes from
+ * .logo-float around the whole logo. Dark mode shows the artwork as drawn.
  */
 .wordmark {
-  filter: var(--wordmark-ink) drop-shadow(1px 1px 0 var(--color-brand))
-    drop-shadow(1px 1px 0 var(--color-brand)) drop-shadow(0 4px 6px rgb(13 27 42 / 0.22));
+  filter: var(--wordmark-ink) drop-shadow(0.6px 0.8px 0 #0a1f44) drop-shadow(0.4px 0.6px 0 #0a1f44);
 }
 [data-theme='dark'] .wordmark {
-  filter: drop-shadow(1px 1px 0 var(--color-brand)) drop-shadow(1px 1px 0 var(--color-brand))
-    drop-shadow(0 0 12px rgb(127 178 255 / 0.45));
+  filter: none;
 }
 /* A band of light crosses the letters once as the page opens, and again on hover. */
 .wordmark-shine {
@@ -573,6 +630,15 @@ html:has(dialog[open]) {
   }
 }
 
+/* Results showcase: the bar that fills until the next case (ResultsShowcase autoPlay). */
+@keyframes autoplay-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
 @keyframes float-y {
   50% {
     transform: translateY(-10px);
@@ -987,7 +1053,6 @@ html[data-festival] .heading-3d {
 @keyframes gallery-in {
   from {
     opacity: 0;
-    clip-path: inset(14% 8% 0 8% round 24px);
     transform: translateY(48px) scale(0.94);
   }
 }

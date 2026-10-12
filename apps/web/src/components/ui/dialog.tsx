@@ -70,6 +70,11 @@ export type DialogProps = {
   variant?: keyof typeof variants;
   /** The button it was opened from: the panel grows out of it and sits beside it. */
   origin?: ActionOrigin | null;
+  /**
+   * Replaces the plain title row with an illustrated header. It must render the title
+   * (and description, if any) with the ids it is given, so the dialog stays labelled.
+   */
+  banner?: (ids: { titleId: string; descriptionId: string }) => ReactNode;
   children?: ReactNode;
   className?: string;
 };
@@ -85,6 +90,7 @@ export function Dialog({
   description,
   variant = 'sheet',
   origin,
+  banner,
   children,
   className,
 }: DialogProps) {
@@ -137,21 +143,34 @@ export function Dialog({
       )}
     >
       <div className="flex flex-col gap-5 p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <h2 id={titleId} className="font-display text-heading font-semibold md:text-title">
-              {title}
-            </h2>
-            {description ? (
-              <p id={descriptionId} className="text-small text-ink-muted">
-                {description}
-              </p>
-            ) : null}
+        {banner ? (
+          <div className="relative">
+            {banner({ titleId, descriptionId })}
+            <IconButton
+              label="Close"
+              onClick={onClose}
+              className="absolute -top-1 -right-2 z-10 bg-surface/80 backdrop-blur-sm"
+            >
+              <XIcon size={20} aria-hidden />
+            </IconButton>
           </div>
-          <IconButton label="Close" onClick={onClose} className="-mt-1 -mr-2 shrink-0">
-            <XIcon size={20} aria-hidden />
-          </IconButton>
-        </div>
+        ) : (
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <h2 id={titleId} className="font-display text-heading font-semibold md:text-title">
+                {title}
+              </h2>
+              {description ? (
+                <p id={descriptionId} className="text-small text-ink-muted">
+                  {description}
+                </p>
+              ) : null}
+            </div>
+            <IconButton label="Close" onClick={onClose} className="-mt-1 -mr-2 shrink-0">
+              <XIcon size={20} aria-hidden />
+            </IconButton>
+          </div>
+        )}
         {children}
       </div>
     </dialog>

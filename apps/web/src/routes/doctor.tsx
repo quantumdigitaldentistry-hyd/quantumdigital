@@ -38,7 +38,7 @@ export default function DoctorPage() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
+      <section className="relative isolate overflow-clip bg-linear-to-br from-hero-from to-hero-to text-on-hero">
         <Container className="grid items-center gap-8 py-10 md:grid-cols-[1.1fr_1fr] md:py-20">
           <div className="flex flex-col gap-5">
             <BackButton fallback="/" />

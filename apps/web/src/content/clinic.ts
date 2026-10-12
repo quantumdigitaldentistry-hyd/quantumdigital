@@ -1,5 +1,8 @@
 import {
+  BabyIcon,
   CrownIcon,
+  FirstAidIcon,
+  LightningIcon,
   DropIcon,
   SmileyIcon,
   SparkleIcon,
@@ -8,7 +11,7 @@ import {
   type Icon,
 } from '@phosphor-icons/react';
 
-import { illustrations, photos, type Photo } from './photos';
+import { illustrations, laserPhotos, photos, type Photo } from './photos';
 
 /** Treatments and doctors, from the clinic's own list and signage. Pages read from here. */
 
@@ -161,7 +164,7 @@ export const treatments: Treatment[] = [
     summary: 'A planned set of treatments for the shape, shade and line of your smile.',
     highlights: ['Shape and shade', 'Planned before treatment', 'Combines treatments'],
     illustration: illustrations.smileOrange,
-    photo: photos.smile,
+    photo: photos.smileDesign,
     intro:
       'Smile designing looks at your whole smile, not one tooth at a time. Photos and digital planning show the proposed shape and shade first, then whitening, veneers, crowns or aligners are combined to get there.',
     steps: [
@@ -297,6 +300,114 @@ export const treatments: Treatment[] = [
         title: 'Fitting',
         body: 'The final crown or bridge is checked for fit and bite, then fixed.',
       },
+    ],
+  },
+  {
+    slug: 'onlays-inlays',
+    Icon: CrownIcon,
+    name: 'Onlays and inlays',
+    shortName: 'Onlays & inlays',
+    menuLine: 'Precise repairs for larger cavities',
+    featured: false,
+    ledBy: 'Prosthodontics',
+    summary: 'Custom-made ceramic pieces that repair a damaged tooth while keeping more of it.',
+    highlights: ['Keeps more natural tooth', 'Matched to your shade', 'Strong and long-lasting'],
+    illustration: illustrations.tooth,
+    photo: photos.scan,
+    intro:
+      'An inlay fits inside the chewing surface of a tooth; an onlay also covers one or more of its cusps. They are made to measure from a scan, so they repair damage too large for a filling without needing a full crown.',
+    steps: [
+      { title: 'Preparation', body: 'Decay or an old filling is removed and the tooth shaped.' },
+      { title: 'Scan', body: 'A precise digital scan records the space to be filled.' },
+      { title: 'Temporary', body: 'A temporary filling protects the tooth while yours is made.' },
+      { title: 'Bonding', body: 'The inlay or onlay is checked for fit and bite, then bonded.' },
+    ],
+  },
+  {
+    slug: 'kids-dentistry',
+    Icon: BabyIcon,
+    name: 'Kids dentistry',
+    shortName: 'Kids dentistry',
+    menuLine: 'Gentle care for children’s teeth',
+    featured: false,
+    summary: 'Gentle check-ups, prevention and treatment for children, from the first tooth.',
+    highlights: ['Child-friendly visits', 'Sealants and fluoride', 'Early habit guidance'],
+    illustration: illustrations.smileOrange,
+    photo: photos.kidsSmile,
+    intro:
+      'Children’s teeth need care from the first tooth. Regular visits catch decay early, protect the back teeth with sealants and fluoride, and help children feel at ease at the dentist.',
+    steps: [
+      {
+        title: 'Friendly check',
+        body: 'A gentle look at the teeth, gums and how they are growing.',
+      },
+      { title: 'Prevention', body: 'Cleaning, fluoride and sealants to protect against decay.' },
+      { title: 'Treatment', body: 'Any cavities are treated calmly, explained in simple words.' },
+      { title: 'Home care', body: 'Brushing, diet and habit tips for parents and children.' },
+    ],
+  },
+  {
+    slug: 'laser-dentistry',
+    Icon: LightningIcon,
+    name: 'Laser dentistry',
+    shortName: 'Laser dentistry',
+    menuLine: 'NovoLase Gold for gums and soft tissue',
+    featured: false,
+    ledBy: 'Prosthodontics',
+    summary: 'Precise laser care for gums and soft tissue, with less bleeding and faster healing.',
+    highlights: ['Minimal bleeding', 'Often no stitches', 'Faster healing'],
+    illustration: illustrations.beam,
+    photo: laserPhotos.unit,
+    intro:
+      'Our NovoLase Gold dual-wavelength laser treats gums and soft tissue with a focused beam of light. It is used for gum reshaping, disinfecting gum pockets, ulcers and minor surgery, usually with less discomfort and quicker healing.',
+    steps: [
+      {
+        title: 'Assessment',
+        body: 'Your gums and teeth are checked to see if laser care suits you.',
+      },
+      { title: 'Comfort', body: 'Local anaesthetic, if needed, and protective eyewear.' },
+      { title: 'Laser care', body: 'The laser treats the area precisely, sealing as it works.' },
+      { title: 'Healing', body: 'Simple aftercare; most people return to normal the same day.' },
+    ],
+  },
+  {
+    slug: 'gum-surgery',
+    Icon: FirstAidIcon,
+    name: 'Advanced gum surgeries',
+    shortName: 'Gum surgeries',
+    menuLine: 'Treat gum disease and recession',
+    featured: false,
+    summary: 'Surgical care for advanced gum disease, recession and uneven gum lines.',
+    highlights: ['Saves loose teeth', 'Covers exposed roots', 'Laser-assisted options'],
+    illustration: illustrations.toothPlus,
+    photo: photos.procedure,
+    intro:
+      'When gum disease goes deeper than a clean can reach, or gums have pulled back from the teeth, gum surgery cleans below the gum line, rebuilds lost support and covers exposed roots, helping keep your natural teeth.',
+    steps: [
+      { title: 'Gum check', body: 'Pocket depths and X-rays show how far the disease has gone.' },
+      { title: 'Deep clean', body: 'Plaque and tartar are cleared from below the gum line.' },
+      { title: 'Surgery', body: 'Gums are treated, grafted or reshaped under local anaesthesia.' },
+      { title: 'Maintenance', body: 'Regular reviews keep the gums healthy afterwards.' },
+    ],
+  },
+  {
+    slug: 'wisdom-teeth-removal',
+    Icon: ToothIcon,
+    name: 'Wisdom teeth removal',
+    shortName: 'Wisdom teeth',
+    menuLine: 'Safe removal of impacted wisdom teeth',
+    featured: false,
+    summary: 'Careful removal of painful or impacted wisdom teeth, planned from X-rays.',
+    highlights: ['Planned from X-rays', 'Local anaesthesia', 'Clear aftercare'],
+    illustration: illustrations.calendar,
+    photo: photos.xray,
+    intro:
+      'Wisdom teeth often come through at an angle or get stuck under the gum, causing pain, swelling or decay in the neighbouring tooth. X-rays show their position so they can be removed safely and comfortably.',
+    steps: [
+      { title: 'X-rays', body: 'Scans show the tooth’s position and nearby nerves.' },
+      { title: 'Numbing', body: 'The area is fully numbed with local anaesthesia.' },
+      { title: 'Removal', body: 'The tooth is removed, sometimes in sections for less strain.' },
+      { title: 'Recovery', body: 'Aftercare advice, and a review to check healing.' },
     ],
   },
 ];
@@ -447,4 +558,15 @@ export function demoCasesFor(treatment: Treatment): ResultCase[] {
       beforeFilter: '[filter:sepia(0.5)_saturate(0.7)_brightness(0.88)]',
     },
   ];
+}
+
+/**
+ * Before/after cases covering every treatment, in the clinic's treatment order: the real
+ * cases where the clinic has published some, a labelled demo for the rest.
+ */
+export function casesForEveryTreatment(live: ResultCase[]): ResultCase[] {
+  return treatments.flatMap((treatment) => {
+    const real = live.filter((item) => item.treatment === treatment.slug);
+    return real.length ? real : demoCasesFor(treatment);
+  });
 }

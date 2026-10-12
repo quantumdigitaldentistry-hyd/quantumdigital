@@ -66,7 +66,7 @@ export function LaserSpotlight({
   return (
     <section
       aria-labelledby={headingId}
-      className="relative isolate overflow-hidden bg-scrim text-on-scrim"
+      className="relative isolate overflow-clip bg-scrim text-on-scrim"
     >
       {/* Warm glow behind the unit, echoing the gold product lighting. */}
       <div

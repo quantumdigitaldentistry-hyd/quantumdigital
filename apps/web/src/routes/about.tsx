@@ -85,8 +85,8 @@ export default function AboutPage() {
 
       <Section
         eyebrow="What we treat"
-        title={`${treatments.length} treatments, one clinic.`}
-        intro="From a cleaning to a full mouth rehabilitation, without being sent elsewhere."
+        title="Committed to improving your quality of life."
+        intro="Through comfortable, modern dentistry: from a routine cleaning to a full mouth rehabilitation, all under one roof."
       >
         <ul className="flex flex-wrap gap-2">
           {treatments.map((treatment) => (
