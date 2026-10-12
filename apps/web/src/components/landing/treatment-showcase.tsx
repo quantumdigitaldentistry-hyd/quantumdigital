@@ -144,29 +144,37 @@ export function TreatmentShowcase() {
         {treatments.map((treatment, index) => (
           <li
             key={treatment.slug}
-            className="slide-card w-[80vw] max-w-sm shrink-0 snap-start sm:w-[44vw] lg:w-92"
+            className="slide-card w-[78vw] max-w-[20rem] shrink-0 snap-start sm:w-[44vw] sm:max-w-sm lg:w-92"
           >
-            <article className="group relative h-full overflow-hidden rounded-4xl border border-line bg-surface shadow-lg shadow-elevation/10 transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
+            {/*
+              Phones: a tall photo card, words over a dark gradient (speciality on top, name
+              and "Know more" at the bottom). From md: photo above, words below.
+            */}
+            <article className="group relative h-[28rem] overflow-hidden rounded-4xl border border-line bg-scrim shadow-lg shadow-elevation/15 transition-[translate,box-shadow] duration-300 ease-out md:h-full md:bg-surface md:hover:-translate-y-1 md:hover:shadow-xl">
               <Link
                 to={`/treatments/${treatment.slug}`}
                 viewTransition
                 className="flex h-full flex-col focus-visible:-outline-offset-4"
               >
                 <div
-                  className="relative aspect-4/3 overflow-hidden"
+                  className="absolute inset-0 overflow-hidden md:relative md:inset-auto md:aspect-4/3"
                   style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
                 >
                   <Photo
                     photo={treatment.photo}
-                    sizes="(min-width: 1024px) 23rem, (min-width: 640px) 44vw, 80vw"
+                    sizes="(min-width: 1024px) 23rem, (min-width: 640px) 44vw, 78vw"
                     className="block size-full"
                     imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
                   />
-                  <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 bg-linear-to-t from-scrim via-scrim/45 to-scrim/25 md:hidden"
+                  />
+                  <span className="absolute top-4 left-4 hidden rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm md:block">
                     {pad(index + 1)} / {pad(treatments.length)}
                   </span>
                   <span
-                    className="absolute right-4 -bottom-1 grid size-18 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20"
+                    className="absolute right-4 -bottom-1 hidden size-18 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20 md:grid"
                     style={{ viewTransitionName: vtNames.treatmentIllustration(treatment.slug) }}
                   >
                     <Photo
@@ -177,14 +185,35 @@ export function TreatmentShowcase() {
                     />
                   </span>
                 </div>
-                <div className="flex flex-1 flex-col gap-2 p-5">
+
+                {/* Phones only: speciality label and number over the photo. */}
+                <div className="relative flex items-center justify-between p-5 text-on-scrim md:hidden">
+                  <span className="text-label font-semibold tracking-[0.18em] uppercase opacity-90">
+                    {treatment.ledBy ?? 'General dentistry'}
+                  </span>
+                  <span className="font-mono text-small opacity-80">
+                    {pad(index + 1)}/{pad(treatments.length)}
+                  </span>
+                </div>
+
+                <div className="relative mt-auto flex flex-col gap-2 p-5 text-on-scrim md:mt-0 md:flex-1 md:text-ink">
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-display text-heading font-bold">{treatment.name}</h3>
-                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
+                    <h3 className="font-display text-title font-bold text-balance md:text-heading">
+                      {treatment.name}
+                    </h3>
+                    <span className="hidden size-10 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45 md:grid">
                       <ArrowUpRightIcon size={18} aria-hidden />
                     </span>
                   </div>
-                  <p className="text-small text-ink-muted">{treatment.summary}</p>
+                  <p className="text-small opacity-90 md:text-ink-muted md:opacity-100">
+                    {treatment.summary}
+                  </p>
+                  <span className="mt-3 flex items-center gap-3 font-semibold md:hidden">
+                    <span className="grid size-12 place-items-center rounded-full bg-surface text-ink transition-transform duration-150 ease-out group-active:scale-95">
+                      <ArrowRightIcon size={20} aria-hidden />
+                    </span>
+                    Know more
+                  </span>
                 </div>
               </Link>
             </article>

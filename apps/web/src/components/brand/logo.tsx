@@ -89,7 +89,7 @@ export function Logo({ className }: { className?: string }) {
       ) : (
         <LogoMark className="h-9 w-auto" priority />
       )}
-      <Wordmark className="h-8 md:h-9" />
+      <Wordmark className="h-8 md:h-9 lg:h-7 xl:h-9" />
     </span>
   );
 }
