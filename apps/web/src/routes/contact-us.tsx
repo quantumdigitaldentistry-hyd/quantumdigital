@@ -10,8 +10,7 @@ import { PageHero } from '@/components/sections/page-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
 import { Card } from '@/components/ui/card';
-import { Link } from 'react-router';
-import { bookingPath } from '@/lib/booking';
+import { BookLink } from '@/components/contact/book-link';
 
 function ContactCard({
   icon,
@@ -62,13 +61,9 @@ export default function ContactUsPage() {
                 icon={<CalendarPlusIcon size={24} weight="duotone" aria-hidden />}
                 title="Appointments"
               >
-                <Link
-                  className={buttonClass('secondary', 'self-start')}
-                  to={bookingPath()}
-                  viewTransition
-                >
+                <BookLink className={buttonClass('secondary', 'self-start')}>
                   Book an appointment
-                </Link>
+                </BookLink>
               </ContactCard>
             </Reveal>
           </li>

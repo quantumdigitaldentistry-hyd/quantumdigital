@@ -1,5 +1,5 @@
 import { CalendarPlusIcon, CheckCircleIcon } from '@phosphor-icons/react';
-import { useParams, type LoaderFunctionArgs, Link } from 'react-router';
+import { useParams, type LoaderFunctionArgs } from 'react-router';
 
 import { BackButton } from '@/components/back-button';
 
@@ -14,7 +14,7 @@ import { Photo } from '@/components/ui/photo';
 import { doctors, specialtyIllustration } from '@/content/clinic';
 import { photos } from '@/content/photos';
 import { DoctorPortrait } from '@/components/sections/doctor-list';
-import { bookingPath } from '@/lib/booking';
+import { BookLink } from '@/components/contact/book-link';
 import { vtNames } from '@/lib/transition-names';
 
 /** Unknown doctor slugs become the site's 404 page. */
@@ -55,10 +55,10 @@ export default function DoctorPage() {
             ) : null}
             <p className="max-w-[46ch] text-on-hero-muted">{doctor.focus}.</p>
             <div className="flex flex-wrap gap-3">
-              <Link className={buttonClass()} to={bookingPath()} viewTransition>
+              <BookLink className={buttonClass()}>
                 <CalendarPlusIcon size={20} aria-hidden />
                 Book an appointment
-              </Link>
+              </BookLink>
             </div>
           </div>
 

@@ -17,10 +17,9 @@ import { TreatmentGrid } from '@/components/sections/treatment-grid';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
+import { BookLink } from '@/components/contact/book-link';
 import { treatments } from '@/content/clinic';
 import { photos } from '@/content/photos';
-import { Link } from 'react-router';
-import { bookingPath } from '@/lib/booking';
 
 const reasons: Feature[] = [
   {
@@ -119,10 +118,10 @@ export default function DentalTourismPage() {
         photo={photos.charminar}
         inset={photos.planeWindow}
       >
-        <Link className={buttonClass('primary')} to={bookingPath()} viewTransition>
+        <BookLink className={buttonClass('primary')}>
           <CalendarPlusIcon size={20} aria-hidden />
           Plan a consultation
-        </Link>
+        </BookLink>
       </MediaHero>
 
       <section aria-labelledby="intro-title" className="bg-surface">

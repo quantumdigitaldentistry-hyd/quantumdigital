@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { loadGsap, prefersReducedMotion } from '@/lib/gsap';
+import { setActiveLenis } from '@/lib/scroll';
 
 /**
  * Lenis smooth scrolling for mouse and trackpad users, driven by GSAP's ticker so Lenis,
@@ -25,6 +26,7 @@ export function SmoothScroll() {
           wheelMultiplier: 0.9,
           prevent: (node) => node.closest('dialog') !== null,
         });
+        setActiveLenis(lenis);
         lenis.on('scroll', ScrollTrigger.update);
         const tick = (time: number) => lenis.raf(time * 1000);
         gsap.ticker.add(tick);
@@ -32,6 +34,7 @@ export function SmoothScroll() {
         destroy = () => {
           gsap.ticker.remove(tick);
           lenis.destroy();
+          setActiveLenis(null);
         };
       },
     );

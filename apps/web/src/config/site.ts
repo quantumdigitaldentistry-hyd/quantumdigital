@@ -3,7 +3,6 @@ import {
   BookOpenTextIcon,
   BuildingsIcon,
   GraduationCapIcon,
-  ImagesIcon,
   FacebookLogoIcon,
   GoogleLogoIcon,
   HouseIcon,
@@ -116,7 +115,6 @@ export const learnLinks: NavLinkItem[] = [
     description: 'Clear answers about your teeth',
     Icon: BookOpenTextIcon,
   },
-  { to: '/gallery', label: 'Gallery', description: 'Inside modern dentistry', Icon: ImagesIcon },
 ];
 
 /** Main navigation, in menu order. Home is the dashboard. */

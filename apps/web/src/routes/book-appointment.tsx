@@ -31,7 +31,9 @@ export default function BookAppointmentPage() {
         description="Tell us what you need and when suits you. The front desk calls to confirm the time."
       />
       <Container className="grid gap-8 py-10 md:py-16 lg:grid-cols-[1.5fr_1fr] lg:items-start lg:gap-12">
-        <AppointmentForm initialTreatment={initialTreatment} />
+        <div data-booking className="scroll-mt-24">
+          <AppointmentForm initialTreatment={initialTreatment} />
+        </div>
         <aside className="flex flex-col gap-4 lg:sticky lg:top-28">
           <div className="flex flex-col gap-4 rounded-4xl border border-line bg-surface p-5 md:p-6">
             <span className="grid size-11 place-items-center rounded-control bg-aqua-soft text-on-aqua-soft">

@@ -5,11 +5,10 @@ import { FestivalAmbience } from '@/components/fx/festival-ambience';
 import { Tilt } from '@/components/fx/tilt';
 import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
+import { BookLink } from '@/components/contact/book-link';
 import { useActiveFestival } from '@/lib/active-festival';
 import { greetingFor, type FestivalPack } from '@/lib/festival-packs';
 import { markPopupSeen, popupSeen, useFestivalPopup } from '@/lib/festival-popup';
-import { Link } from 'react-router';
-import { bookingPath } from '@/lib/booking';
 import { useSiteSettings, type FestivalOffer } from '@/lib/site-settings';
 
 const validity = (offer: FestivalOffer) =>
@@ -113,14 +112,10 @@ export function FestivalBanner({ className }: { className?: string }) {
                   {pack.blessing}
                 </p>
                 <div className="mt-1 flex flex-wrap justify-center gap-3 md:justify-start">
-                  <Link
-                    to={bookingPath()}
-                    viewTransition
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-on-festive px-5 font-semibold text-festive transition-transform active:scale-[0.97]"
-                  >
+                  <BookLink className="inline-flex min-h-11 items-center gap-2 rounded-full bg-on-festive px-5 font-semibold text-festive transition-transform active:scale-[0.97]">
                     <CalendarPlusIcon size={20} aria-hidden />
                     {offer ? 'Book with this offer' : 'Book a visit'}
-                  </Link>
+                  </BookLink>
                   {offer ? (
                     <button
                       type="button"
@@ -216,14 +211,13 @@ function FestivalPopup({ pack }: { pack: FestivalPack }) {
               <p className="opacity-90 md:text-heading md:font-normal">{pack.blessing}</p>
               {offer ? <OfferCard offer={offer} compact /> : null}
               <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-                <Link
-                  to={bookingPath()}
+                <BookLink
                   onClick={close}
                   className="inline-flex min-h-12 items-center gap-2 rounded-full bg-on-festive px-6 font-semibold text-festive transition-transform active:scale-[0.97]"
                 >
                   <CalendarPlusIcon size={20} aria-hidden />
                   {offer ? 'Book with this offer' : 'Book a visit'}
-                </Link>
+                </BookLink>
                 <button
                   type="button"
                   onClick={close}

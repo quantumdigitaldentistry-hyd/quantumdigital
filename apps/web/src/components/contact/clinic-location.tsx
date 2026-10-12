@@ -106,6 +106,7 @@ export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
     <section
       ref={section}
       id="book"
+      data-booking
       aria-labelledby={headingId}
       className={cx('scroll-mt-20', tinted && 'border-y border-line bg-surface')}
     >

@@ -368,6 +368,27 @@ html:has(dialog[open]) {
 
 /* Gentle hover-in-place for the floating chips around the 3D tooth. */
 /*
+ * Home treatments row: each card eases up to full size as it slides into the row from
+ * the side, driven by the row's own horizontal scroll (view(inline)). Static without
+ * support or with reduced motion.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .treatment-row .slide-card {
+      animation: slide-card linear both;
+      animation-timeline: view(inline);
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+@keyframes slide-card {
+  from {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+}
+
+/*
  * Clinic wordmark (components/brand/logo.tsx). The artwork is white letters with a yellow
  * M, made for dark backgrounds. On light surfaces --wordmark-ink (an SVG colour matrix in
  * the component) turns the white letters ink and leaves the yellow untouched. Stacked 1px

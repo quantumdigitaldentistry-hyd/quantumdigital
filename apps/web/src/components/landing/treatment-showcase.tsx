@@ -1,106 +1,83 @@
-import { ArrowUpRightIcon } from '@phosphor-icons/react';
-import { useRef, useState, type CSSProperties } from 'react';
+import { ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon } from '@phosphor-icons/react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { DepthBackdrop } from '@/components/fx/depth-field';
+import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { treatments } from '@/content/clinic';
 import { cx } from '@/lib/cx';
-import { useScrollScene } from '@/lib/gsap';
 import { vtNames } from '@/lib/transition-names';
 
+const pad = (value: number) => String(value).padStart(2, '0');
+
 /**
- * All of the clinic's treatments, in its own order, as a stack of cards. Each card sticks a
- * little lower than the one before, so they pile up as you scroll. As a card arrives its
- * photo settles out of a slight zoom and its words rise into place; as the next one covers
- * it, it eases back and dims. A counter (beside the heading on desktop, a pill pinned to the
- * bottom on phones) follows the card you're on. Without scripts (or with reduced motion)
- * the cards still stack, just without the motion or the counter.
+ * All of the clinic's treatments as one swipeable row. Native scroll-snap does the work:
+ * swipe on phones, trackpad or the arrow buttons on desktop, keyboard via Tab. Each card
+ * eases up to full size as it slides into view (`.slide-card`, a scroll-driven animation
+ * on the row itself, so no script runs per frame). A bar under the row shows how far
+ * along you are.
  */
 export function TreatmentShowcase() {
-  const section = useRef<HTMLElement>(null);
-  const [active, setActive] = useState(0);
-  const [live, setLive] = useState(false);
+  const track = useRef<HTMLOListElement>(null);
+  const bar = useRef<HTMLSpanElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
 
-  useScrollScene(section, ({ gsap, ScrollTrigger }, element) => {
-    // A short lag on the scrub smooths touch scrolling, where Lenis doesn't run.
-    const scrub = 0.6;
-    const cards = gsap.utils.toArray<HTMLElement>('[data-stack-card]', element);
-    cards.forEach((card, index) => {
-      gsap.fromTo(
-        card.querySelector('[data-stack-photo]'),
-        { scale: 1.18, yPercent: -6 },
-        {
-          scale: 1,
-          yPercent: 0,
-          ease: 'none',
-          scrollTrigger: { trigger: card, start: 'top bottom', end: 'top 35%', scrub },
-        },
+  useEffect(() => {
+    const row = track.current;
+    if (!row) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = row.scrollWidth - row.clientWidth;
+      const progress = max > 0 ? row.scrollLeft / max : 1;
+      // Never below one card's share, so the bar is visible before any scrolling.
+      const shown = Math.max(progress, 1 / treatments.length);
+      if (bar.current) bar.current.style.transform = `scaleX(${shown})`;
+      const start = row.scrollLeft < 8;
+      const end = row.scrollLeft > max - 8;
+      setEdges((current) =>
+        current.start === start && current.end === end ? current : { start, end },
       );
-      gsap.from(card.querySelectorAll('[data-stack-rise]'), {
-        opacity: 0,
-        y: 24,
-        stagger: 0.12,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: card, start: 'top 90%', end: 'top 45%', scrub },
-      });
-      ScrollTrigger.create({
-        trigger: card,
-        start: 'top 60%',
-        onEnter: () => setActive(index),
-        onLeaveBack: () => setActive(Math.max(0, index - 1)),
-      });
-
-      const next = cards[index + 1];
-      if (!next) return;
-      const scrollTrigger = { trigger: next, start: 'top bottom', end: 'top 20%', scrub };
-      // The card stays opaque (so covered cards never show through); a scrim dims it.
-      gsap.to(card.querySelector('[data-stack-inner]'), {
-        scale: 0.9,
-        ease: 'none',
-        scrollTrigger,
-      });
-      gsap.to(card.querySelector('[data-stack-dim]'), {
-        opacity: 0.5,
-        ease: 'none',
-        scrollTrigger,
-      });
-    });
-    gsap.fromTo(
-      element.querySelectorAll('[data-stack-progress]'),
-      { scaleX: 0 },
-      {
-        scaleX: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: element.querySelector('[data-stack-list]'),
-          start: 'top 60%',
-          end: 'bottom 60%',
-          scrub: true,
-        },
-      },
-    );
-    setLive(true);
-    return () => {
-      setLive(false);
-      setActive(0);
     };
-  });
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    row.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      row.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
-  const names = treatments.map((treatment) => treatment.name);
-  const numbers = treatments.map((_, index) => String(index + 1).padStart(2, '0'));
-  const total = String(treatments.length).padStart(2, '0');
+  /** One card's width (plus the gap) per press. */
+  const step = (direction: 1 | -1) => {
+    const row = track.current;
+    const card = row?.querySelector('li');
+    if (!row || !card) return;
+    const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    row.scrollBy({
+      left: direction * (card.offsetWidth + gap),
+      behavior: smooth ? 'smooth' : 'auto',
+    });
+  };
+
+  const arrow =
+    'grid size-12 place-items-center rounded-full border border-line-strong bg-surface text-ink shadow-sm transition-[border-color,color,opacity,scale] duration-150 ease-out hover:border-brand hover:text-brand active:scale-95 disabled:pointer-events-none disabled:opacity-35';
 
   return (
     <section
-      ref={section}
       aria-labelledby="treatments-title"
-      className="relative isolate bg-canvas"
+      className="relative isolate overflow-hidden bg-canvas"
     >
       <DepthBackdrop density={0.6} />
-      <Container className="grid gap-10 py-16 md:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-        <div className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
+      <Container className="flex flex-col gap-6 pt-16 md:flex-row md:items-end md:justify-between md:pt-24">
+        <Reveal className="flex max-w-xl flex-col gap-3">
           <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
             02 · Treatments
           </p>
@@ -110,184 +87,120 @@ export function TreatmentShowcase() {
           >
             Your complete smile destination.
           </h2>
-          <p className="max-w-[40ch] text-ink-muted">
+          <p className="text-ink-muted">
             Each treatment is led by a specialist and planned with digital records before anything
             begins.
           </p>
+        </Reveal>
+        <div className="flex items-center gap-3">
           <Link
             to="/treatments"
             viewTransition
-            className="group inline-flex w-fit items-center gap-2 rounded-full border border-line-strong bg-surface px-5 py-3 font-medium transition-colors hover:border-brand hover:text-brand"
+            className="group inline-flex min-h-12 items-center gap-2 rounded-full border border-line-strong bg-surface px-5 font-medium transition-colors hover:border-brand hover:text-brand"
           >
-            Explore treatments
+            All treatments
             <ArrowUpRightIcon
               size={18}
               aria-hidden
               className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </Link>
-          <div
-            aria-hidden
-            className={cx(
-              'mt-8 hidden max-w-xs flex-col gap-3 transition-opacity duration-500 ease-out lg:flex',
-              !live && 'invisible opacity-0',
-            )}
-          >
-            <div className="flex items-baseline gap-2 font-mono">
-              <Ticker
-                items={numbers}
-                index={active}
-                className="font-display text-display font-bold text-brand"
-              />
-              <span className="text-ink-muted">/ {total}</span>
-            </div>
-            <Ticker
-              items={names}
-              index={active}
-              className="font-display text-heading font-semibold"
-            />
-            <ProgressBar />
-          </div>
-        </div>
-
-        <div className="relative">
-          <ol data-stack-list className="flex flex-col gap-6">
-            {treatments.map((treatment, index) => (
-              <li
-                key={treatment.slug}
-                data-stack-card
-                className="sticky top-(--stack-top)"
-                style={{ '--stack-top': `${5.5 + index * 0.6}rem` } as CSSProperties}
-              >
-                <article
-                  data-stack-inner
-                  className="group relative origin-top overflow-hidden rounded-4xl border border-line bg-surface shadow-xl shadow-elevation/10"
-                >
-                  <Link
-                    to={`/treatments/${treatment.slug}`}
-                    viewTransition
-                    className="block focus-visible:outline-offset-[-4px]"
-                  >
-                    <div
-                      className="relative aspect-2/1 overflow-hidden"
-                      style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
-                    >
-                      <div data-stack-photo className="size-full will-change-transform">
-                        <Photo
-                          photo={treatment.photo}
-                          sizes="(min-width: 1024px) 40rem, 92vw"
-                          className="block size-full"
-                          imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      </div>
-                      <span
-                        className="float-y absolute right-4 -bottom-1 grid size-20 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20 md:size-24"
-                        style={{
-                          viewTransitionName: vtNames.treatmentIllustration(treatment.slug),
-                        }}
-                      >
-                        <Photo
-                          photo={treatment.illustration}
-                          sizes="96px"
-                          fit="contain"
-                          className="block size-[68%]"
-                        />
-                      </span>
-                      <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
-                        {numbers[index]} / {total}
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-2.5 p-5 md:p-6">
-                      <div data-stack-rise className="flex items-start justify-between gap-4">
-                        <h3 className="font-display text-title font-bold">{treatment.name}</h3>
-                        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
-                          <ArrowUpRightIcon size={20} aria-hidden />
-                        </span>
-                      </div>
-                      <p data-stack-rise className="text-ink-muted">
-                        {treatment.summary}
-                      </p>
-                      <ul data-stack-rise className="hidden flex-wrap gap-2 pt-1 sm:flex">
-                        {treatment.highlights.map((item) => (
-                          <li
-                            key={item}
-                            className="rounded-full border border-line px-3 py-1 text-small text-ink-muted"
-                          >
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </Link>
-                  <div
-                    data-stack-dim
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 bg-scrim opacity-0"
-                  />
-                </article>
-              </li>
-            ))}
-          </ol>
-          {/* Phones: a small counter pinned to the bottom while the stack is on screen, between the floating buttons. */}
-          <div
-            aria-hidden
-            className="pointer-events-none sticky bottom-6 z-10 mt-6 flex justify-center lg:hidden"
-          >
-            <div
-              className={cx(
-                'flex items-center gap-3 rounded-full border border-line bg-surface/85 py-2 pr-4 pl-3.5 shadow-lg shadow-elevation/15 backdrop-blur-md transition-[opacity,translate] duration-500 ease-out',
-                !live && 'invisible translate-y-3 opacity-0',
-              )}
+          <div className="hidden gap-2 md:flex">
+            <button
+              type="button"
+              aria-label="Previous treatments"
+              aria-controls="treatment-row"
+              disabled={edges.start}
+              onClick={() => step(-1)}
+              className={arrow}
             >
-              <span className="flex font-mono text-small font-semibold text-brand">
-                <Ticker items={numbers} index={active} />
-                <span className="text-ink-muted">/{total}</span>
-              </span>
-              <span className="w-12">
-                <ProgressBar />
-              </span>
-            </div>
+              <ArrowLeftIcon size={20} aria-hidden />
+            </button>
+            <button
+              type="button"
+              aria-label="More treatments"
+              aria-controls="treatment-row"
+              disabled={edges.end}
+              onClick={() => step(1)}
+              className={arrow}
+            >
+              <ArrowRightIcon size={20} aria-hidden />
+            </button>
           </div>
         </div>
       </Container>
-    </section>
-  );
-}
 
-/**
- * One line of text that rolls to `items[index]`: every item sits in a column and the column
- * slides, so fast scrolling retargets mid-roll instead of restarting. Sized to the longest.
- */
-function Ticker({
-  items,
-  index,
-  className,
-}: {
-  items: string[];
-  index: number;
-  className?: string;
-}) {
-  return (
-    <span className={cx('relative inline-block h-lh overflow-hidden', className)}>
-      <span
-        className="flex flex-col transition-transform duration-500 ease-out"
-        style={{ transform: `translateY(${(-index * 100) / items.length}%)` }}
+      <ol
+        ref={track}
+        id="treatment-row"
+        aria-label="Treatments"
+        className={cx(
+          'treatment-row mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pt-2 pb-6 md:gap-6',
+          // Line the first card up with the page column, and let the last one reach the edge.
+          'scroll-px-(--row-inset) px-(--row-inset) [--row-inset:1rem] md:[--row-inset:max(1.5rem,calc((100vw-72rem)/2+1.5rem))]',
+          '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        )}
       >
-        {items.map((item) => (
-          <span key={item} className="whitespace-nowrap">
-            {item}
-          </span>
+        {treatments.map((treatment, index) => (
+          <li
+            key={treatment.slug}
+            className="slide-card w-[80vw] max-w-sm shrink-0 snap-start sm:w-[44vw] lg:w-92"
+          >
+            <article className="group relative h-full overflow-hidden rounded-4xl border border-line bg-surface shadow-lg shadow-elevation/10 transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl">
+              <Link
+                to={`/treatments/${treatment.slug}`}
+                viewTransition
+                className="flex h-full flex-col focus-visible:-outline-offset-4"
+              >
+                <div
+                  className="relative aspect-4/3 overflow-hidden"
+                  style={{ viewTransitionName: vtNames.treatmentPhoto(treatment.slug) }}
+                >
+                  <Photo
+                    photo={treatment.photo}
+                    sizes="(min-width: 1024px) 23rem, (min-width: 640px) 44vw, 80vw"
+                    className="block size-full"
+                    imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  <span className="absolute top-4 left-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-small font-medium backdrop-blur-sm">
+                    {pad(index + 1)} / {pad(treatments.length)}
+                  </span>
+                  <span
+                    className="absolute right-4 -bottom-1 grid size-18 place-items-center rounded-full bg-surface shadow-lg shadow-elevation/20"
+                    style={{ viewTransitionName: vtNames.treatmentIllustration(treatment.slug) }}
+                  >
+                    <Photo
+                      photo={treatment.illustration}
+                      sizes="72px"
+                      fit="contain"
+                      className="block size-[68%]"
+                    />
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col gap-2 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-display text-heading font-bold">{treatment.name}</h3>
+                    <span className="grid size-10 shrink-0 place-items-center rounded-full bg-aqua-soft text-on-aqua-soft transition-transform duration-300 ease-out group-hover:rotate-45">
+                      <ArrowUpRightIcon size={18} aria-hidden />
+                    </span>
+                  </div>
+                  <p className="text-small text-ink-muted">{treatment.summary}</p>
+                </div>
+              </Link>
+            </article>
+          </li>
         ))}
-      </span>
-    </span>
-  );
-}
+      </ol>
 
-/** Fills as you scroll through the stack (scaled by the scroll scene). */
-function ProgressBar() {
-  return (
-    <span className="block h-0.5 overflow-hidden rounded-full bg-line">
-      <span data-stack-progress className="block h-full origin-left rounded-full bg-brand" />
-    </span>
+      <Container className="pb-16 md:pb-24">
+        <span aria-hidden className="block h-1 overflow-hidden rounded-full bg-line">
+          <span
+            ref={bar}
+            className="block h-full origin-left rounded-full bg-brand transition-transform duration-150 ease-out"
+            style={{ transform: `scaleX(${1 / treatments.length})` }}
+          />
+        </span>
+      </Container>
+    </section>
   );
 }

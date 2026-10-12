@@ -14,10 +14,10 @@ import { FeatureGrid, type Feature } from '@/components/sections/feature-grid';
 import { MediaHero } from '@/components/sections/media-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
+import { BookLink } from '@/components/contact/book-link';
 import { clinic } from '@/config/site';
 import { treatments } from '@/content/clinic';
 import { photos } from '@/content/photos';
-import { bookingPath } from '@/lib/booking';
 
 // Only what the clinic actually does; no invented numbers, awards or testimonials.
 const values: Feature[] = [
@@ -57,10 +57,10 @@ export default function AboutPage() {
         photo={photos.consult}
         inset={photos.receptionLounge}
       >
-        <Link className={buttonClass('primary')} to={bookingPath()} viewTransition>
+        <BookLink className={buttonClass('primary')}>
           <CalendarPlusIcon size={20} aria-hidden />
           Book a visit
-        </Link>
+        </BookLink>
         <Link className={buttonClass('secondary')} to="/studio" viewTransition>
           See the studio
         </Link>

@@ -16,10 +16,10 @@ import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
+import { BookLink } from '@/components/contact/book-link';
 import { demoCasesFor, leadDoctor, treatments } from '@/content/clinic';
 import { treatmentDetails } from '@/content/treatment-details';
 import { useLiveResults } from '@/lib/live-content';
-import { bookingPath } from '@/lib/booking';
 import { usePointerParallax } from '@/lib/use-pointer-fx';
 import { vtNames } from '@/lib/transition-names';
 
@@ -87,15 +87,14 @@ export default function TreatmentPage() {
                 </li>
               ))}
             </ul>
-            <Link
+            <BookLink
               className={buttonClass('primary', 'enter w-fit')}
               style={{ '--d': 3 } as CSSProperties}
-              to={bookingPath(treatment.slug)}
-              viewTransition
+              treatment={treatment.slug}
             >
               <CalendarPlusIcon size={20} aria-hidden />
               Book a consultation
-            </Link>
+            </BookLink>
           </div>
 
           <div className="hero-exit relative mx-auto w-full max-w-md">

@@ -13,9 +13,8 @@ import { LaserSpotlight } from '@/components/sections/laser-spotlight';
 import { MediaHero } from '@/components/sections/media-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
+import { BookLink } from '@/components/contact/book-link';
 import { photos, studioPhotos } from '@/content/photos';
-import { Link } from 'react-router';
-import { bookingPath } from '@/lib/booking';
 
 // Photos are Unsplash placeholders until the clinic shares photos of its own rooms.
 const spaces: Feature[] = [
@@ -71,10 +70,10 @@ export default function StudioPage() {
         photo={photos.receptionLounge}
         inset={photos.treatmentRoom}
       >
-        <Link className={buttonClass('primary')} to={bookingPath()} viewTransition>
+        <BookLink className={buttonClass('primary')}>
           <CalendarPlusIcon size={20} aria-hidden />
           Book a visit
-        </Link>
+        </BookLink>
       </MediaHero>
 
       <Section
