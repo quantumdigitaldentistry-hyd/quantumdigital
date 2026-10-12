@@ -1,10 +1,11 @@
-import { CalendarPlusIcon, PhoneIcon, type Icon } from '@phosphor-icons/react';
-import type { ReactNode } from 'react';
+import { ArrowUpIcon, CalendarPlusIcon, PhoneIcon, type Icon } from '@phosphor-icons/react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import { BookLink } from '@/components/contact/book-link';
 import { clinicTelHref } from '@/config/site';
 import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
+import { scrollToY } from '@/lib/scroll';
 
 type Fab = {
   id: string;
@@ -35,6 +36,58 @@ function FabLabel({ children }: { children: ReactNode }) {
     >
       {children}
     </span>
+  );
+}
+
+/**
+ * Back-to-top arrow: appears once the visitor is halfway down the page (or two screens
+ * down on very long pages) and glides back up through the smooth scroller.
+ */
+function ScrollTopButton() {
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const threshold = Math.min(scrollable / 2, window.innerHeight * 2);
+      setShown(scrollable > 0 && window.scrollY > Math.max(threshold, 200));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  return (
+    <button
+      type="button"
+      aria-label="Back to top"
+      tabIndex={shown ? 0 : -1}
+      aria-hidden={!shown}
+      onClick={() => scrollToY(0)}
+      className={cx(
+        'group relative grid size-11 place-items-center rounded-full border border-line bg-surface/90 text-brand shadow-lg shadow-elevation/20 backdrop-blur-md',
+        'transition-[opacity,translate,scale] duration-300 ease-out hover:scale-105 active:scale-95',
+        shown ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0',
+      )}
+    >
+      <ArrowUpIcon
+        size={20}
+        weight="bold"
+        aria-hidden
+        className="transition-transform duration-300 group-hover:-translate-y-0.5"
+      />
+      <FabLabel>Back to top</FabLabel>
+    </button>
   );
 }
 
@@ -71,6 +124,10 @@ export function FloatingActions() {
       style={{ viewTransitionName: 'quick-actions' }}
       className="fixed right-3 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 flex flex-col items-end gap-3 md:right-5 md:bottom-6"
     >
+      {/* Centred over the round buttons below it. */}
+      <div className="grid w-13 place-items-center">
+        <ScrollTopButton />
+      </div>
       {fabs.map(({ id, label, Icon, tone, book, href, onClick }, index) => {
         const style = { animationDelay: `${300 + index * 70}ms` };
         const inner = (

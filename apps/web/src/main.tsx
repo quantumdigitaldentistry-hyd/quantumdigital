@@ -62,10 +62,8 @@ const router = createBrowserRouter([
         path: 'treatments',
         lazy: async () => ({ Component: (await import('@/routes/treatments')).default }),
       },
-      // Old addresses: aligners were listed as 'Invisalign provider'; the laser now lives on
-      // the studio page and the laser-trained doctor's page.
+      // Old address: aligners were listed as 'Invisalign provider'.
       { path: 'treatments/invisalign', loader: () => redirect('/treatments/aligners') },
-      { path: 'treatments/laser-dentistry', loader: () => redirect('/studio') },
       {
         path: 'treatments/:slug',
         lazy: async () => {
@@ -108,6 +106,10 @@ const router = createBrowserRouter([
       {
         path: 'gallery',
         lazy: async () => ({ Component: (await import('@/routes/gallery')).default }),
+      },
+      {
+        path: 'results',
+        lazy: async () => ({ Component: (await import('@/routes/results')).default }),
       },
       {
         path: 'doctors/:slug',

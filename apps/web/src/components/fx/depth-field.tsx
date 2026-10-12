@@ -10,8 +10,9 @@ type Bubble = { x: number; y: number; z: number; r: number; phase: number; hue: 
  * faint, so the layer reads as 3D space. Drawn on a 2D canvas with perspective maths:
  * no WebGL context, so it's cheap to use on several sections. Each colour's bubble is
  * painted once to a small sprite and stamped, rather than building gradients every frame.
- * Touch devices get fewer bubbles at 30 fps and a 1× canvas. Pauses off screen and in
- * background tabs; with reduced motion it draws once and stays still.
+ * It draws at ~30 fps and holds still while the page scrolls; touch devices also get
+ * fewer bubbles and a 1× canvas. Pauses off screen and in background tabs; with reduced
+ * motion it draws once and stays still.
  */
 export function DepthField({
   className,
@@ -117,10 +118,15 @@ export function DepthField({
     let frame = 0;
     let last = 0;
     let visible = false;
+    // The page is scrolling: hold the bubbles still so every frame goes to the scroll.
+    let scrolling = false;
+    let scrollIdle = 0;
     const tick = (now: number) => {
       frame = 0;
-      // Touch devices draw every other frame (~30 fps): the drift is slow enough not to show.
-      if (light && last && now - last < 30) {
+      // ~30 fps everywhere (the drift is slow enough not to show), and nothing at all
+      // while the page scrolls. Redrawing a canvas also costs a compositor commit, so
+      // this keeps the main thread free for scrolling on slower machines.
+      if (scrolling || (last && now - last < 30)) {
         if (visible && !document.hidden) frame = requestAnimationFrame(tick);
         return;
       }
@@ -139,6 +145,17 @@ export function DepthField({
         frame = requestAnimationFrame(tick);
       }
     };
+
+    const onScroll = () => {
+      scrolling = true;
+      window.clearTimeout(scrollIdle);
+      scrollIdle = window.setTimeout(() => {
+        scrolling = false;
+        // Pick up where the drift left off, without a jump.
+        last = 0;
+      }, 180);
+    };
+    if (!still) window.addEventListener('scroll', onScroll, { passive: true });
 
     const onPointer = (event: PointerEvent) => {
       pointer.tx = (event.clientX / window.innerWidth - 0.5) * 2;
@@ -161,6 +178,8 @@ export function DepthField({
 
     return () => {
       cancelAnimationFrame(frame);
+      window.clearTimeout(scrollIdle);
+      window.removeEventListener('scroll', onScroll);
       sizeObserver.disconnect();
       viewObserver.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);

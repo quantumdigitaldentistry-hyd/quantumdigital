@@ -43,6 +43,9 @@ export const clinic = {
     mapsUrl: 'https://maps.app.goo.gl/xNYtHzrFkFvKGgay6',
   },
   whatsapp: 'https://wa.me/917207011988',
+  email: 'quantumdigitaldentistry@gmail.com',
+  /** The clinic's Google listing: reviews, rating and "Write a review". */
+  googleReviewsUrl: 'https://share.google/zlvAc9coPvWEHS1Rn',
 };
 
 /** Weekly opening hours, Sunday = 0. null = not confirmed yet (shown as "call to confirm"). */
@@ -85,7 +88,12 @@ export const socialLinks: SocialLink[] = [
     href: 'https://www.facebook.com/people/Quantum-Digital-Dentistry/61591626561368/',
   },
   { id: 'youtube', label: 'YouTube', Icon: YoutubeLogoIcon, href: null },
-  { id: 'google', label: 'Google reviews', Icon: GoogleLogoIcon, href: null },
+  {
+    id: 'google',
+    label: 'Google reviews',
+    Icon: GoogleLogoIcon,
+    href: 'https://share.google/zlvAc9coPvWEHS1Rn',
+  },
 ];
 
 export type NavLinkItem = { to: string; label: string; description: string; Icon: Icon };

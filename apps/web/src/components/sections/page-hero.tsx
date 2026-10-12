@@ -21,7 +21,7 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
+    <section className="relative isolate overflow-clip bg-linear-to-br from-hero-from to-hero-to text-on-hero">
       <DepthField className="-z-10" density={0.8} />
       <Container className="flex flex-col gap-3 py-10 md:py-16">
         {eyebrow ? (

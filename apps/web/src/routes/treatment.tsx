@@ -2,6 +2,7 @@ import { ArrowUpRightIcon, CalendarPlusIcon, CheckIcon, InfoIcon } from '@phosph
 import { useRef, type CSSProperties } from 'react';
 import { Link, useParams, type LoaderFunctionArgs } from 'react-router';
 
+import { AlignerOfferPrompt } from '@/components/actions/booking-prompt';
 import { BackButton } from '@/components/back-button';
 import { DepthField } from '@/components/fx/depth-field';
 import { ResultsShowcase } from '@/components/gallery/results-showcase';
@@ -9,8 +10,11 @@ import { ClosingCta } from '@/components/landing/closing-cta';
 import { ImplantStory } from '@/components/landing/implant-story';
 import { OrthoStory } from '@/components/landing/ortho-story';
 import { Reveal } from '@/components/reveal';
+import { AlignerComparison } from '@/components/sections/aligner-comparison';
 import { FaqSection } from '@/components/sections/faq-section';
 import { FeatureGrid } from '@/components/sections/feature-grid';
+import { ImplantProcess } from '@/components/sections/implant-process';
+import { LaserSpotlight } from '@/components/sections/laser-spotlight';
 import { Section } from '@/components/sections/section';
 import { StepList } from '@/components/sections/step-list';
 import { buttonClass } from '@/components/ui/button-class';
@@ -47,13 +51,14 @@ export default function TreatmentPage() {
 
   return (
     <>
+      {treatment.slug === 'aligners' ? <AlignerOfferPrompt /> : null}
       <div
         aria-hidden
         className="read-progress pointer-events-none fixed inset-x-0 top-0 z-50 h-1 bg-brand"
       />
       <section
         ref={hero}
-        className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero"
+        className="relative isolate overflow-clip bg-linear-to-br from-hero-from to-hero-to text-on-hero"
       >
         <DepthField className="-z-10" density={0.9} />
         <Container className="grid items-center gap-10 py-8 md:grid-cols-[1.05fr_1fr] md:py-16">
@@ -167,6 +172,9 @@ export default function TreatmentPage() {
         </Container>
       </section>
 
+      {treatment.slug === 'implants' ? <ImplantProcess /> : null}
+      {treatment.slug === 'aligners' ? <AlignerComparison /> : null}
+
       {details ? (
         <>
           <Section eyebrow="Why choose it" title={`${label}: why patients choose it.`}>
@@ -191,8 +199,12 @@ export default function TreatmentPage() {
 
       {treatment.slug === 'implants' ? <ImplantStory eyebrow="Implants in 3D" /> : null}
       {treatment.slug === 'aligners' || treatment.slug === 'braces' ? (
-        <OrthoStory eyebrow="Straightening in 3D" />
+        <OrthoStory
+          eyebrow="Straightening in 3D"
+          appliance={treatment.slug === 'aligners' ? 'aligner' : 'braces'}
+        />
       ) : null}
+      {treatment.slug === 'laser-dentistry' ? <LaserSpotlight link /> : null}
 
       {cases.length ? (
         <section aria-labelledby="cases-title" className="bg-canvas">

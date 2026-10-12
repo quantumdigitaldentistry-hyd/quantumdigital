@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { Outlet, ScrollRestoration, useLocation, useNavigation } from 'react-router';
 
+import { BookingPrompt } from '@/components/actions/booking-prompt';
 import { QuickActionsHost } from '@/components/actions/quick-actions-host';
 import { FestivalLayer } from '@/components/brand/festival-experience';
 import { IntroReveal } from '@/components/brand/intro-reveal';
 import { ChatBubble } from '@/components/chat/chat-bubble';
+import { OffscreenPause } from '@/components/fx/offscreen-pause';
 import { FloatingActions } from '@/components/layout/floating-actions';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SiteHeader } from '@/components/layout/site-header';
@@ -60,7 +62,9 @@ export function RootLayout() {
       <ChatBubble />
       <FestivalLayer />
       <QuickActionsHost />
+      <BookingPrompt />
       <SmoothScroll />
+      <OffscreenPause />
       <IntroReveal />
       {/*
         One saved position per history entry, so Back returns to the exact spot. Fresh page

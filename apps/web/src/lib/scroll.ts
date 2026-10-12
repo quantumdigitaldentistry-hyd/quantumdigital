@@ -8,11 +8,13 @@ let active: Lenis | null = null;
  * when it is running (so the two never fight), and native smooth scrolling otherwise.
  */
 export function scrollToElement(element: HTMLElement, offset = 80) {
+  // A plain position, not the element: Lenis would add the element's scroll-margin on
+  // top of `offset` and stop short.
+  const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - offset);
   if (active) {
-    active.scrollTo(element, { offset: -offset, duration: 1.2 });
+    active.scrollTo(top, { duration: 1.2 });
     return;
   }
-  const top = element.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({ top, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
 

@@ -1,5 +1,5 @@
 import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react';
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 
 import { Photo } from '@/components/ui/photo';
 import { treatments, type ResultCase } from '@/content/clinic';
@@ -10,17 +10,42 @@ import { BeforeAfter } from './before-after';
 const treatmentName = (slug: string) =>
   treatments.find((treatment) => treatment.slug === slug)?.name ?? '';
 
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 /**
  * Several before/after cases: thumbnail tabs choose the case, the comparison cross-fades
  * in. The tab strip scrolls sideways (swipe, trackpad or shift + wheel), with previous /
- * next buttons either side and arrow keys on the tabs; the chosen tab is kept in view. Every case is marked as a demo until real,
- * consented cases replace them.
+ * next buttons either side and arrow keys on the tabs; the chosen tab is kept in view.
+ * Every case is marked as a demo until real, consented cases replace them.
+ *
+ * With `autoPlay` (ms) it moves to the next case on its own, with a bar filling up to
+ * the change. It holds while the pointer is over it or focus is inside it, while the tab
+ * is hidden, and never runs with reduced motion.
  */
-export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; className?: string }) {
+export function ResultsShowcase({
+  cases,
+  autoPlay,
+  className,
+}: {
+  cases: ResultCase[];
+  autoPlay?: number;
+  className?: string;
+}) {
   const [active, setActive] = useState(0);
+  const [held, setHeld] = useState(false);
+  const [hidden, setHidden] = useState(() => document.hidden);
+  const [canPlay] = useState(() => !!autoPlay && !reducedMotion());
   const strip = useRef<HTMLDivElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const moved = useRef(false);
+  const playing = canPlay && !held && !hidden && cases.length > 1;
+
+  useEffect(() => {
+    if (!canPlay) return;
+    const update = () => setHidden(document.hidden);
+    document.addEventListener('visibilitychange', update);
+    return () => document.removeEventListener('visibilitychange', update);
+  }, [canPlay]);
 
   // Keep the chosen tab in view, scrolling only the strip (never the page).
   useEffect(() => {
@@ -28,8 +53,7 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
     const tab = tabs.current[active];
     if (!container || !tab || !moved.current) return;
     const left = tab.offsetLeft - (container.clientWidth - tab.offsetWidth) / 2;
-    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    container.scrollTo({ left, behavior: smooth ? 'smooth' : 'auto' });
+    container.scrollTo({ left, behavior: reducedMotion() ? 'auto' : 'smooth' });
   }, [active]);
 
   const current = cases[active] ?? cases[0];
@@ -57,7 +81,15 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
     'grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink shadow-sm transition-[background-color,border-color,scale] duration-150 hover:border-brand hover:text-brand active:scale-95';
 
   return (
-    <div className={cx('flex flex-col gap-4', className)}>
+    <div
+      className={cx('flex flex-col gap-4', className)}
+      onPointerEnter={(event) => event.pointerType === 'mouse' && setHeld(true)}
+      onPointerLeave={() => setHeld(false)}
+      onFocus={() => setHeld(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeld(false);
+      }}
+    >
       <div key={current.id} className="relative animate-[lightbox-in_420ms_var(--ease-out)_both]">
         <BeforeAfter
           before={current.before ?? current.photo}
@@ -67,9 +99,12 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
         />
         <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-2">
           <p className="rounded-2xl bg-scrim/70 px-3 py-2 text-on-scrim backdrop-blur-sm">
-            <span className="block text-caption opacity-80">
-              {treatmentName(current.treatment)}
-            </span>
+            {/* The treatment above the case title, unless they are the same words. */}
+            {treatmentName(current.treatment) !== current.title ? (
+              <span className="block text-caption opacity-80">
+                {treatmentName(current.treatment)}
+              </span>
+            ) : null}
             <span className="font-display font-semibold">{current.title}</span>
           </p>
           {current.demo === false ? null : (
@@ -78,6 +113,27 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
             </span>
           )}
         </div>
+        {canPlay && cases.length > 1 ? (
+          // Time to the next case; it freezes while held.
+          <span
+            aria-hidden
+            className="absolute inset-x-6 bottom-1.5 h-1 overflow-hidden rounded-full bg-surface/40"
+          >
+            {/* The bar finishing is what moves on, so pausing holds both together. */}
+            {/* data-loop: held while off screen too, so it never moves on unseen. */}
+            <span
+              data-loop
+              onAnimationEnd={() => go(active + 1)}
+              className="block h-full origin-left animate-[autoplay-fill_linear_both] rounded-full bg-surface"
+              style={
+                {
+                  animationDuration: `${autoPlay}ms`,
+                  animationPlayState: playing ? 'running' : 'paused',
+                } as CSSProperties
+              }
+            />
+          </span>
+        ) : null}
       </div>
 
       {cases.length > 1 ? (
@@ -135,7 +191,7 @@ export function ResultsShowcase({ cases, className }: { cases: ResultCase[]; cla
           </button>
           <span
             aria-live="polite"
-            className="hidden w-12 shrink-0 text-center font-mono text-small text-ink-muted sm:block"
+            className="hidden shrink-0 text-center font-mono whitespace-nowrap text-small text-ink-muted sm:block"
           >
             {active + 1} / {cases.length}
           </span>

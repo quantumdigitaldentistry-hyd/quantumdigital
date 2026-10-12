@@ -1,5 +1,4 @@
-import logoAvif from '@/assets/brand/logo-mark.avif';
-import logoWebp from '@/assets/brand/logo-mark.webp';
+import logoMark from '@/assets/dashbaordlogo/logo.svg';
 import wordmarkAvif from '@/assets/brand/wordmark.avif';
 import wordmarkWebp from '@/assets/brand/wordmark.webp';
 import { useId, type CSSProperties } from 'react';
@@ -8,7 +7,10 @@ import { clinic } from '@/config/site';
 import { useActiveFestival } from '@/lib/active-festival';
 import { cx } from '@/lib/cx';
 
-/** The tooth mark from the brand kit (assets/brand), AVIF with a WebP fallback. */
+/**
+ * The tooth mark from the brand kit, as a vector (assets/dashbaordlogo/logo.svg), so it
+ * stays sharp at every size and screen density.
+ */
 export function LogoMark({
   className,
   priority = false,
@@ -17,17 +19,15 @@ export function LogoMark({
   priority?: boolean;
 }) {
   return (
-    <picture className="shrink-0">
-      <source srcSet={logoAvif} type="image/avif" />
-      <img
-        src={logoWebp}
-        alt=""
-        width={400}
-        height={373}
-        fetchPriority={priority ? 'high' : undefined}
-        className={cx('object-contain', className)}
-      />
-    </picture>
+    <img
+      src={logoMark}
+      alt=""
+      width={495}
+      height={462}
+      fetchPriority={priority ? 'high' : undefined}
+      decoding="async"
+      className={cx('shrink-0 object-contain', className)}
+    />
   );
 }
 
@@ -43,12 +43,13 @@ export function Wordmark({ className }: { className?: string }) {
       style={{ '--wordmark-ink': `url(#${ink})` } as CSSProperties}
     >
       {/*
-        White → ink (#0d1b2a), yellow kept: each channel loses blue × (1 − ink). White has
-        full blue, the yellow none, so only the letters change.
+        Light surfaces: white → ink (#0d1b2a) and the signage yellow (#ffe605) → a deeper
+        gold (#e0a100) that holds up on white. Each channel is a mix of itself and blue;
+        white has full blue and the yellow almost none, which tells them apart.
       */}
       <svg aria-hidden width="0" height="0" className="absolute">
         <filter id={ink} colorInterpolationFilters="sRGB">
-          <feColorMatrix values="1 0 -0.95 0 0  0 1 -0.894 0 0  0 0 0.165 0 0  0 0 0 1 0" />
+          <feColorMatrix values="0.895 0 -0.845 0 0  0 0.715 -0.609 0 0  0 0 0.165 0 0  0 0 0 1 0" />
         </filter>
       </svg>
       <picture className="block h-full">
@@ -71,25 +72,25 @@ export function Wordmark({ className }: { className?: string }) {
 }
 
 /**
- * Mark plus the clinic wordmark. During a festival the mark becomes that festival's logo
- * artwork.
+ * Mark plus the clinic wordmark, floating over a soft shadow (.logo-float in styles.css).
+ * During a festival the mark becomes that festival's logo artwork.
  */
 export function Logo({ className }: { className?: string }) {
   const festival = useActiveFestival();
   return (
-    <span className={cx('flex items-center gap-2.5', className)}>
+    <span className={cx('logo-float flex items-center gap-2.5', className)}>
       {festival ? (
         <img
           src={festival.logo.small}
           alt=""
           width={256}
           height={256}
-          className="size-11 shrink-0 object-contain"
+          className="size-12 shrink-0 object-contain"
         />
       ) : (
-        <LogoMark className="h-9 w-auto" priority />
+        <LogoMark className="h-10 w-auto lg:h-8 xl:h-11" priority />
       )}
-      <Wordmark className="h-8 md:h-9 lg:h-7 xl:h-9" />
+      <Wordmark className="h-9 md:h-10 lg:h-7 xl:h-10" />
     </span>
   );
 }

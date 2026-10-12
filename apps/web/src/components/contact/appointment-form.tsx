@@ -6,7 +6,6 @@ import {
   InfoIcon,
   LockSimpleIcon,
   MoonStarsIcon,
-  QuestionIcon,
   SunHorizonIcon,
   SunIcon,
   UserIcon,
@@ -17,8 +16,7 @@ import { PhoneLink } from '@/components/contact/phone-link';
 import { AccordionItem } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { ChoiceChips, type Choice } from '@/components/ui/choice-chips';
-import { Field, TextAreaField } from '@/components/ui/field';
-import { Photo } from '@/components/ui/photo';
+import { Field, SelectField, TextAreaField } from '@/components/ui/field';
 import { treatments } from '@/content/clinic';
 import { BOOKING_TREATMENT_EVENT, takeBookingTreatment } from '@/lib/booking';
 import { CallbackNotConnectedError, requestAppointment } from '@/lib/callback';
@@ -29,20 +27,9 @@ type TimeOfDay = 'morning' | 'afternoon' | 'evening';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-const treatmentChoices: Choice<string>[] = [
-  ...treatments.map((treatment) => ({
-    value: treatment.slug,
-    label: treatment.shortName ?? treatment.name,
-    visual: (
-      <Photo
-        photo={treatment.illustration}
-        sizes="20px"
-        fit="contain"
-        className="block size-5 shrink-0"
-      />
-    ),
-  })),
-  { value: 'not-sure', label: 'Not sure yet', Icon: QuestionIcon },
+const treatmentOptions = [
+  ...treatments.map((treatment) => ({ value: treatment.slug, label: treatment.name })),
+  { value: 'not-sure', label: 'Not sure yet' },
 ];
 
 const timeChoices: Choice<TimeOfDay>[] = [
@@ -67,16 +54,21 @@ function Group({ step, title, children }: { step: number; title: string; childre
 }
 
 /**
- * "Book an appointment" form in three short groups: the treatment (tappable chips),
+ * "Book an appointment" form in three short groups: the treatment (a dropdown),
  * when suits you, and contact details. Validates on submit (errors appear under each
  * field). Until the backend exists the request is not sent, and the form says so
  * plainly with the clinic's number instead of faking a confirmation.
+ *
+ * `wide` (the booking pop-up): from lg up the groups sit in two columns, so the whole
+ * form fits on a laptop screen without scrolling.
  */
 export default function AppointmentForm({
   plain = false,
+  wide = false,
   initialTreatment = '',
 }: {
   plain?: boolean;
+  wide?: boolean;
   /** A treatment slug to start with already chosen. */
   initialTreatment?: string;
 }) {
@@ -141,6 +133,101 @@ export default function AppointmentForm({
     }
   };
 
+  // The groups, laid out below in one column, or two for `wide`.
+  const what = (
+    <Group step={1} title="What can we help with?">
+      <SelectField
+        label="Treatment"
+        name="treatment"
+        placeholder="Choose a treatment"
+        options={treatmentOptions}
+        value={values.treatment}
+        onChange={(e) => set('treatment')(e.target.value)}
+        className="sm:max-w-sm"
+      />
+    </Group>
+  );
+  const when = (
+    <Group step={2} title="When suits you?">
+      <div className="flex flex-col gap-4">
+        <Field
+          label="Preferred date"
+          name="preferredDate"
+          type="date"
+          min={today()}
+          value={values.preferredDate}
+          onChange={(e) => set('preferredDate')(e.target.value)}
+          error={errors.preferredDate}
+          className="sm:max-w-60"
+        />
+        <ChoiceChips
+          legend="Time of day"
+          name="preferredTime"
+          options={timeChoices}
+          tiles
+          className="sm:max-w-sm"
+          value={values.preferredTime}
+          onChange={set('preferredTime')}
+        />
+      </div>
+    </Group>
+  );
+  const details = (
+    <Group step={3} title="Your details">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label="Your name"
+          name="name"
+          autoComplete="name"
+          prefix={<UserIcon size={18} aria-hidden />}
+          value={values.name}
+          onChange={(e) => set('name')(e.target.value)}
+          error={errors.name}
+        />
+        <Field
+          label="Mobile number"
+          name="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel-national"
+          prefix="+91"
+          placeholder="98480 21573"
+          value={values.phone}
+          onChange={(e) => set('phone')(e.target.value)}
+          error={errors.phone}
+        />
+      </div>
+      <AccordionItem
+        variant="plain"
+        defaultOpen={!!errors.message}
+        className="-mx-3"
+        title={<span className="text-small text-brand">Add a note (optional)</span>}
+      >
+        <TextAreaField
+          label="Anything we should know?"
+          name="message"
+          maxLength={500}
+          placeholder="For example: a broken tooth, or you are visiting from another city"
+          value={values.message}
+          onChange={(e) => set('message')(e.target.value)}
+          error={errors.message}
+        />
+      </AccordionItem>
+    </Group>
+  );
+  const send = (
+    <div className="flex flex-col gap-3 rounded-3xl bg-sunken p-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="flex items-center gap-2 text-caption text-ink-muted">
+        <LockSimpleIcon size={16} aria-hidden className="shrink-0" />
+        We only use your number to arrange this visit.
+      </p>
+      <Button type="submit" loading={status === 'sending'} className="w-full sm:w-fit">
+        Request appointment
+        <ArrowRightIcon size={18} aria-hidden />
+      </Button>
+    </div>
+  );
+
   return (
     <form
       noValidate
@@ -167,92 +254,26 @@ export default function AppointmentForm({
         </div>
       </div>
 
-      <Group step={1} title="What can we help with?">
-        <ChoiceChips
-          legend="Treatment"
-          name="treatment"
-          options={treatmentChoices}
-          value={values.treatment}
-          onChange={set('treatment')}
-        />
-      </Group>
-
-      <Group step={2} title="When suits you?">
-        <div className="flex flex-col gap-4">
-          <Field
-            label="Preferred date"
-            name="preferredDate"
-            type="date"
-            min={today()}
-            value={values.preferredDate}
-            onChange={(e) => set('preferredDate')(e.target.value)}
-            error={errors.preferredDate}
-            className="sm:max-w-60"
-          />
-          <ChoiceChips
-            legend="Time of day"
-            name="preferredTime"
-            options={timeChoices}
-            tiles
-            className="sm:max-w-sm"
-            value={values.preferredTime}
-            onChange={set('preferredTime')}
-          />
+      {wide ? (
+        <div className="grid gap-5 lg:grid-cols-2 lg:gap-x-10">
+          <div className="flex flex-col gap-5">
+            {what}
+            {when}
+          </div>
+          {/* Its own top rule while the columns are stacked. */}
+          <div className="flex flex-col gap-5 border-t border-line pt-5 lg:border-t-0 lg:pt-0">
+            {details}
+            {send}
+          </div>
         </div>
-      </Group>
-
-      <Group step={3} title="Your details">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="Your name"
-            name="name"
-            autoComplete="name"
-            prefix={<UserIcon size={18} aria-hidden />}
-            value={values.name}
-            onChange={(e) => set('name')(e.target.value)}
-            error={errors.name}
-          />
-          <Field
-            label="Mobile number"
-            name="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel-national"
-            prefix="+91"
-            placeholder="98480 21573"
-            value={values.phone}
-            onChange={(e) => set('phone')(e.target.value)}
-            error={errors.phone}
-          />
-        </div>
-        <AccordionItem
-          variant="plain"
-          defaultOpen={!!errors.message}
-          className="-mx-3"
-          title={<span className="text-small text-brand">Add a note (optional)</span>}
-        >
-          <TextAreaField
-            label="Anything we should know?"
-            name="message"
-            maxLength={500}
-            placeholder="For example: a broken tooth, or you are visiting from another city"
-            value={values.message}
-            onChange={(e) => set('message')(e.target.value)}
-            error={errors.message}
-          />
-        </AccordionItem>
-      </Group>
-
-      <div className="flex flex-col gap-3 rounded-3xl bg-sunken p-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="flex items-center gap-2 text-caption text-ink-muted">
-          <LockSimpleIcon size={16} aria-hidden className="shrink-0" />
-          We only use your number to arrange this visit.
-        </p>
-        <Button type="submit" loading={status === 'sending'} className="w-full sm:w-fit">
-          Request appointment
-          <ArrowRightIcon size={18} aria-hidden />
-        </Button>
-      </div>
+      ) : (
+        <>
+          {what}
+          {when}
+          {details}
+          {send}
+        </>
+      )}
 
       {/* Honeypot: hidden from people (and screen readers); bots fill it in. */}
       <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">

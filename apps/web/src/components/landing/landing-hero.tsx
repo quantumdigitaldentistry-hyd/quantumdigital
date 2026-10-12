@@ -13,12 +13,12 @@ import { vtNames } from '@/lib/transition-names';
 
 const HEADLINE = 'Implants, aligners and smile design, planned digitally.';
 
-/** Where each treatment chip floats around the 3D logo (md and up). */
-const chipPlacement: Record<string, { className: string; delay: string }> = {
-  braces: { className: '-left-4 top-[10%]', delay: '0s' },
-  implants: { className: '-right-2 top-[30%]', delay: '-2s' },
-  aligners: { className: 'left-[2%] bottom-[22%]', delay: '-4s' },
-  'smile-design': { className: 'right-[6%] bottom-[8%]', delay: '-1s' },
+/** Where each treatment chip sits around the 3D logo (md and up). */
+const chipPlacement: Record<string, string> = {
+  braces: '-left-4 top-[10%]',
+  implants: '-right-2 top-[30%]',
+  aligners: 'left-[2%] bottom-[22%]',
+  'smile-design': 'right-[6%] bottom-[8%]',
 };
 
 const chipClass =
@@ -51,7 +51,7 @@ export function LandingHero() {
   const show = useQuickActions((s) => s.show);
 
   return (
-    <section className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero">
+    <section className="relative isolate overflow-clip bg-linear-to-br from-hero-from to-hero-to text-on-hero">
       {/* Soft light behind the tooth: decorative. */}
       <div
         aria-hidden
@@ -62,7 +62,7 @@ export function LandingHero() {
         }}
       />
       <Container className="grid min-h-[calc(100svh-7rem)] items-center gap-2 pt-10 pb-4 md:grid-cols-[1.2fr_1fr] md:gap-8 md:py-16">
-        <div className="flex flex-col gap-6">
+        <div className="hero-text-scroll flex flex-col gap-6">
           <p className="text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase">
             Quantum Digital Dentistry
           </p>
@@ -96,21 +96,14 @@ export function LandingHero() {
           </div>
         </div>
 
-        <div className="hero-exit relative mx-auto w-full max-w-[min(100%,30rem)] md:max-w-none">
+        <div className="relative mx-auto w-full max-w-[min(100%,30rem)] md:max-w-none">
           <HeroVisual />
-          {/* Desktop: chips float around the logo. */}
-          {featuredTreatments.map(({ slug, name }) => {
-            const place = chipPlacement[slug];
-            return (
-              <div
-                key={slug}
-                className={cx('float-y absolute hidden md:block', place?.className)}
-                style={{ animationDelay: place?.delay }}
-              >
-                <TreatmentChip slug={slug} name={name} />
-              </div>
-            );
-          })}
+          {/* Desktop: chips around the logo. */}
+          {featuredTreatments.map(({ slug, name }) => (
+            <div key={slug} className={cx('absolute hidden md:block', chipPlacement[slug])}>
+              <TreatmentChip slug={slug} name={name} />
+            </div>
+          ))}
         </div>
         {/* Phones: the same chips in a row under the logo, clear of the floating buttons. */}
         <nav
@@ -124,12 +117,15 @@ export function LandingHero() {
       </Container>
 
       <a
-        href="#implant-story"
+        href="#treatments"
         className="mx-auto mb-6 hidden w-fit flex-col items-center gap-2 text-caption font-medium text-on-hero-muted md:flex"
       >
         Scroll to explore
         <span className="relative h-10 w-px overflow-hidden bg-on-hero/20">
-          <span className="absolute inset-x-0 top-0 h-1/3 animate-[cue_1.8s_var(--ease-in-out)_infinite] bg-on-hero motion-reduce:animate-none" />
+          <span
+            data-loop
+            className="absolute inset-x-0 top-0 h-1/3 animate-[cue_1.8s_var(--ease-in-out)_infinite] bg-on-hero motion-reduce:animate-none"
+          />
         </span>
       </a>
     </section>

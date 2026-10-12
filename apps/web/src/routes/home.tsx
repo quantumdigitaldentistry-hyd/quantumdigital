@@ -1,7 +1,7 @@
 import { FestivalBanner } from '@/components/brand/festival-experience';
 import { ClinicLocation } from '@/components/contact/clinic-location';
-import { ImplantStory } from '@/components/landing/implant-story';
 import { LandingHero } from '@/components/landing/landing-hero';
+import { PatientReviews } from '@/components/landing/patient-reviews';
 import { GalleryPreview, SmileResults } from '@/components/landing/results-and-gallery';
 import { TreatmentMarquee } from '@/components/landing/treatment-marquee';
 import { TreatmentShowcase } from '@/components/landing/treatment-showcase';
@@ -10,9 +10,9 @@ import { DoctorList } from '@/components/sections/doctor-list';
 import { Section } from '@/components/sections/section';
 
 /**
- * Home (the dashboard) as a landing page: interactive 3D logo hero, treatment ticker, the
- * scroll-driven implant story, stacked treatment cards, visit journey, before/after
- * results, gallery, doctors and a closing call to action.
+ * Home (the dashboard) as a landing page: 3D logo hero, treatment ticker, a grid of
+ * treatment cards, visit journey, before/after results, patient reviews, gallery, doctors
+ * and the clinic location. The implant story lives on the implants treatment page.
  */
 export default function HomePage() {
   return (
@@ -20,10 +20,10 @@ export default function HomePage() {
       <LandingHero />
       <FestivalBanner className="py-6 md:py-10" />
       <TreatmentMarquee />
-      <ImplantStory />
       <TreatmentShowcase />
       <VisitJourney />
       <SmileResults />
+      <PatientReviews />
       <GalleryPreview />
       <Section
         id="doctors"
@@ -33,7 +33,7 @@ export default function HomePage() {
       >
         <DoctorList />
       </Section>
-      <ClinicLocation />
+      <ClinicLocation backdrop />
     </>
   );
 }

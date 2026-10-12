@@ -96,22 +96,35 @@ function PinnedStory({ id, eyebrow, title, steps, Scene }: ScrollStoryProps) {
   const [near, setNear] = useState(false);
   const [ready, setReady] = useState(false);
 
-  // Start loading the scene a screen before the section arrives, at an idle moment.
+  // Set the scene up at the first idle moment after the page loads, not as the section
+  // approaches: creating the WebGL context, lighting and shaders takes one long frame,
+  // and mid-scroll that frame shows as a jolt. While the visitor reads the top of the
+  // page it goes unnoticed. If they reach the section sooner, it starts then.
   useEffect(() => {
     const element = section.current;
     if (!element) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        observer.disconnect();
-        if ('requestIdleCallback' in window)
-          requestIdleCallback(() => setNear(true), { timeout: 3000 });
-        else setTimeout(() => setNear(true), 1200);
-      },
-      { rootMargin: '100% 0px' },
-    );
+    let idle = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const start = () => {
+      observer.disconnect();
+      setNear(true);
+    };
+    const observer = new IntersectionObserver(([entry]) => entry?.isIntersecting && start(), {
+      rootMargin: '50% 0px',
+    });
     observer.observe(element);
-    return () => observer.disconnect();
+    const whenIdle = () => {
+      if ('requestIdleCallback' in window) idle = requestIdleCallback(start, { timeout: 4000 });
+      else timer = setTimeout(start, 1500);
+    };
+    if (document.readyState === 'complete') whenIdle();
+    else window.addEventListener('load', whenIdle, { once: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('load', whenIdle);
+      if (idle) cancelIdleCallback(idle);
+      clearTimeout(timer);
+    };
   }, []);
 
   useScrollScene(

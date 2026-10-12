@@ -18,30 +18,35 @@ function useMenuActive(item: NavItem) {
   return false;
 }
 
-/** Treatments: illustration, name and one-line description, two columns. */
+/**
+ * Treatments: illustration, name and one-line description, three columns. Scrolls inside
+ * itself on short screens.
+ */
 function TreatmentsPanel({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <div className="w-[min(44rem,calc(100vw-3rem))]">
-      <ul className="grid grid-cols-2 gap-1">
+    <div className="max-h-[calc(100dvh-7rem)] w-[min(62rem,calc(100vw-4rem))] overflow-y-auto overscroll-contain">
+      <ul className="grid grid-cols-3 gap-0.5">
         {treatments.map((treatment) => (
           <li key={treatment.slug}>
             <Link
               to={`/treatments/${treatment.slug}`}
               viewTransition
               onClick={onNavigate}
-              className="group/item flex items-center gap-3 rounded-2xl p-3 transition-colors hover:bg-sunken focus-visible:bg-sunken"
+              className="group/item flex items-center gap-2.5 rounded-2xl p-2.5 transition-colors hover:bg-sunken focus-visible:bg-sunken"
             >
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-aqua-soft transition-transform duration-300 group-hover/item:-rotate-6">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-aqua-soft transition-transform duration-300 group-hover/item:-rotate-6">
                 <Photo
                   photo={treatment.illustration}
-                  sizes="48px"
+                  sizes="40px"
                   fit="contain"
                   className="block size-[68%]"
                 />
               </span>
               <span className="flex min-w-0 flex-col">
-                <span className="font-display font-semibold">{treatment.name}</span>
-                <span className="truncate text-small text-ink-muted">{treatment.menuLine}</span>
+                <span className="font-display text-small leading-snug font-semibold">
+                  {treatment.name}
+                </span>
+                <span className="truncate text-caption text-ink-muted">{treatment.menuLine}</span>
               </span>
             </Link>
           </li>
@@ -122,9 +127,13 @@ export function NavMenu({ item }: { item: NavItem }) {
     }
   };
 
+  // The wide treatments panel centres on the header (its positioned ancestor) instead of
+  // the trigger, so it never runs off the side of the screen.
+  const wide = item.menu === 'treatments';
+
   return (
     <div
-      className="relative"
+      className={wide ? 'static' : 'relative'}
       onPointerEnter={(event) => event.pointerType === 'mouse' && schedule(true, OPEN_DELAY)}
       onPointerLeave={(event) => event.pointerType === 'mouse' && schedule(false, CLOSE_DELAY)}
       onBlur={onBlur}
@@ -159,13 +168,16 @@ export function NavMenu({ item }: { item: NavItem }) {
       <div
         id={panelId}
         className={cx(
-          'absolute top-full left-1/2 z-50 -translate-x-1/2 pt-3',
+          'absolute left-1/2 z-50 -translate-x-1/2',
+          wide ? 'top-[calc(100%-0.5rem)] pt-2' : 'top-full pt-3',
           !open && 'pointer-events-none',
         )}
       >
         <div
           className={cx(
-            'origin-top rounded-3xl border border-line bg-surface/95 p-2 shadow-2xl shadow-elevation/20 backdrop-blur-xl transition-[opacity,translate,scale,visibility] duration-200 ease-out',
+            'origin-top rounded-3xl border border-line p-2 shadow-2xl shadow-elevation/20 backdrop-blur-xl transition-[opacity,translate,scale,visibility] duration-200 ease-out',
+            // The wide panel is opaque: the header's own blur stops a blur working here.
+            wide ? 'bg-surface' : 'bg-surface/95',
             open
               ? 'visible translate-y-0 scale-100 opacity-100'
               : 'invisible -translate-y-1 scale-[0.98] opacity-0',

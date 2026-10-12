@@ -37,7 +37,7 @@ export function MediaHero({
   return (
     <section
       ref={hero}
-      className="relative isolate overflow-hidden bg-linear-to-br from-hero-from to-hero-to text-on-hero"
+      className="relative isolate overflow-clip bg-linear-to-br from-hero-from to-hero-to text-on-hero"
     >
       <DepthField className="-z-10" density={0.9} />
       <Container className="grid items-center gap-10 py-8 md:grid-cols-[1.05fr_1fr] md:py-16">

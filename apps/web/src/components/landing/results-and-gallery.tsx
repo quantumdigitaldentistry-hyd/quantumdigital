@@ -6,13 +6,14 @@ import { PhotoGallery } from '@/components/gallery/photo-gallery';
 import { Reveal } from '@/components/reveal';
 import { DepthField } from '@/components/fx/depth-field';
 import { Container } from '@/components/ui/container';
-import { resultCases } from '@/content/clinic';
+import { casesForEveryTreatment } from '@/content/clinic';
 import { galleryPhotos } from '@/content/photos';
 import { useLiveGallery, useLiveResults } from '@/lib/live-content';
 import { RevealWords } from '@/components/reveal-words';
 
 /**
- * Smile results (before/after slider) and a gallery preview.
+ * Smile results (a before/after for every treatment, moving on every 5 seconds) and a
+ * gallery preview.
  *
  * The slider shows a DEMO until the clinic adds real patient cases with consent: the
  * same photo, with a filter standing in for "before". It is labelled as such, so no
@@ -22,12 +23,12 @@ export function SmileResults() {
   const live = useLiveResults().data ?? [];
   const real = live.length > 0;
   return (
-    <section aria-labelledby="results-title" className="relative isolate overflow-hidden bg-canvas">
+    <section aria-labelledby="results-title" className="relative isolate overflow-clip bg-canvas">
       <DepthField className="-z-10" density={0.6} />
       <Container className="grid gap-10 py-16 *:min-w-0 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14 md:py-24">
         <Reveal className="flex flex-col gap-4">
           <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
-            04 · Results
+            03 · Results
           </p>
           <h2
             id="results-title"
@@ -36,7 +37,8 @@ export function SmileResults() {
             <RevealWords text={'See the difference.'} />
           </h2>
           <p className="max-w-[42ch] text-ink-muted">
-            Pick a case, then drag the handle to compare.{' '}
+            A result for every treatment, changing every few seconds. Move over the photo to
+            compare, or tap Before and After.{' '}
             {real
               ? 'Real cases from the clinic, shared with each patient’s consent.'
               : 'Real cases from the clinic will appear here, shared with each patient’s consent.'}
@@ -47,9 +49,21 @@ export function SmileResults() {
               Demo only: each case uses one photo with a filter, to show how the comparison works.
             </p>
           )}
+          <Link
+            to="/results"
+            viewTransition
+            className="group inline-flex min-h-12 w-fit items-center gap-2 rounded-full border border-line-strong bg-surface px-5 font-medium transition-colors hover:border-brand hover:text-brand"
+          >
+            See all results
+            <ArrowUpRightIcon
+              size={18}
+              aria-hidden
+              className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
         </Reveal>
         <Reveal step={1}>
-          <ResultsShowcase cases={real ? live : resultCases} />
+          <ResultsShowcase cases={casesForEveryTreatment(live)} autoPlay={5000} />
         </Reveal>
       </Container>
     </section>

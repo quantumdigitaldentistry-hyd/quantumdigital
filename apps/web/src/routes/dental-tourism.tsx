@@ -1,10 +1,12 @@
 import {
+  ArrowRightIcon,
   CalendarPlusIcon,
   ClipboardTextIcon,
   StethoscopeIcon,
   SquaresFourIcon,
   VideoCameraIcon,
 } from '@phosphor-icons/react';
+import { Link } from 'react-router';
 
 import { ClosingCta } from '@/components/landing/closing-cta';
 import { Reveal } from '@/components/reveal';
@@ -17,6 +19,13 @@ import { TreatmentGrid } from '@/components/sections/treatment-grid';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
+import {
+  CostAdvantage,
+  ExploreHyderabad,
+  GettingHere,
+  PatientSupport,
+  WhyHyderabad,
+} from '@/components/tourism/travel-guide';
 import { BookLink } from '@/components/contact/book-link';
 import { treatments } from '@/content/clinic';
 import { photos } from '@/content/photos';
@@ -157,6 +166,8 @@ export default function DentalTourismPage() {
         </Container>
       </section>
 
+      <WhyHyderabad />
+
       <Section
         eyebrow="Why plan it with us"
         title="What you can expect."
@@ -165,6 +176,8 @@ export default function DentalTourismPage() {
       >
         <FeatureGrid features={reasons} columns={4} />
       </Section>
+
+      <CostAdvantage />
 
       <section aria-labelledby="steps-title">
         <Container className="grid gap-10 py-14 md:grid-cols-[0.9fr_1.1fr] md:gap-14 md:py-24">
@@ -197,7 +210,35 @@ export default function DentalTourismPage() {
         tinted
       >
         <TreatmentGrid items={travelTreatments} />
+        {/* On to every treatment, to browse them all and pick one. */}
+        <Link
+          to="/treatments"
+          viewTransition
+          className="group mt-8 flex flex-col gap-4 rounded-4xl bg-linear-to-br from-brand to-brand-strong p-6 text-on-brand shadow-lg shadow-elevation/20 transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl sm:flex-row sm:items-center sm:justify-between md:p-8"
+        >
+          <span className="flex flex-col gap-1">
+            <span className="font-display text-title font-bold">
+              See all {treatments.length} treatments
+            </span>
+            <span className="opacity-90">
+              Everything we offer in one place. Choose a treatment to see the steps and what to
+              expect.
+            </span>
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-surface px-5 py-3 font-semibold text-ink sm:self-auto">
+            All treatments
+            <ArrowRightIcon
+              size={18}
+              aria-hidden
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
+          </span>
+        </Link>
       </Section>
+
+      <GettingHere />
+      <PatientSupport />
+      <ExploreHyderabad />
 
       <FaqSection
         title="Planning your trip."
