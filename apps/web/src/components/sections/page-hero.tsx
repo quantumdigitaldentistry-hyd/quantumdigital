@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { DepthField } from '@/components/fx/depth-field';
 import { Container } from '@/components/ui/container';
+import { RevealWords } from '@/components/reveal-words';
 
 /**
  * Header band for inner pages, in the signage sky gradient. Text uses on-hero colours,
@@ -28,8 +29,8 @@ export function PageHero({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="max-w-3xl font-display text-display font-bold text-balance md:text-display-lg">
-          {title}
+        <h1 className="hero-words max-w-3xl font-display text-display font-bold text-balance md:text-display-lg">
+          <RevealWords text={title} />
         </h1>
         {description ? (
           <p className="max-w-[60ch] text-on-hero-muted md:text-heading md:font-normal">

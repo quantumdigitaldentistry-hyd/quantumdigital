@@ -22,6 +22,7 @@ import { treatmentDetails } from '@/content/treatment-details';
 import { useLiveResults } from '@/lib/live-content';
 import { usePointerParallax } from '@/lib/use-pointer-fx';
 import { vtNames } from '@/lib/transition-names';
+import { RevealWords } from '@/components/reveal-words';
 
 /** Unknown treatment slugs become the site's 404 page. */
 export function loader({ params }: LoaderFunctionArgs) {
@@ -136,7 +137,7 @@ export default function TreatmentPage() {
               id="about-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              What to expect.
+              <RevealWords text={'What to expect.'} />
             </h2>
             <p className="text-ink-muted md:text-heading md:font-normal">{treatment.intro}</p>
             {doctor ? (
@@ -204,7 +205,7 @@ export default function TreatmentPage() {
                 id="cases-title"
                 className="heading-3d font-display text-title font-bold text-balance md:text-display"
               >
-                {treatment.name} results.
+                <RevealWords text={`${treatment.name} results.`} />
               </h2>
               {live.length ? (
                 <p className="text-ink-muted">Real cases, shared with each patient’s consent.</p>
@@ -236,7 +237,7 @@ export default function TreatmentPage() {
       >
         <Container className="flex flex-col gap-6 py-14 md:py-20">
           <h2 id="others-title" className="heading-3d font-display text-title font-bold">
-            Other treatments
+            <RevealWords text={'Other treatments'} />
           </h2>
           <ul className="grid gap-4 sm:grid-cols-3">
             {others.map((item, index) => (

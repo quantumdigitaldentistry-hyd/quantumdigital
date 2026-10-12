@@ -14,6 +14,7 @@ import { clinic, clinicTelHref, type DayHours } from '@/config/site';
 import { useClinicHours } from '@/lib/clinic-hours';
 import { cx } from '@/lib/cx';
 import { useNearViewport } from '@/lib/use-near-viewport';
+import { RevealWords } from '@/components/reveal-words';
 
 // The form (and its validation) loads as this section approaches, not on first paint.
 const AppointmentForm = lazy(() => import('@/components/contact/appointment-form'));
@@ -144,7 +145,7 @@ export function ClinicLocation({ tinted = false }: { tinted?: boolean }) {
                 id={headingId}
                 className="heading-3d font-display text-title font-bold text-balance md:text-display"
               >
-                Find the clinic.
+                <RevealWords text={'Find the clinic.'} />
               </h2>
             </div>
             <address className="flex gap-3 not-italic">

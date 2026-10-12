@@ -3,6 +3,7 @@ import { useId, type ReactNode } from 'react';
 import { Reveal } from '@/components/reveal';
 import { Container } from '@/components/ui/container';
 import { cx } from '@/lib/cx';
+import { RevealWords } from '@/components/reveal-words';
 
 /** A page section with a title and optional intro. `tinted` alternates the background. */
 export function Section({
@@ -44,7 +45,7 @@ export function Section({
               eyebrow ? 'font-bold md:text-display' : 'font-semibold',
             )}
           >
-            {title}
+            <RevealWords text={title} />
           </h2>
           {intro ? <p className="text-ink-muted">{intro}</p> : null}
         </Reveal>

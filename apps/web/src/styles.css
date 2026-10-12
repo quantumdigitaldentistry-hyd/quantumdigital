@@ -353,6 +353,24 @@ html:has(dialog[open]) {
  */
 
 /* Headline words rise in one after another (`--i` = word index). */
+/* Photos open out from a smaller window as they scroll in (clip-path only). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .photo-reveal {
+      animation: photo-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 75%;
+    }
+  }
+}
+@keyframes photo-reveal {
+  from {
+    clip-path: inset(16% 8% 16% 8% round 24px);
+  }
+  to {
+    clip-path: inset(0 round 0);
+  }
+}
 @keyframes word-rise {
   from {
     opacity: 0;
@@ -644,6 +662,44 @@ html:has(dialog[open]) {
   from {
     opacity: 0;
     transform: perspective(700px) rotateX(-62deg) translateY(0.4em);
+  }
+}
+
+/*
+ * Word-by-word headings (components/reveal-words.tsx). In a section heading each word
+ * rises and turns upright as it scrolls in, a beat after the one before; page titles
+ * (.hero-words) play the same once on load. Transform and opacity only, so it stays on
+ * the compositor; static without support or with reduced motion.
+ */
+.heading-3d .word,
+.hero-words .word {
+  display: inline-block;
+  transform-origin: 0 100%;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .heading-3d:has(.word) {
+      animation: none;
+    }
+    .heading-3d .word {
+      animation: word-rise linear both;
+      animation-timeline: view();
+      /* Over the first quarter of the word's trip up the screen (a word's own "entry"
+         is only its height, far too short to see). */
+      animation-range: cover calc(var(--i) * 1.5%) cover calc(22% + var(--i) * 1.5%);
+    }
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-words .word {
+    animation: word-rise 700ms var(--ease-out) both;
+    animation-delay: calc(120ms + var(--i) * 55ms);
+  }
+}
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.55em) rotate(5deg);
   }
 }
 

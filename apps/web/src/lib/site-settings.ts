@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { defaultHours, type DayHours } from '@/config/site';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/backend';
 
 /**
  * Site-wide settings the clinic team controls from the staff area: the active festival
@@ -87,6 +87,7 @@ export const useSiteSettings = create<SiteSettings>((set) => ({
   load: () => {
     if (loading) return loading;
     loading = (async () => {
+      const supabase = await getSupabase();
       if (!supabase) return set({ loaded: true });
       const { data, error } = await supabase.from('site_settings').select('key, value');
       if (error || !data) return set({ loaded: true });

@@ -1,6 +1,6 @@
 import type { AppointmentRequest, CallbackRequest } from '@quantam/shared';
 
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/backend';
 
 /** Thrown when the site has no backend configured (no VITE_SUPABASE_* values). */
 export class CallbackNotConnectedError extends Error {
@@ -35,6 +35,7 @@ type Payload = {
  * for the team and emails the clinic. Rejects with a readable message on failure.
  */
 async function send(payload: Payload) {
+  const supabase = await getSupabase();
   if (!supabase) throw new CallbackNotConnectedError();
   const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: string }>(
     'book-appointment',

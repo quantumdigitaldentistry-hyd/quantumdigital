@@ -44,7 +44,7 @@ export function FeatureGrid({
             <Tilt className="h-full rounded-container">
               <article className="group flex h-full flex-col overflow-hidden rounded-container border border-line bg-surface transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-aqua">
                 {photo ? (
-                  <div className="aspect-4/3 overflow-hidden">
+                  <div className="photo-reveal aspect-4/3 overflow-hidden">
                     <Photo
                       photo={photo}
                       sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"

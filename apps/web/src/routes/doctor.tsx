@@ -16,6 +16,7 @@ import { photos } from '@/content/photos';
 import { DoctorPortrait } from '@/components/sections/doctor-list';
 import { BookLink } from '@/components/contact/book-link';
 import { vtNames } from '@/lib/transition-names';
+import { RevealWords } from '@/components/reveal-words';
 
 /** Unknown doctor slugs become the site's 404 page. */
 export function loader({ params }: LoaderFunctionArgs) {
@@ -95,7 +96,7 @@ export default function DoctorPage() {
               id="specialty-title"
               className="heading-3d font-display text-title font-bold text-balance md:text-display"
             >
-              What is {doctor.specialty.toLowerCase()}?
+              <RevealWords text={`What is ${doctor.specialty.toLowerCase()}?`} />
             </h2>
             <p className="text-ink-muted md:text-heading md:font-normal">{doctor.specialtyIntro}</p>
             <ul className="grid gap-3 pt-2 sm:grid-cols-2">

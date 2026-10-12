@@ -11,6 +11,7 @@ import { cx } from '@/lib/cx';
 import { useScrollScene } from '@/lib/gsap';
 import { scrollToY } from '@/lib/scroll';
 import { vtNames } from '@/lib/transition-names';
+import { RevealWords } from '@/components/reveal-words';
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
@@ -176,7 +177,7 @@ export function TreatmentShowcase() {
             id="treatments-title"
             className="heading-3d font-display text-title font-bold text-balance md:text-display"
           >
-            Your complete smile destination.
+            <RevealWords text={'Your complete smile destination.'} />
           </h2>
           <p className="text-ink-muted">
             Each treatment is led by a specialist and planned with digital records before anything
