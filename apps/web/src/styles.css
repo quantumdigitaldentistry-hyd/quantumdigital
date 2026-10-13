@@ -695,12 +695,6 @@ html:has(dialog[open]) {
     .journey-timeline {
       view-timeline: --journey block;
     }
-    /* Gallery photos unveil as they scroll in: clip opens, image rises and settles. */
-    .gallery-item {
-      animation: gallery-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 70%;
-    }
   }
 }
 /*
@@ -1050,10 +1044,23 @@ html[data-festival] .heading-3d {
   }
 }
 
-@keyframes gallery-in {
-  from {
+/*
+ * Gallery tiles (components/gallery/photo-gallery.tsx) rise and fade in once as they come
+ * into view, in a soft wave (--i). Played on entry, not tied to scroll position, so they
+ * never flicker; opacity and transform only.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-tile {
     opacity: 0;
-    transform: translateY(48px) scale(0.94);
+    transform: translateY(28px) scale(0.97);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 900ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 80ms);
+  }
+  .gallery-tile[data-in] {
+    opacity: 1;
+    transform: none;
   }
 }
 @keyframes hero-exit {

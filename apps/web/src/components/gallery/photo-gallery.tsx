@@ -6,7 +6,14 @@ import {
   PlayIcon,
   XIcon,
 } from '@phosphor-icons/react';
-import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from 'react';
 
 import { Tilt } from '@/components/fx/tilt';
 import { Photo } from '@/components/ui/photo';
@@ -20,20 +27,53 @@ export type GalleryEntry = PhotoData & { video?: VideoRef };
 type Origin = { rect: DOMRect; src: string };
 
 /**
- * Masonry gallery (CSS columns: 2 on phones, 3 from md). Photos unveil as they scroll
- * in (`.gallery-item`). Tapping one expands it straight out of its thumbnail into a
- * full-screen lightbox: arrow keys, on-screen arrows and swipe to browse, Esc to close.
- * Videos show as 16:9 thumbnails with a play button and play in the lightbox.
+ * Gallery as a tile grid: two even columns on phones; from md, three columns in groups
+ * of six, where the first of each group is a large feature tile (2 × 2) and five small
+ * tiles fill the rest, so every group closes without gaps. Tiles rise and fade in once,
+ * in a soft wave, as they come into view (`.gallery-tile`, styles.css), never tied to the
+ * scroll position. Tapping one expands it straight out of its thumbnail into a full-screen
+ * lightbox: arrow keys, on-screen arrows and swipe to browse, Esc to close. Videos show a
+ * play button and play in the lightbox.
  */
 export function PhotoGallery({ items, className }: { items: GalleryEntry[]; className?: string }) {
   const [open, setOpen] = useState<{ index: number; origin: Origin | null } | null>(null);
+  const grid = useRef<HTMLUListElement>(null);
+
+  // Mark tiles as they enter the view; CSS plays the entrance once.
+  useEffect(() => {
+    const tiles = grid.current?.querySelectorAll<HTMLElement>('.gallery-tile');
+    if (!tiles?.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.setAttribute('data-in', '');
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -8% 0px' },
+    );
+    tiles.forEach((tile) => observer.observe(tile));
+    return () => observer.disconnect();
+  }, [items]);
 
   return (
     <>
-      <ul className={cx('columns-2 gap-3 md:columns-3 md:gap-4', className)}>
+      <ul
+        ref={grid}
+        className={cx(
+          'grid auto-rows-[9.5rem] grid-cols-2 gap-3 sm:auto-rows-[12rem] md:auto-rows-[13rem] md:grid-cols-3 md:gap-4 lg:auto-rows-[15rem]',
+          className,
+        )}
+      >
         {items.map((item, index) => (
-          <li key={item.fallback} className="gallery-item mb-3 break-inside-avoid md:mb-4">
-            <Tilt className="rounded-container" max={6}>
+          <li
+            key={item.fallback}
+            className={cx('gallery-tile', index % 6 === 0 && 'md:col-span-2 md:row-span-2')}
+            // The wave: each tile in a group of six starts a little after the last.
+            style={{ '--i': index % 6 } as CSSProperties}
+          >
+            <Tilt className="h-full rounded-container" max={6}>
               <button
                 type="button"
                 onClick={(event) => {
@@ -45,16 +85,20 @@ export function PhotoGallery({ items, className }: { items: GalleryEntry[]; clas
                   });
                 }}
                 aria-label={item.video ? `Play video: ${item.alt}` : `View larger: ${item.alt}`}
-                className="group relative block w-full overflow-hidden rounded-container"
+                className="group relative block size-full overflow-hidden rounded-container bg-sunken"
               >
                 {item.video ? (
                   <VideoThumb video={item.video} />
                 ) : (
                   <Photo
                     photo={item}
-                    sizes="(min-width: 768px) 33vw, 50vw"
-                    className="block"
-                    imgClassName="h-auto transition-transform duration-700 ease-out group-hover:scale-110 group-focus-visible:scale-110"
+                    sizes={
+                      index % 6 === 0
+                        ? '(min-width: 768px) 66vw, 50vw'
+                        : '(min-width: 768px) 33vw, 50vw'
+                    }
+                    className="block size-full"
+                    imgClassName="transition-transform duration-700 ease-out group-hover:scale-110 group-focus-visible:scale-110"
                   />
                 )}
                 {item.video ? (
@@ -90,7 +134,7 @@ export function PhotoGallery({ items, className }: { items: GalleryEntry[]; clas
 function VideoThumb({ video }: { video: VideoRef }) {
   const [failed, setFailed] = useState(false);
   return (
-    <span className="relative block aspect-video w-full bg-linear-to-br from-brand-soft to-sunken">
+    <span className="relative block size-full bg-linear-to-br from-brand-soft to-sunken">
       {failed ? (
         <FilmSlateIcon
           size={36}

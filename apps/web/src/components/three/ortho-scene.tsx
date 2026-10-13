@@ -266,7 +266,7 @@ export default function OrthoScene({
       scene.environment?.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [appliance]);
 
   return <canvas ref={canvasRef} aria-hidden className="block size-full" />;
 }

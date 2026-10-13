@@ -40,7 +40,6 @@ const describe = (hours: DayHours) =>
 const mapEmbed = `https://www.google.com/maps?q=${clinic.address.lat},${clinic.address.lng}(${encodeURIComponent(clinic.name)})&z=17&output=embed`;
 export const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
 
-/** Same footprint as the form, so nothing jumps when it arrives. */
 /** Holds the form's place while it loads: the same height (measured), so nothing jumps. */
 function FormPlaceholder() {
   return (
