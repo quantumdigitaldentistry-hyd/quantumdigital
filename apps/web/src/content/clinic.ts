@@ -43,16 +43,18 @@ export const treatments: Treatment[] = [
   {
     slug: 'braces',
     Icon: SmileyIcon,
-    name: 'Braces',
-    menuLine: 'Metal and ceramic braces',
+    name: 'Orthodontic braces',
+    shortName: 'Braces',
+    menuLine: 'Metal, ceramic and self-ligating braces',
     featured: true,
     ledBy: 'Orthodontics',
-    summary: 'Fixed braces that move teeth steadily into line, for children and adults.',
+    summary:
+      'Orthodontic braces are small devices used to straighten crooked teeth, close gaps, and fix your bite.',
     highlights: ['Metal or tooth-coloured', 'Suits complex cases', 'Regular adjustments'],
     illustration: illustrations.braces,
     photo: photos.bracesModels,
     intro:
-      'Braces use small brackets bonded to the teeth and a wire that is adjusted over time. They can correct crowding, gaps and bite problems, including cases that aligners cannot treat as well.',
+      'Small brackets are fixed on your teeth and connected with a thin wire. This wire puts gentle, continuous pressure and slowly moves teeth into the correct position over 12–18 months.',
     steps: [
       { title: 'Records', body: 'Photos, scans and X-rays show how your teeth and bite line up.' },
       { title: 'Fitting', body: 'Brackets are bonded to the teeth and the first wire is placed.' },
@@ -68,12 +70,13 @@ export const treatments: Treatment[] = [
     menuLine: 'Invisalign and clear aligners',
     featured: true,
     ledBy: 'Orthodontics',
-    summary: 'Clear, removable aligners that straighten teeth without brackets or wires.',
+    summary:
+      'Clear aligners are the modern, invisible alternative to braces for straightening teeth.',
     highlights: ['Invisalign provider', 'Removable to eat', 'Digitally planned'],
     illustration: illustrations.smileBlue,
     photo: photos.aligners,
     intro:
-      'Clear aligners, such as Invisalign, are a series of thin, custom-made trays. Each set moves your teeth a little, and you switch to the next set every week or two until your teeth reach the planned position.',
+      'Clear aligners are a set of custom-made, transparent, removable trays that slowly move teeth into the perfect position. You get a series of aligners: each set is worn for 10–14 days, then you switch to the next. Each tray shifts teeth a little — until you get your perfect smile.',
     steps: [
       { title: 'Digital scan', body: 'A 3D scan of your teeth replaces messy impressions.' },
       { title: 'Your plan', body: 'You see the planned movement of every tooth before you start.' },
@@ -89,7 +92,7 @@ export const treatments: Treatment[] = [
     menuLine: 'Single, multiple and full-arch implants',
     featured: true,
     ledBy: 'Prosthodontics',
-    summary: 'Fixed replacements for missing teeth, anchored in the jaw like a natural root.',
+    summary: 'The most advanced and natural way to replace a missing tooth.',
     highlights: [
       'Fixed, not removable',
       'Looks like a natural tooth',
@@ -98,7 +101,7 @@ export const treatments: Treatment[] = [
     illustration: illustrations.toothPlus,
     photo: photos.implantModel,
     intro:
-      'A dental implant replaces the root of a missing tooth with a small titanium post. Once the bone has bonded to it, a crown is fixed on top, so the new tooth looks, feels and works like your own.',
+      'A small, biocompatible titanium screw is fixed into your jawbone where the tooth is missing. After it heals and fuses with the bone, a strong, natural-looking cap (crown) is placed on top of it. Think of it as an artificial tooth root.',
     steps: [
       {
         title: 'Assessment',
@@ -117,12 +120,13 @@ export const treatments: Treatment[] = [
     menuLine: 'Thin shells for shape and shade',
     featured: false,
     ledBy: 'Prosthodontics',
-    summary: 'Thin, tooth-coloured shells that reshape and brighten the front teeth.',
+    summary:
+      'Ultra-thin, tooth-coloured shells placed on the front of your teeth to give you a perfect, celebrity-like smile.',
     highlights: ['Natural-looking', 'Stain-resistant porcelain', 'Little tooth removal'],
     illustration: illustrations.smileTeal,
     photo: photos.veneers,
     intro:
-      'Veneers, also called laminates, are thin shells of porcelain or composite bonded to the front of the teeth. They can change the colour, shape and size of teeth, close small gaps and hide chips or stains that whitening cannot fix.',
+      'Think of veneers and laminates as a designer makeover for your teeth. We lightly shape the front surface and bond a custom-made, natural-looking veneer. In 2–3 visits, your smile is completely transformed.',
     steps: [
       { title: 'Smile plan', body: 'Photos and a preview show the planned shape and shade.' },
       { title: 'Preparation', body: 'A very thin layer of enamel is shaped, if needed.' },
@@ -135,14 +139,15 @@ export const treatments: Treatment[] = [
     Icon: ToothIcon,
     name: 'Tooth-coloured fillings',
     shortName: 'Fillings',
-    menuLine: 'Cosmetic, tooth-coloured fillings',
+    menuLine: 'Composite, tooth-coloured fillings',
     featured: false,
-    summary: 'Cosmetic fillings matched to your tooth colour, with no silver showing.',
-    highlights: ['Matched to your shade', 'Bonded to the tooth', 'Usually one visit'],
+    summary:
+      'Natural-looking fillings used to repair a tooth damaged by cavities or a small chip or break.',
+    highlights: ['Matched to your shade', 'Bonded to the tooth', 'Single visit (15–20 mins)'],
     illustration: illustrations.tooth,
     photo: photos.fillings,
     intro:
-      'Tooth-coloured fillings, also called cosmetic or composite fillings, repair cavities and small chips with a resin matched to your tooth. The material bonds to the tooth, so less healthy tooth needs to be removed than for a metal filling.',
+      'Unlike old silver (amalgam) fillings which look black, tooth-coloured fillings (composite fillings) are made of a tooth-coloured composite resin that exactly matches your natural tooth shade — so no one can tell you have a filling.',
     steps: [
       { title: 'Check', body: 'The tooth is examined, with an X-ray if needed.' },
       { title: 'Cleaning', body: 'Decay is removed gently, usually under local anaesthesia.' },
@@ -161,12 +166,13 @@ export const treatments: Treatment[] = [
     menuLine: 'A planned smile makeover',
     featured: true,
     ledBy: 'Prosthodontics',
-    summary: 'A planned set of treatments for the shape, shade and line of your smile.',
+    summary:
+      'A complete makeover of your smile — not just teeth, but your whole face, lips, and personality.',
     highlights: ['Shape and shade', 'Planned before treatment', 'Combines treatments'],
     illustration: illustrations.smileOrange,
     photo: photos.smileDesign,
     intro:
-      'Smile designing looks at your whole smile, not one tooth at a time. Photos and digital planning show the proposed shape and shade first, then whitening, veneers, crowns or aligners are combined to get there.',
+      'We don’t just fix teeth, we design a smile that looks perfect on you. We consider your face shape, lip line, skin tone, age, gender, and what you want, then combine treatments like whitening, veneers, aligners or braces, gum contouring and tooth-coloured fillings to get there.',
     steps: [
       { title: 'Photos and scans', body: 'Your face, lips and teeth are recorded together.' },
       { title: 'Digital preview', body: 'You see the proposed smile before anything changes.' },
@@ -176,37 +182,40 @@ export const treatments: Treatment[] = [
   {
     slug: 'root-canal',
     Icon: ToothIcon,
-    name: 'Root canal treatment',
+    name: 'Root canal treatment (RCT)',
     shortName: 'Root canal',
     menuLine: 'Save an infected or painful tooth',
     featured: false,
-    summary: 'Removes infection from inside a tooth so it can be kept instead of extracted.',
+    summary:
+      'A treatment to save a badly decayed, painful, or infected tooth — so you don’t have to remove it.',
     highlights: ['Relieves tooth pain', 'Saves your own tooth', 'Done under anaesthesia'],
     illustration: illustrations.calendar,
     photo: photos.xrayTall,
     intro:
-      'When the soft pulp inside a tooth becomes infected or inflamed, root canal treatment cleans it out, disinfects the canals and seals them. The tooth is then usually protected with a crown, and can last for many years.',
+      'Inside your tooth there is soft tissue called pulp (nerve). When it gets infected, we remove the infected pulp, clean and disinfect the inside canals, fill them with a safe material and protect the tooth with a cap (crown). With modern anaesthesia and digital X-rays, it feels just like getting a normal filling done.',
     steps: [
       { title: 'Diagnosis', body: 'An X-ray shows the infection and the shape of the roots.' },
-      { title: 'Cleaning', body: 'The infected pulp is removed and the canals are disinfected.' },
-      { title: 'Sealing', body: 'The canals are filled and sealed to keep bacteria out.' },
-      { title: 'Crown', body: 'A crown is often fitted to protect the treated tooth.' },
+      { title: 'Removal', body: 'The infected pulp is removed, painlessly with anaesthesia.' },
+      { title: 'Cleaning', body: 'The inside canals are cleaned and disinfected.' },
+      { title: 'Filling', body: 'The canals are filled with a safe material.' },
+      { title: 'Crown', body: 'A cap (crown) protects the treated tooth.' },
     ],
   },
   {
     slug: 'full-mouth-rehabilitation',
     Icon: SmileyIcon,
-    name: 'Full mouth rehabilitation',
+    name: 'Full mouth rehabilitation (FMR)',
     shortName: 'Full mouth rehab',
     menuLine: 'Rebuild every tooth and your bite',
     featured: false,
     ledBy: 'Prosthodontics',
-    summary: 'A complete plan to restore worn, broken or missing teeth and a healthy bite.',
-    highlights: ['One complete plan', 'Restores your bite', 'Crowns, bridges or implants'],
+    summary:
+      'A complete restoration of your entire mouth to bring back chewing, speaking, and a beautiful smile.',
+    highlights: ['One complete plan', 'Restores your bite', 'Planned with 3D scans'],
     illustration: illustrations.smileGreen,
     photo: photos.fullMouth,
     intro:
-      'Full mouth rehabilitation rebuilds the teeth in both jaws when many are worn, broken or missing. Your prosthodontist plans the bite as a whole and combines crowns, bridges, implants or dentures so you can chew comfortably and smile with confidence.',
+      'When most of your teeth are damaged, worn out, or missing, full mouth rehabilitation rebuilds your whole smile. We combine multiple treatments together based on your needs: implants, crowns and bridges, root canals, aligners or braces, and veneers.',
     steps: [
       { title: 'Full assessment', body: 'X-rays, scans and bite records of both jaws.' },
       { title: 'Your plan', body: 'A staged plan with timings, options and costs.' },
@@ -218,15 +227,15 @@ export const treatments: Treatment[] = [
     slug: 'dentures',
     Icon: SparkleIcon,
     name: 'Dentures',
-    menuLine: 'Removable, complete or partial',
+    menuLine: 'Complete, partial, flexible or implant-supported',
     featured: false,
     ledBy: 'Prosthodontics',
-    summary: 'Removable replacements for several or all teeth, made to fit comfortably.',
-    highlights: ['Complete or partial', 'Natural-looking', 'Implant-supported options'],
+    summary: 'Removable artificial teeth used to replace all or many missing teeth.',
+    highlights: ['Complete, partial or flexible', 'Natural-looking', 'Implant-supported options'],
     illustration: illustrations.smilePurple,
     photo: photos.dentures,
     intro:
-      'Removable dentures replace missing teeth with a plate you can take out. Complete dentures replace a full arch; partial dentures fill gaps between natural teeth. Implants can be added to hold a denture more firmly.',
+      'If you have lost most or all of your teeth due to age, decay, or gum disease, dentures help you eat, speak, and smile confidently again. Complete dentures replace a full arch, partial dentures fill gaps between natural teeth, flexible dentures are thin and metal-free, and implant-supported dentures stay firmly in place.',
     steps: [
       { title: 'Impressions', body: 'Detailed impressions record your gums and bite.' },
       {
@@ -239,20 +248,23 @@ export const treatments: Treatment[] = [
   {
     slug: 'teeth-cleaning',
     Icon: DropIcon,
-    name: 'Professional teeth cleaning',
+    name: 'Professional teeth cleaning (scaling & polishing)',
     shortName: 'Teeth cleaning',
     menuLine: 'Scaling, polishing and gum care',
     featured: false,
-    summary: 'Removes hardened tartar and stains to keep your gums healthy.',
+    summary: 'Removes the plaque and tartar that daily brushing can’t reach, safely.',
     highlights: ['Removes tartar', 'Fresher breath', 'Protects your gums'],
     illustration: illustrations.toothbrush,
     photo: photos.procedure,
     intro:
-      'Brushing cannot remove tartar, the hardened plaque that builds up along the gums and causes bleeding and gum disease. A professional cleaning (scaling and polishing) removes it and surface stains, and lets the dentist check your gums.',
+      'Even with daily brushing, plaque and tartar build up in places you can’t reach — which causes bad breath, yellow teeth, bleeding gums and cavities. We use ultrasonic scalers to remove plaque, tartar and stains from above and below the gums, then polish teeth to make them smooth and shiny.',
     steps: [
       { title: 'Check-up', body: 'Your teeth and gums are examined.' },
-      { title: 'Scaling', body: 'Tartar is removed from above and just below the gum line.' },
-      { title: 'Polishing', body: 'Surface stains are polished away.' },
+      {
+        title: 'Scaling',
+        body: 'Ultrasonic scalers remove plaque, tartar and stains from above and below the gums.',
+      },
+      { title: 'Polishing', body: 'Teeth are polished to make them smooth and shiny.' },
       { title: 'Advice', body: 'Simple tips to keep your gums healthy at home.' },
     ],
   },
@@ -263,16 +275,17 @@ export const treatments: Treatment[] = [
     shortName: 'Whitening',
     menuLine: 'Brighter teeth, safely',
     featured: false,
-    summary: 'Lightens teeth that have yellowed or stained, under a dentist’s care.',
-    highlights: ['Visible change', 'Safe for enamel', 'In-clinic treatment'],
+    summary:
+      'A quick, safe cosmetic treatment to remove stains and make your teeth 2–3 shades whiter and brighter.',
+    highlights: ['2–3 shades whiter', 'Safe for enamel', 'One visit'],
     illustration: illustrations.beam,
     photo: photos.teethWhitening,
     intro:
-      'Professional whitening uses a stronger, safer gel than shop-bought kits, applied in the clinic with the gums protected. It lightens natural teeth stained by tea, coffee, smoking or age. Crowns, veneers and fillings do not change colour.',
+      'Teeth become yellow with aging, tea, coffee, smoking, or poor oral hygiene. We apply a safe whitening gel on your teeth and activate it with a laser light. In 30–45 mins, stains are removed and teeth become visibly whiter. Crowns, veneers and fillings do not change colour.',
     steps: [
       { title: 'Check', body: 'Your teeth and gums are checked, and the shade recorded.' },
       { title: 'Protection', body: 'Your gums are covered so only the teeth are treated.' },
-      { title: 'Whitening', body: 'The gel is applied and activated in short cycles.' },
+      { title: 'Whitening', body: 'The gel is applied and activated with a laser light.' },
       { title: 'Aftercare', body: 'Advice on foods to avoid for a day or two.' },
     ],
   },
@@ -284,16 +297,17 @@ export const treatments: Treatment[] = [
     menuLine: 'Rebuild or replace damaged teeth',
     featured: false,
     ledBy: 'Prosthodontics',
-    summary: 'Crowns protect weak or broken teeth; bridges replace a missing tooth.',
+    summary:
+      'When a tooth is badly broken, root canal treated, or missing, a crown or bridge gives you back a strong, natural-looking fixed tooth.',
     highlights: ['Matched to your shade', 'Fixed in place', 'Restores chewing'],
     illustration: illustrations.crown,
     photo: photos.crownModel,
     intro:
-      'A crown covers and protects a tooth that is cracked, heavily filled or root-canal treated. A bridge replaces a missing tooth by attaching a new tooth to the neighbouring ones.',
+      'A crown is a cap that covers and protects your damaged tooth completely. A bridge replaces a missing tooth by taking support from the teeth next to it — like a bridge.',
     steps: [
       {
         title: 'Preparation',
-        body: 'The tooth is shaped and a precise scan or impression is taken.',
+        body: 'The tooth is shaped and a digital 3D impression is taken — no messy moulds.',
       },
       { title: 'Temporary', body: 'A temporary crown protects the tooth while yours is made.' },
       {
@@ -382,7 +396,7 @@ export const treatments: Treatment[] = [
     illustration: illustrations.toothPlus,
     photo: photos.procedure,
     intro:
-      'When gum disease goes deeper than a clean can reach, or gums have pulled back from the teeth, gum surgery cleans below the gum line, rebuilds lost support and covers exposed roots, helping keep your natural teeth.',
+      'Your gums are the foundation of your teeth. If gums are weak, infected, or receding, teeth become loose and fall, even without pain. Advanced gum treatments save your teeth before it’s too late.',
     steps: [
       { title: 'Gum check', body: 'Pocket depths and X-rays show how far the disease has gone.' },
       { title: 'Deep clean', body: 'Plaque and tartar are cleared from below the gum line.' },
@@ -422,11 +436,10 @@ export type Doctor = {
   specialty: 'Prosthodontics' | 'Orthodontics';
   /** Title under the name, e.g. "Orthodontist". */
   role: string;
-  /**
-   * Further qualifications and memberships, listed under the degree. TODO(clinic): add
-   * each doctor's (university, fellowships, memberships, years of experience).
-   */
+  /** Further qualifications, ranks and experience, listed under the degree. */
   credentials?: string[];
+  /** The doctor's profile in the clinic's own words (from its signage). */
+  bio?: string;
   focus: string;
   /** Plain-language explanation of the speciality (general information, not a bio). */
   specialtyIntro: string;
@@ -444,17 +457,27 @@ export const doctors: Doctor[] = [
     slug: 'dr-d-reddy-pradeep',
     name: 'Dr D Reddy Pradeep',
     initials: 'RP',
-    degree: 'MDS, Orthodontics & Dentofacial Orthopaedics',
+    degree: 'BDS, MDS (Orthodontics & Dentofacial Orthopaedics)',
     specialty: 'Orthodontics',
     role: 'Orthodontist',
+    credentials: [
+      'Govt. Dental College and Hospital, Hyderabad (Osmania)',
+      'State 2nd rank, APPG entrance',
+      'Certified Invisalign and Spark Aligners provider',
+      'Over 10 years of clinical experience',
+      'Over 700 orthodontic patients treated',
+    ],
+    bio: 'Highly accomplished and dedicated orthodontist with over 10 years of clinical experience, specialising in the diagnosis, prevention and treatment of dental and facial irregularities. Having successfully treated over 700 orthodontic patients, employing a wide range of treatment modalities including traditional braces, clear aligners, growth modulation procedures and surgical orthodontics, he shows a strong commitment to delivering high-quality, patient-centric care.',
     focus: 'Braces and clear aligners',
     specialtyIntro:
       'Orthodontics is the speciality of straightening teeth and correcting the bite. An orthodontist uses braces or clear aligners to move teeth gradually into a healthier, more even position.',
     treats: [
       'Metal and ceramic braces',
-      'Clear aligners, including Invisalign',
+      'Clear aligners, including Invisalign and Spark',
       'Crowded, gapped or crooked teeth',
       'Overbite, underbite and crossbite',
+      'Growth modulation for growing jaws',
+      'Surgical orthodontics',
       'Retainers after treatment',
     ],
     portrait: photos.doctorPradeep,
@@ -464,10 +487,16 @@ export const doctors: Doctor[] = [
     slug: 'dr-mohana-bindu',
     name: 'Dr B Mohana Bindu',
     initials: 'MB',
-    degree: 'MDS, Prosthodontics & Implantology',
+    degree: 'BDS, MDS (Prosthodontics & Implantology)',
     fellowship: 'Fellowship in Laser Dentistry',
     specialty: 'Prosthodontics',
     role: 'Prosthodontist and implantologist',
+    credentials: [
+      'Govt. Dental College and Hospital, Hyderabad (Osmania)',
+      'State 6th rank, APPG entrance',
+      '10 years of experience',
+    ],
+    bio: 'Highly skilled prosthodontist and implantologist with 10 years of experience in restoring and enhancing patients’ oral function and aesthetics. Proficient in diagnosing and treating complex dental cases, with expertise in dental implant placement and restoration, fixed and removable prosthodontics, and full-mouth rehabilitation. Well-versed in new technologies and techniques in digital dentistry (intraoral scanners, CAD/CAM).',
     focus: 'Implants, crowns, dentures, veneers and laser care',
     specialtyIntro:
       'Prosthodontics is the speciality of restoring and replacing teeth. A prosthodontist plans crowns, bridges, dentures and implant-supported teeth so they look natural, bite comfortably and last.',

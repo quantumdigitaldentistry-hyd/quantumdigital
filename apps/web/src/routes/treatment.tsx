@@ -17,6 +17,7 @@ import { ImplantProcess } from '@/components/sections/implant-process';
 import { LaserSpotlight } from '@/components/sections/laser-spotlight';
 import { Section } from '@/components/sections/section';
 import { StepList } from '@/components/sections/step-list';
+import { TreatmentLists } from '@/components/sections/treatment-lists';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
@@ -194,6 +195,15 @@ export default function TreatmentPage() {
               columns={details.options.length === 4 ? 4 : 3}
             />
           </Section>
+          {details.lists?.length || details.notes?.length || details.closing ? (
+            <Section eyebrow="Good to know" title={`${label}: at a glance.`}>
+              <TreatmentLists
+                lists={details.lists}
+                notes={details.notes}
+                closing={details.closing}
+              />
+            </Section>
+          ) : null}
         </>
       ) : null}
 
@@ -252,7 +262,7 @@ export default function TreatmentPage() {
         </section>
       ) : null}
 
-      {details ? (
+      {details?.faqs.length ? (
         <FaqSection
           title={`${label}: your questions, answered.`}
           intro="General information. Your specialist will advise on your own case."

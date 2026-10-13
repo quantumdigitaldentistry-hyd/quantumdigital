@@ -171,7 +171,7 @@ function CallbackForm() {
         inputMode="tel"
         autoComplete="tel-national"
         prefix="+91"
-        placeholder="98480 21573"
+        placeholder="10-digit mobile number"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         error={errors.phone}

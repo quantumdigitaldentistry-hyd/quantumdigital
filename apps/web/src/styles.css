@@ -30,6 +30,7 @@
   --color-ink: #0d1b2a;
   --color-ink-muted: #46586a;
   --color-ink-subtle: #5d6e7e; /* 4.5:1 even on sunken */
+  --color-ink-placeholder: #9aa9b6; /* light grey example text in inputs, never a real value */
 
   /* Brand blue (the tooth mark): actions, links, focus, selection */
   --color-brand: #1a5bc4;
@@ -126,6 +127,7 @@
   --color-ink: #e6eef4;
   --color-ink-muted: #9db0c0;
   --color-ink-subtle: #7f93a5;
+  --color-ink-placeholder: #5a6d7e;
 
   --color-brand: #7fb2ff;
   --color-brand-strong: #a3c8ff;
@@ -383,30 +385,12 @@ html:has(dialog[open]) {
 }
 
 /*
- * Home hero (components/landing/landing-hero.tsx, components/three/hero-visual.tsx).
- * On load the 3D logo settles in from slightly below and tilted back. As the hero
- * scrolls away the text lifts and fades first, and the logo drifts back more slowly,
- * tilting away, so the two separate in depth. Static with reduced motion; the scroll
- * part needs scroll-driven animations (browsers without them simply keep it in place).
+ * Home hero (components/landing/landing-hero.tsx). As the hero scrolls away the text
+ * lifts and fades. Static with reduced motion; needs scroll-driven animations (browsers
+ * without them simply keep it in place).
  */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-logo-in {
-    animation: hero-logo-in 1100ms var(--ease-out) 150ms both;
-  }
-}
-@keyframes hero-logo-in {
-  from {
-    opacity: 0;
-    transform: perspective(1000px) translateY(28px) rotateX(14deg) scale(0.92);
-  }
-}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .hero-logo-scroll {
-      animation: hero-logo-scroll linear both;
-      animation-timeline: view();
-      animation-range: exit -10% exit 100%;
-    }
     .hero-text-scroll {
       animation: hero-text-scroll linear both;
       animation-timeline: view();
@@ -427,12 +411,6 @@ html:has(dialog[open]) {
         entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 60%),
         exit 35% exit 100%;
     }
-  }
-}
-@keyframes hero-logo-scroll {
-  to {
-    opacity: 0.15;
-    transform: perspective(1000px) translateY(22%) rotateX(22deg) scale(0.86);
   }
 }
 @keyframes hero-text-scroll {
@@ -711,16 +689,6 @@ html:has(dialog[open]) {
       animation: parallax linear both;
       animation-timeline: view();
       animation-range: cover 0% cover 100%;
-    }
-    /* Vertical progress line that fills while its section scrolls through. */
-    .line-fill {
-      transform-origin: top;
-      animation: line-fill linear both;
-      animation-timeline: --journey;
-      animation-range: cover 15% cover 75%;
-    }
-    .journey-timeline {
-      view-timeline: --journey block;
     }
   }
 }

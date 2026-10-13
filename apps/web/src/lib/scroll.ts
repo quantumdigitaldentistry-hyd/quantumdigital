@@ -31,3 +31,16 @@ export function scrollToY(y: number) {
   }
   window.scrollTo({ top: y, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 }
+
+/**
+ * Moves the page by `delta` px at once, with no animation, through Lenis when it is
+ * running. For keeping what's on screen still when content above it changes height.
+ */
+export function jumpBy(delta: number) {
+  if (!delta) return;
+  if (active) {
+    active.scrollTo(active.scroll + delta, { immediate: true, force: true });
+    return;
+  }
+  window.scrollBy({ top: delta, behavior: 'instant' });
+}

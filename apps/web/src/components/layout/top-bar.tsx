@@ -14,7 +14,7 @@ export function TopBar() {
   const show = useQuickActions((s) => s.show);
   return (
     <div className="bg-topbar text-small text-on-topbar">
-      <Container className="flex min-h-12 items-center justify-between gap-3">
+      <Container className="flex min-h-12 items-center justify-between gap-2 min-[360px]:gap-3">
         <PhoneLink />
         <div className="flex items-center gap-4">
           <div className="hidden md:block">
@@ -25,7 +25,8 @@ export function TopBar() {
             onClick={() => show('callback')}
             className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-highlight px-3.5 text-small font-semibold whitespace-nowrap text-on-highlight transition-[transform,filter] duration-150 hover:brightness-95 active:scale-95"
           >
-            <PhoneCallIcon size={16} weight="bold" aria-hidden />
+            {/* Below 360px the icon gives way so the bar fits beside the phone number. */}
+            <PhoneCallIcon size={16} weight="bold" aria-hidden className="max-[359px]:hidden" />
             Instant call back
           </button>
         </div>

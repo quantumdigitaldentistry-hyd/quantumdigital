@@ -82,7 +82,7 @@ export function Field({ label, hint, error, prefix, className, type, ...rest }: 
             id={id}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
-            className="h-12 w-full min-w-0 bg-transparent px-3 text-body outline-none placeholder:text-ink-subtle"
+            className="h-12 w-full min-w-0 bg-transparent px-3 text-body outline-none placeholder:text-ink-placeholder"
             type={isPassword && revealed ? 'text' : type}
             {...rest}
           />
@@ -162,7 +162,7 @@ export function TextAreaField({ label, hint, error, className, ...rest }: TextAr
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
             rows={3}
-            className="block w-full resize-y bg-transparent px-3 py-2.5 text-body outline-none placeholder:text-ink-subtle"
+            className="block w-full resize-y bg-transparent px-3 py-2.5 text-body outline-none placeholder:text-ink-placeholder"
             {...rest}
           />
         </div>

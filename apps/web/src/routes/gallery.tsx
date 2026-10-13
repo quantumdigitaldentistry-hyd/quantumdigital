@@ -57,7 +57,8 @@ export default function GalleryPage() {
         />
         {live.length ? null : (
           <p className="text-caption text-ink-subtle">
-            Photos from Unsplash, shown until the clinic&apos;s own photos are added.
+            Photos of our rooms are the clinic&apos;s own; the rest are from Unsplash until more of
+            ours are added.
           </p>
         )}
       </Container>

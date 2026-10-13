@@ -413,7 +413,7 @@ export function ChatAssistant() {
           autoComplete="off"
           enterKeyHint="send"
           maxLength={300}
-          className="h-12 min-w-0 flex-1 rounded-full border border-line-strong bg-surface px-4 text-body outline-none focus:border-brand"
+          className="h-12 min-w-0 flex-1 rounded-full border border-line-strong bg-surface px-4 text-body outline-none placeholder:text-ink-placeholder focus:border-brand"
         />
         <button
           type="submit"

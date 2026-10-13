@@ -5,13 +5,13 @@ import { PatientReviews } from '@/components/landing/patient-reviews';
 import { GalleryPreview, SmileResults } from '@/components/landing/results-and-gallery';
 import { TreatmentMarquee } from '@/components/landing/treatment-marquee';
 import { TreatmentShowcase } from '@/components/landing/treatment-showcase';
-import { VisitJourney } from '@/components/landing/visit-journey';
+import { WhyChooseUs } from '@/components/landing/why-choose-us';
 import { DoctorList } from '@/components/sections/doctor-list';
 import { Section } from '@/components/sections/section';
 
 /**
  * Home (the dashboard) as a landing page: 3D logo hero, treatment ticker, a grid of
- * treatment cards, visit journey, before/after results, patient reviews, gallery, doctors
+ * treatment cards, why choose us, before/after results, patient reviews, gallery, doctors
  * and the clinic location. The implant story lives on the implants treatment page.
  */
 export default function HomePage() {
@@ -21,7 +21,7 @@ export default function HomePage() {
       <FestivalBanner className="py-6 md:py-10" />
       <TreatmentMarquee />
       <TreatmentShowcase />
-      <VisitJourney />
+      <WhyChooseUs />
       <SmileResults />
       <PatientReviews />
       <GalleryPreview />

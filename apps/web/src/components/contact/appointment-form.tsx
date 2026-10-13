@@ -191,7 +191,7 @@ export default function AppointmentForm({
           inputMode="tel"
           autoComplete="tel-national"
           prefix="+91"
-          placeholder="98480 21573"
+          placeholder="10-digit mobile number"
           value={values.phone}
           onChange={(e) => set('phone')(e.target.value)}
           error={errors.phone}
