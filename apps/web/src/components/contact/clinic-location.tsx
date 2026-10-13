@@ -7,13 +7,14 @@ import {
 } from '@phosphor-icons/react';
 import { lazy, Suspense, useId, useRef } from 'react';
 
+import { FormPlaceholder } from '@/components/contact/form-placeholder';
 import { Reveal } from '@/components/reveal';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
-import { clinic, clinicTelHref, type DayHours } from '@/config/site';
+import { clinic, clinicTelHref } from '@/config/site';
 import { photos } from '@/content/photos';
-import { useClinicHours } from '@/lib/clinic-hours';
+import { describeHours, useClinicHours } from '@/lib/clinic-hours';
 import { cx } from '@/lib/cx';
 import { useNearViewport } from '@/lib/use-near-viewport';
 import { RevealWords } from '@/components/reveal-words';
@@ -23,33 +24,7 @@ const AppointmentForm = lazy(() => import('@/components/contact/appointment-form
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const time = (value: string) => {
-  const [h = 0, m = 0] = value.split(':').map(Number);
-  const suffix = h >= 12 ? 'pm' : 'am';
-  const hour = h % 12 || 12;
-  return m ? `${hour}:${String(m).padStart(2, '0')} ${suffix}` : `${hour} ${suffix}`;
-};
-
-const describe = (hours: DayHours) =>
-  hours === 'closed'
-    ? 'Closed'
-    : hours
-      ? `${time(hours.open)} – ${time(hours.close)}`
-      : 'Call to confirm';
-
 const mapEmbed = `https://www.google.com/maps?q=${clinic.address.lat},${clinic.address.lng}(${encodeURIComponent(clinic.name)})&z=17&output=embed`;
-export const directions = `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`;
-
-/** Same footprint as the form, so nothing jumps when it arrives. */
-/** Holds the form's place while it loads: the same height (measured), so nothing jumps. */
-function FormPlaceholder() {
-  return (
-    <div
-      aria-hidden
-      className="h-254 rounded-4xl border border-line bg-surface shadow-xl shadow-elevation/10 sm:h-216 lg:h-223 xl:h-216"
-    />
-  );
-}
 
 /** This week's timings, today highlighted. */
 export function Timings() {
@@ -75,7 +50,7 @@ export function Timings() {
               {index === today ? <span className="sr-only"> (today)</span> : null}
             </dt>
             <dd className={cx('text-right', hours[index] === null && 'text-ink-muted')}>
-              {describe(hours[index] ?? null)}
+              {describeHours(hours[index] ?? null)}
             </dd>
           </div>
         ))}
@@ -193,7 +168,7 @@ export function ClinicLocation({
             </address>
             <div className="flex flex-wrap gap-3">
               <a
-                href={directions}
+                href={clinic.directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={buttonClass('primary')}

@@ -63,7 +63,7 @@ export function SmileResults() {
           </Link>
         </Reveal>
         <Reveal step={1}>
-          <ResultsShowcase cases={casesForEveryTreatment(live)} autoPlay={5000} />
+          <ResultsShowcase cases={casesForEveryTreatment(live, 1)} autoPlay={5000} />
         </Reveal>
       </Container>
     </section>

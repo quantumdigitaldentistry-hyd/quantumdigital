@@ -22,6 +22,7 @@ import {
 } from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+import { adaptiveQuality } from './adaptive-quality';
 import type { ScrollSceneProps } from './types';
 
 /**
@@ -104,8 +105,12 @@ export default function OrthoScene({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    const renderer = new WebGLRenderer({
+      canvas,
+      // High-density screens don't need edge smoothing; skipping it saves GPU time.
+      antialias: window.devicePixelRatio < 2,
+      alpha: true,
+    });
     renderer.outputColorSpace = SRGBColorSpace;
     // Shader compile logs are for development; in production they only cost time and
     // surface harmless driver notes as console warnings.
@@ -229,11 +234,16 @@ export default function OrthoScene({
 
     let lastProgress = 0;
     let frame = 0;
+    let lastDrawn = 0;
+    // Drops the resolution on devices that can't keep up (see adaptive-quality.ts).
+    const quality = adaptiveQuality(renderer, () => resize());
     setProgressRef.current = (p: number) => {
       lastProgress = p;
       if (frame) return;
-      frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame((now) => {
         frame = 0;
+        if (lastDrawn) quality.sample(now - lastDrawn);
+        lastDrawn = now;
         setProgress(lastProgress);
       });
     };
@@ -266,7 +276,7 @@ export default function OrthoScene({
       scene.environment?.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [appliance]);
 
   return <canvas ref={canvasRef} aria-hidden className="block size-full" />;
 }

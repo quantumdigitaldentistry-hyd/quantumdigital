@@ -143,6 +143,33 @@ window.addEventListener('unhandledrejection', (event) => {
   }
 });
 
+/*
+ * After a deploy, a tab that was already open still references the previous build's code
+ * files, which no longer exist. When loading one fails, reload once to pick up the new
+ * build instead of showing an error. The flag stops a reload loop if the network is down.
+ */
+window.addEventListener('vite:preloadError', (event) => {
+  const key = 'qdd-reloaded-for-update';
+  try {
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+  } catch {
+    return;
+  }
+  event.preventDefault();
+  window.location.reload();
+});
+window.addEventListener('load', () => {
+  // A successful load clears the flag, so a later deploy can recover the same way.
+  window.setTimeout(() => {
+    try {
+      sessionStorage.removeItem('qdd-reloaded-for-update');
+    } catch {
+      // ignore
+    }
+  }, 10_000);
+});
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 60_000, refetchOnWindowFocus: false } },
 });

@@ -37,6 +37,7 @@ import {
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
+import { adaptiveQuality, lightDevice } from './adaptive-quality';
 import type { ScrollSceneProps } from './types';
 
 /**
@@ -284,15 +285,20 @@ export default function ImplantScene({ ref, onReady }: ScrollSceneProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const renderer = new WebGLRenderer({
+      canvas,
+      // High-density screens don't need edge smoothing; skipping it saves GPU time.
+      antialias: window.devicePixelRatio < 2,
+      alpha: true,
+    });
     // 1.5x is visually identical here and ~30% cheaper per frame than 2x on phones.
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.debug.checkShaderErrors = import.meta.env.DEV;
     renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     renderer.localClippingEnabled = true;
-    renderer.shadowMap.enabled = true;
+    // Soft shadows cost a whole extra pass: kept for capable computers, off on phones.
+    renderer.shadowMap.enabled = !lightDevice();
     renderer.shadowMap.type = PCFShadowMap;
 
     const scene = new Scene();
@@ -548,10 +554,13 @@ export default function ImplantScene({ ref, onReady }: ScrollSceneProps) {
     };
 
     const render = () => renderer.render(scene, camera);
+    // Drops the resolution on devices that can't keep up (see adaptive-quality.ts).
+    const quality = adaptiveQuality(renderer, () => resize());
 
     // Loop only while the canvas is on screen and the tab is visible.
     let frame = 0;
     let last = 0;
+    let lastDrawn = 0;
     let onScreen = false;
     const tick = (now: number) => {
       frame = 0;
@@ -561,8 +570,15 @@ export default function ImplantScene({ ref, onReady }: ScrollSceneProps) {
       // Critically damped follow: smooth on wheel steps, still close behind the scroll.
       shown += (target - shown) * (1 - Math.exp(-dt * 7));
       if (Math.abs(target - shown) < 0.0002) shown = target;
-      pose(shown, elapsed);
-      render();
+      const moving = shown !== target;
+      // At rest only the slow idle sway is left: ~20 fps is plenty for it, and keeps the
+      // main thread free so the next scroll starts instantly.
+      if (moving || now - lastDrawn > 48) {
+        if (moving && lastDrawn) quality.sample(now - lastDrawn);
+        lastDrawn = now;
+        pose(shown, elapsed);
+        render();
+      }
       if (onScreen && !document.hidden) frame = requestAnimationFrame(tick);
     };
     const start = () => {

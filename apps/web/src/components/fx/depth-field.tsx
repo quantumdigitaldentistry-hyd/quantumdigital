@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { cx } from '@/lib/cx';
+import { prefersReducedMotion } from '@/lib/motion';
 
 type Bubble = { x: number; y: number; z: number; r: number; phase: number; hue: 0 | 1 | 2 };
 
@@ -32,7 +33,7 @@ export function DepthField({
     const context = canvas?.getContext('2d');
     if (!canvas || !context) return;
     const ctx = context;
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const still = prefersReducedMotion();
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     // Phones and tablets: lighter field, half the frame rate, no hi-DPI canvas.
     const light = !finePointer;

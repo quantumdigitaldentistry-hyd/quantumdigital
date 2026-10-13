@@ -420,6 +420,13 @@ export type Doctor = {
   /** Additional training, e.g. a fellowship. */
   fellowship?: string;
   specialty: 'Prosthodontics' | 'Orthodontics';
+  /** Title under the name, e.g. "Orthodontist". */
+  role: string;
+  /**
+   * Further qualifications and memberships, listed under the degree. TODO(clinic): add
+   * each doctor's (university, fellowships, memberships, years of experience).
+   */
+  credentials?: string[];
   focus: string;
   /** Plain-language explanation of the speciality (general information, not a bio). */
   specialtyIntro: string;
@@ -439,6 +446,7 @@ export const doctors: Doctor[] = [
     initials: 'RP',
     degree: 'MDS, Orthodontics & Dentofacial Orthopaedics',
     specialty: 'Orthodontics',
+    role: 'Orthodontist',
     focus: 'Braces and clear aligners',
     specialtyIntro:
       'Orthodontics is the speciality of straightening teeth and correcting the bite. An orthodontist uses braces or clear aligners to move teeth gradually into a healthier, more even position.',
@@ -459,6 +467,7 @@ export const doctors: Doctor[] = [
     degree: 'MDS, Prosthodontics & Implantology',
     fellowship: 'Fellowship in Laser Dentistry',
     specialty: 'Prosthodontics',
+    role: 'Prosthodontist and implantologist',
     focus: 'Implants, crowns, dentures, veneers and laser care',
     specialtyIntro:
       'Prosthodontics is the speciality of restoring and replacing teeth. A prosthodontist plans crowns, bridges, dentures and implant-supported teeth so they look natural, bite comfortably and last.',
@@ -474,6 +483,12 @@ export const doctors: Doctor[] = [
     portraitIsIllustration: true,
   },
 ];
+
+/**
+ * A doctor's name with non-breaking spaces, so it never splits across two lines when it
+ * sits inside a sentence ("…with Dr B Mohana Bindu").
+ */
+export const oneLine = (name: string) => name.replace(/ /g, '\u00a0');
 
 /** Treatments shown on the home page. */
 export const featuredTreatments = treatments.filter((treatment) => treatment.featured);
@@ -541,32 +556,70 @@ export const resultCases: ResultCase[] = [
   },
 ];
 
+/** Photos for each treatment's demo cases, most relevant first. */
+const demoPhotos: Record<string, Photo[]> = {
+  braces: [photos.bracesModels, photos.bracesClose, photos.smileJoy],
+  aligners: [photos.aligners, photos.alignerFit, photos.smile],
+  implants: [photos.implantModel, photos.crownModel, photos.smileClose],
+  veneers: [photos.veneers, photos.smileClose, photos.smileDesign],
+  'tooth-coloured-fillings': [photos.fillings, photos.smileClose, photos.smile],
+  'smile-design': [photos.smileDesign, photos.smileJoy, photos.smile],
+  'root-canal': [photos.xrayTall, photos.xray, photos.smileClose],
+  'full-mouth-rehabilitation': [photos.fullMouth, photos.dentures, photos.smile],
+  dentures: [photos.dentures, photos.fullMouth, photos.smile],
+  'teeth-cleaning': [photos.procedure, photos.smileClose, photos.smileJoy],
+  'teeth-whitening': [photos.teethWhitening, photos.smileClose, photos.smileDesign],
+  'crowns-bridges': [photos.crownModel, photos.implantModel, photos.smileClose],
+  'onlays-inlays': [photos.scan, photos.fillings, photos.smileClose],
+  'kids-dentistry': [photos.kidsSmile, photos.smileJoy, photos.smile],
+  'laser-dentistry': [photos.procedure, photos.smileClose, photos.smile],
+  'gum-surgery': [photos.procedure, photos.smileClose, photos.smile],
+  'wisdom-teeth-removal': [photos.xray, photos.xrayTall, photos.smileClose],
+};
+
+/** Stand-ins for "before", rotated so neighbouring demo cases look different. */
+const demoFilters = [
+  '[filter:sepia(0.5)_saturate(0.7)_brightness(0.88)]',
+  '[filter:grayscale(0.6)_brightness(0.86)_contrast(0.95)]',
+  '[filter:sepia(0.35)_saturate(1.3)_hue-rotate(-10deg)_brightness(0.9)]',
+];
+
+/** How many before/after cases each treatment shows until real ones arrive. */
+export const DEMO_CASES_PER_TREATMENT = 3;
+
 /**
- * Demo cases for one treatment: its own entries above, or else one made from the
- * treatment's photo, so every treatment page has a before/after to show (labelled Demo)
- * until the clinic adds real cases for it.
+ * Demo cases for one treatment: its own entries above first, then cases made from
+ * related photos, up to three, so every treatment shows several before/afters (labelled
+ * Demo) until the clinic adds real cases for it.
  */
 export function demoCasesFor(treatment: Treatment): ResultCase[] {
   const own = resultCases.filter((item) => item.treatment === treatment.slug);
-  if (own.length) return own;
-  return [
-    {
-      id: `demo-${treatment.slug}`,
+  const used = new Set(own.map((item) => item.photo));
+  const pool = (demoPhotos[treatment.slug] ?? [treatment.photo]).filter(
+    (photo) => !used.has(photo),
+  );
+  const label = treatment.shortName ?? treatment.name;
+  const made = pool
+    .slice(0, Math.max(0, DEMO_CASES_PER_TREATMENT - own.length))
+    .map((photo, index): ResultCase => ({
+      id: `demo-${treatment.slug}-${index + 1}`,
       treatment: treatment.slug,
-      title: treatment.name,
-      photo: treatment.photo,
-      beforeFilter: '[filter:sepia(0.5)_saturate(0.7)_brightness(0.88)]',
-    },
-  ];
+      title: `${label} · case ${own.length + index + 1}`,
+      photo,
+      beforeFilter: demoFilters[(own.length + index) % demoFilters.length]!,
+    }));
+  return [...own, ...made];
 }
 
 /**
  * Before/after cases covering every treatment, in the clinic's treatment order: the real
- * cases where the clinic has published some, a labelled demo for the rest.
+ * cases where the clinic has published some, labelled demos for the rest. `perTreatment`
+ * caps how many each treatment contributes (the home page shows one each).
  */
-export function casesForEveryTreatment(live: ResultCase[]): ResultCase[] {
+export function casesForEveryTreatment(live: ResultCase[], perTreatment?: number): ResultCase[] {
   return treatments.flatMap((treatment) => {
     const real = live.filter((item) => item.treatment === treatment.slug);
-    return real.length ? real : demoCasesFor(treatment);
+    const cases = real.length ? real : demoCasesFor(treatment);
+    return perTreatment ? cases.slice(0, perTreatment) : cases;
   });
 }

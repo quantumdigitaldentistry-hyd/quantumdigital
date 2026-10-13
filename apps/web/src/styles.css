@@ -370,13 +370,6 @@ html:has(dialog[open]) {
     transform: translateY(32px) scale(0.9);
   }
 }
-@keyframes word-rise {
-  from {
-    opacity: 0;
-    transform: translateY(0.6em) rotate(2deg);
-    filter: blur(6px);
-  }
-}
 .word-reveal > span {
   display: inline-block;
   animation: word-rise 900ms var(--ease-out) both;
@@ -458,6 +451,40 @@ html:has(dialog[open]) {
   to {
     opacity: 0;
     transform: translateY(-32px) scale(0.96);
+  }
+}
+/*
+ * Phones: the same scroll-linked fades with shorter travel and no 3D tilt. Rasterising
+ * rotated layers is what makes mobile GPUs stutter; small, flat moves stay at full frame
+ * rate even on a fast flick, and a short distance never leaves a card half-faded on a
+ * phone-sized screen. The exit fade starts later, so text isn't faded while still read.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+    .card-rise {
+      animation-name: card-rise-sm, card-leave-sm;
+      animation-range:
+        entry 0% entry 55%,
+        exit 55% exit 100%;
+    }
+    .tilt-in {
+      animation-name: reveal-up;
+    }
+    .reveal {
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+@keyframes card-rise-sm {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes card-leave-sm {
+  to {
+    opacity: 0.15;
+    transform: translateY(-12px);
   }
 }
 
@@ -694,12 +721,6 @@ html:has(dialog[open]) {
     }
     .journey-timeline {
       view-timeline: --journey block;
-    }
-    /* Gallery photos unveil as they scroll in: clip opens, image rises and settles. */
-    .gallery-item {
-      animation: gallery-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 70%;
     }
   }
 }
@@ -1050,10 +1071,23 @@ html[data-festival] .heading-3d {
   }
 }
 
-@keyframes gallery-in {
-  from {
+/*
+ * Gallery tiles (components/gallery/photo-gallery.tsx) rise and fade in once as they come
+ * into view, in a soft wave (--i). Played on entry, not tied to scroll position, so they
+ * never flicker; opacity and transform only.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-tile {
     opacity: 0;
-    transform: translateY(48px) scale(0.94);
+    transform: translateY(28px) scale(0.97);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 900ms var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 80ms);
+  }
+  .gallery-tile[data-in] {
+    opacity: 1;
+    transform: none;
   }
 }
 @keyframes hero-exit {
@@ -1085,17 +1119,31 @@ html[data-festival] .heading-3d {
 }
 
 /*
- * Page transitions (View Transitions API). Forward: the old page sinks back and softens
- * while the new one rises in. Back (html[data-nav='back'], lib/navigation.ts): reversed.
- * The header has its own name, so it holds still instead of fading with the page.
- * Shared elements (treatment titles and photos, doctor photos) morph between pages via
- * matching view-transition-name values.
+ * Page transitions (View Transitions API): a "fade-through". The old page fades out
+ * quickly while barely moving; the new one fades in a moment later with a short rise.
+ * Back (html[data-nav='back'], lib/navigation.ts) reverses the direction. Opacity and
+ * transform only (no blur or filters), so the GPU composites it and it stays smooth on
+ * phones. Phones use a smaller distance and shorter timing. The header, quick actions and
+ * chat bubble have their own names, so they hold still. Shared elements (treatment titles
+ * and photos, doctor photos) morph between pages via matching view-transition-name values.
  */
+:root {
+  --vt-out: 180ms;
+  --vt-in: 380ms;
+  --vt-rise: 20px;
+}
+@media (max-width: 767px) {
+  :root {
+    --vt-out: 140ms;
+    --vt-in: 300ms;
+    --vt-rise: 12px;
+  }
+}
 ::view-transition-old(root) {
-  animation: 320ms var(--ease-in-out) both vt-page-out;
+  animation: var(--vt-out) cubic-bezier(0.4, 0, 1, 1) both vt-page-out;
 }
 ::view-transition-new(root) {
-  animation: 520ms var(--ease-out) both vt-page-in;
+  animation: var(--vt-in) var(--ease-out) calc(var(--vt-out) * 0.5) both vt-page-in;
 }
 html[data-nav='back']::view-transition-old(root) {
   animation-name: vt-page-out-back;
@@ -1109,33 +1157,31 @@ html[data-nav='back']::view-transition-new(root) {
   animation: none;
 }
 ::view-transition-group(*) {
-  animation-duration: 520ms;
+  animation-duration: var(--vt-in);
   animation-timing-function: var(--ease-out);
 }
 @keyframes vt-page-out {
   to {
     opacity: 0;
-    transform: translateY(-24px) scale(0.98);
-    filter: blur(6px);
+    transform: translateY(calc(var(--vt-rise) * -0.5));
   }
 }
 @keyframes vt-page-in {
   from {
     opacity: 0;
-    transform: translateY(48px);
+    transform: translateY(var(--vt-rise));
   }
 }
 @keyframes vt-page-out-back {
   to {
     opacity: 0;
-    transform: translateY(48px);
+    transform: translateY(calc(var(--vt-rise) * 0.5));
   }
 }
 @keyframes vt-page-in-back {
   from {
     opacity: 0;
-    transform: translateY(-24px) scale(0.98);
-    filter: blur(6px);
+    transform: translateY(calc(var(--vt-rise) * -1));
   }
 }
 

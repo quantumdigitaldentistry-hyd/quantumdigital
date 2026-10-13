@@ -11,7 +11,8 @@ import { treatmentName } from './appointments-data';
 import { useStaffDocument } from './document';
 import { backend, errorMessage } from './session';
 import { Empty, Notice, Panel, Pill, StaffPage, Toggle } from './ui';
-import { mediaUrl, removeImage, uploadImage } from './upload';
+import { MediaImg } from './media-img';
+import { removeImage, uploadImage } from './upload';
 
 type ResultCase = Database['public']['Tables']['result_cases']['Row'];
 
@@ -29,7 +30,7 @@ function PhotoInput({
       <span className="text-label font-medium">{label}</span>
       <span className="grid aspect-4/3 place-items-center overflow-hidden rounded-2xl border border-dashed border-line-strong bg-sunken">
         {path ? (
-          <img src={mediaUrl(path)} alt="" className="size-full object-cover" />
+          <MediaImg path={path} alt="" className="size-full object-cover" />
         ) : (
           <span className="flex flex-col items-center gap-1 text-small text-ink-muted">
             <UploadSimpleIcon size={24} aria-hidden />
@@ -193,13 +194,13 @@ export default function ResultsPage() {
               className="flex flex-col gap-3 rounded-3xl border border-line bg-surface p-3"
             >
               <div className="grid grid-cols-2 gap-1.5 overflow-hidden rounded-2xl">
-                <img
-                  src={mediaUrl(item.before_path)}
+                <MediaImg
+                  path={item.before_path}
                   alt="Before"
                   className="aspect-square object-cover"
                 />
-                <img
-                  src={mediaUrl(item.after_path)}
+                <MediaImg
+                  path={item.after_path}
                   alt="After"
                   className="aspect-square object-cover"
                 />

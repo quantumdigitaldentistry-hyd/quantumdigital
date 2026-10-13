@@ -1,4 +1,5 @@
 import type { Location, NavigateFunction } from 'react-router';
+import { prefersReducedMotion } from '@/lib/motion';
 
 /**
  * Animated "back" navigation. React Router animates links (`viewTransition`), but not
@@ -16,14 +17,12 @@ export function markNavigated() {
   if (resolve) requestAnimationFrame(() => resolve());
 }
 
-const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 export function goBack(navigate: NavigateFunction, location: Location, fallback: string) {
   // Opened directly (no in-app history): go to the parent page instead of leaving the site.
   const hasHistory = location.key !== 'default';
   const go = () => (hasHistory ? navigate(-1) : navigate(fallback));
 
-  if (!document.startViewTransition || reducedMotion()) {
+  if (!document.startViewTransition || prefersReducedMotion()) {
     go();
     return;
   }

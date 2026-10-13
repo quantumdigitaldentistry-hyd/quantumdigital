@@ -13,7 +13,8 @@ import { useStaffDocument } from './document';
 import { backend, errorMessage } from './session';
 import { timeAgo } from './time';
 import { Empty, Notice, Pill, StaffPage, Toggle } from './ui';
-import { mediaUrl, removeImage, uploadImage } from './upload';
+import { MediaImg } from './media-img';
+import { removeImage, uploadImage } from './upload';
 
 type Article = Database['public']['Tables']['articles']['Row'];
 
@@ -151,8 +152,8 @@ function Editor({ article, onClose }: { article: Article | null; onClose: () => 
       </div>
       {cover ? (
         <div className="flex flex-col gap-3 sm:flex-row">
-          <img
-            src={mediaUrl(cover)}
+          <MediaImg
+            path={cover}
             alt=""
             className="aspect-video w-full rounded-2xl object-cover sm:w-56"
           />
@@ -260,8 +261,8 @@ export default function ArticlesPage() {
               className="flex items-center gap-3 rounded-3xl border border-line bg-surface p-3"
             >
               {article.cover_path ? (
-                <img
-                  src={mediaUrl(article.cover_path)}
+                <MediaImg
+                  path={article.cover_path}
                   alt=""
                   className="size-14 shrink-0 rounded-2xl object-cover"
                 />

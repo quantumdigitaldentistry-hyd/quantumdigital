@@ -3,12 +3,13 @@ import logoWebp from '@/assets/brand/logo-mark.webp';
 import wordmarkAvif from '@/assets/brand/wordmark.avif';
 import wordmarkWebp from '@/assets/brand/wordmark.webp';
 import { useEffect, useState, type CSSProperties } from 'react';
+import { prefersReducedMotion } from '@/lib/motion';
 
 const SEEN_KEY = 'qd-intro-seen';
 
 /** First visit in this browser (not on refresh), motion allowed, not the staff area. */
 function shouldPlay() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  if (prefersReducedMotion()) return false;
   if (location.pathname.startsWith('/staff')) return false;
   try {
     return !localStorage.getItem(SEEN_KEY);

@@ -5,6 +5,7 @@ import { cx } from '@/lib/cx';
 import type { ActionOrigin } from '@/lib/quick-actions';
 
 import { IconButton } from './icon-button';
+import { prefersReducedMotion } from '@/lib/motion';
 
 const variants = {
   /** Bottom sheet on phones, centred dialog from md up. */
@@ -19,8 +20,6 @@ const variants = {
 const GAP = 12;
 const EASE_OUT = 'cubic-bezier(0.22, 1, 0.36, 1)';
 const EASE_IN = 'cubic-bezier(0.5, 0, 0.75, 0)';
-
-const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * From md up, sit the panel beside the button it came from (above it when the button is
@@ -103,7 +102,7 @@ export function Dialog({
   useLayoutEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    const animate = !!origin && !reducedMotion();
+    const animate = !!origin && !prefersReducedMotion();
     if (open && !dialog.open) {
       exit.current?.cancel();
       exit.current = null;

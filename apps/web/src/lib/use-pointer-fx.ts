@@ -1,10 +1,11 @@
 import { useEffect, type RefObject } from 'react';
+import { prefersReducedMotion } from '@/lib/motion';
 
 /** Pointer effects only where there's a real hover pointer and motion is welcome. */
 export const pointerFxEnabled = () =>
   typeof window !== 'undefined' &&
   window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  !prefersReducedMotion();
 
 /**
  * 3D tilt toward the pointer. Writes --rx / --ry (degrees) and --gx / --gy (glare

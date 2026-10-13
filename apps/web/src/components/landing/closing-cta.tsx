@@ -1,6 +1,7 @@
 import { CheckIcon, PhoneCallIcon } from '@phosphor-icons/react';
 import { lazy, Suspense, useRef } from 'react';
 
+import { FormPlaceholder } from '@/components/contact/form-placeholder';
 import { PhoneLink } from '@/components/contact/phone-link';
 import { buttonClass } from '@/components/ui/button-class';
 import { Container } from '@/components/ui/container';
@@ -11,16 +12,6 @@ import { useNearViewport } from '@/lib/use-near-viewport';
 
 // The form (and its validation) loads as this section approaches, not on first paint.
 const AppointmentForm = lazy(() => import('@/components/contact/appointment-form'));
-
-/** Same footprint as the form, so nothing jumps when it arrives. */
-function FormPlaceholder() {
-  return (
-    <div
-      aria-hidden
-      className="h-254 rounded-4xl border border-line bg-surface/90 shadow-2xl shadow-elevation/30 sm:h-216 lg:h-223 xl:h-216"
-    />
-  );
-}
 
 /**
  * Closing section over a clinic photo: why to book, the phone and call-back options, and
@@ -88,11 +79,13 @@ export function ClosingCta({
           </div>
         </div>
         {near ? (
-          <Suspense fallback={<FormPlaceholder />}>
+          <Suspense
+            fallback={<FormPlaceholder className="bg-surface/90 shadow-2xl shadow-elevation/30" />}
+          >
             <AppointmentForm />
           </Suspense>
         ) : (
-          <FormPlaceholder />
+          <FormPlaceholder className="bg-surface/90 shadow-2xl shadow-elevation/30" />
         )}
       </Container>
     </section>

@@ -39,9 +39,9 @@ export default function DentalKnowledgePage() {
                       className="group flex h-full flex-col overflow-hidden rounded-container border border-line bg-surface transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-aqua"
                     >
                       <div className="aspect-video overflow-hidden bg-sunken">
-                        {article.cover_path ? (
+                        {article.cover_url ? (
                           <Photo
-                            photo={storedPhoto(article.cover_path, article.cover_alt)}
+                            photo={storedPhoto(article.cover_url, article.cover_alt)}
                             sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
                             className="block size-full"
                             imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"

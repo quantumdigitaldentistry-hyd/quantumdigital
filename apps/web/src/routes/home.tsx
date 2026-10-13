@@ -31,7 +31,7 @@ export default function HomePage() {
         title="Specialists who lead your care."
         intro="Postgraduate specialists in the treatments they lead. Open a profile to see their speciality in 3D."
       >
-        <DoctorList />
+        <DoctorList compact />
       </Section>
       <ClinicLocation backdrop />
     </>

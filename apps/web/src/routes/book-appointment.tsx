@@ -1,7 +1,7 @@
 import { MapPinIcon, NavigationArrowIcon, PhoneIcon } from '@phosphor-icons/react';
 import { useSearchParams } from 'react-router';
 
-import { directions, Timings } from '@/components/contact/clinic-location';
+import { Timings } from '@/components/contact/clinic-location';
 import AppointmentForm from '@/components/contact/appointment-form';
 import { PhoneLink } from '@/components/contact/phone-link';
 import { PageHero } from '@/components/sections/page-hero';
@@ -66,7 +66,7 @@ export default function BookAppointmentPage() {
               ))}
             </address>
             <a
-              href={directions}
+              href={clinic.directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-small font-semibold text-brand"

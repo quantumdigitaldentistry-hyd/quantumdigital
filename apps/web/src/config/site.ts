@@ -42,6 +42,8 @@ export const clinic = {
     lng: 78.4461524,
     mapsUrl: 'https://maps.app.goo.gl/xNYtHzrFkFvKGgay6',
   },
+  /** Google Maps directions to the clinic pin. */
+  directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=17.4419959,78.4461524',
   whatsapp: 'https://wa.me/917207011988',
   email: 'quantumdigitaldentistry@gmail.com',
   /** The clinic's Google listing: reviews, rating and "Write a review". */
