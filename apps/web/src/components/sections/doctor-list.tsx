@@ -1,4 +1,10 @@
-import { ArrowUpRightIcon, CaretRightIcon, SmileyIcon, ToothIcon } from '@phosphor-icons/react';
+import {
+  ArrowUpRightIcon,
+  CalendarPlusIcon,
+  CaretRightIcon,
+  SmileyIcon,
+  ToothIcon,
+} from '@phosphor-icons/react';
 import { Link } from 'react-router';
 
 import { BookLink } from '@/components/contact/book-link';
@@ -182,94 +188,133 @@ function DoctorFeature({ doctor, flip }: { doctor: Doctor; flip: boolean }) {
 /** First name for buttons: "Dr D Reddy Pradeep" → "Dr Reddy Pradeep". */
 const shortName = (doctor: Doctor) => doctor.name.replace(/^Dr\.? (?:[A-Z] )*/, 'Dr ');
 
+/** Card colours per speciality: teal for orthodontics, deep blue for prosthodontics. */
+const cardTone: Record<Doctor['specialty'], { bg: string; accent: string; glow: string }> = {
+  Orthodontics: {
+    bg: 'linear-gradient(140deg, #072f3d 0%, #0c5f73 55%, #1696a8 100%)',
+    accent: '#8ff0ff',
+    glow: 'rgb(110 230 245 / 0.55)',
+  },
+  Prosthodontics: {
+    bg: 'linear-gradient(140deg, #0a1c45 0%, #13469b 55%, #2f78e0 100%)',
+    accent: '#a9cbff',
+    glow: 'rgb(127 178 255 / 0.55)',
+  },
+};
+
 /**
- * Compact doctor card for the home page, two side by side: an arch portrait on a soft
- * tinted panel, then the name (one line), title, qualifications, a few treatments and
- * the two actions. Cards in a row share a height.
+ * Home page doctor card: a rich gradient panel (teal or blue by speciality) with soft
+ * glows, concentric rings and dot texture; the doctor stands in front of the rings and
+ * breaks out over the card's top edge. Frosted chips, white text, a white Consult button.
+ * On hover the card lifts, the glow brightens, the rings open out and the doctor steps
+ * forward. Container queries pick the layout from the card's own width (`card`): side by
+ * side (portrait left) when there is room, stacked otherwise; the details column sizes
+ * the name to fit one line.
  */
 function DoctorCard({ doctor }: { doctor: Doctor }) {
+  const tone = cardTone[doctor.specialty];
   const qualifications = [doctor.degree, doctor.fellowship, ...(doctor.credentials ?? [])].filter(
     (item): item is string => !!item,
   );
   const treats = doctor.treats.slice(0, 3);
   const more = doctor.treats.length - treats.length;
   return (
-    <article
-      data-doctor
-      className="flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-surface shadow-lg shadow-elevation/10 transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
-    >
-      {/* Portrait panel */}
-      <div className="relative overflow-clip bg-linear-to-br from-aqua-soft via-surface to-brand-soft px-6 pt-8">
-        <span
-          aria-hidden
-          className="absolute top-4 right-4 size-20 opacity-50 [background-image:radial-gradient(var(--color-brand)_1.5px,transparent_1.5px)] [background-size:12px_12px]"
-        />
+    <article data-doctor className="group @container/card h-full">
+      <div
+        className="relative isolate mt-16 flex h-[calc(100%-4rem)] flex-col @md/card:mt-6 @md/card:h-[calc(100%-1.5rem)] rounded-[2rem] text-white shadow-xl shadow-elevation/25 transition-[translate,box-shadow] duration-500 ease-out group-hover:-translate-y-1.5 group-hover:shadow-2xl @md/card:flex-row"
+        style={{ backgroundImage: tone.bg }}
+      >
+        {/* Decorations, clipped to the card. */}
+        <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden rounded-[2rem]">
+          <span
+            className="absolute -top-24 -right-20 size-72 rounded-full opacity-60 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
+            style={{ background: tone.glow }}
+          />
+          <span className="absolute -bottom-28 -left-16 size-64 rounded-full bg-white/10 blur-3xl" />
+          <span className="absolute right-5 bottom-5 size-24 opacity-30 [background-image:radial-gradient(white_1.2px,transparent_1.2px)] [background-size:12px_12px]" />
+          {/* Rings behind the doctor. */}
+          <span className="absolute top-[52%] left-1/2 size-64 -translate-1/2 transition-transform duration-700 ease-out group-hover:scale-110 @md/card:top-[58%] @md/card:left-[27%]">
+            <span className="absolute inset-0 rounded-full border border-white/15" />
+            <span className="absolute inset-6 rounded-full border border-white/20" />
+            <span className="absolute inset-12 rounded-full border border-white/25 bg-white/5" />
+          </span>
+        </div>
+
+        {/* The doctor, rising out of the card. */}
         <Link
           to={`/doctors/${doctor.slug}`}
           viewTransition
           aria-label={`${doctor.name}, view profile`}
-          className="group relative mx-auto block aspect-4/5 w-44 overflow-hidden rounded-t-full border-4 border-b-0 border-surface bg-surface sm:w-48"
+          className="relative -mt-16 flex h-64 shrink-0 @md/card:mt-0 justify-center self-center @md/card:h-auto @md/card:min-h-80 @md/card:w-[42%] @md/card:self-stretch"
           style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
         >
-          <DoctorPortrait
-            doctor={doctor}
-            sizes="12rem"
-            imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
-          />
-        </Link>
-        <span className="absolute bottom-4 left-4 rounded-full bg-surface/90 px-3 py-1 text-label font-semibold text-brand shadow-sm backdrop-blur-sm">
-          {doctor.specialty}
-        </span>
-        <span className="absolute right-4 bottom-4 grid size-14 place-items-center rounded-full bg-surface shadow-md shadow-elevation/15">
           <Photo
-            photo={specialtyIllustration(doctor)}
-            sizes="56px"
+            photo={doctor.portrait}
+            sizes="16rem"
             fit="contain"
-            className="block size-[66%]"
+            className="block h-full w-auto @md/card:absolute @md/card:inset-x-0 @md/card:-top-6 @md/card:bottom-0 @md/card:h-auto @md/card:w-full"
+            imgClassName="origin-bottom object-bottom drop-shadow-[0_18px_24px_rgb(0_0_0/0.35)] transition-transform duration-500 ease-out group-hover:scale-[1.04]"
           />
-        </span>
-      </div>
+          <span className="absolute bottom-3 left-1/2 grid size-12 -translate-x-1/2 place-items-center rounded-full bg-white shadow-lg shadow-black/20 @md/card:left-auto @md/card:right-2 @md/card:translate-x-0">
+            <Photo
+              photo={specialtyIllustration(doctor)}
+              sizes="48px"
+              fit="contain"
+              className="block size-[64%]"
+            />
+          </span>
+        </Link>
 
-      {/* Details */}
-      <div className="flex flex-1 flex-col gap-4 p-5 text-center sm:p-6">
-        <div className="flex flex-col gap-1">
-          <h3 className="font-display text-[clamp(1.35rem,5.6vw,1.75rem)] leading-tight font-bold whitespace-nowrap">
-            {doctor.name}
-          </h3>
-          <p className="font-display font-semibold text-brand">{doctor.role}</p>
-        </div>
-        <ul className="flex flex-col gap-1.5 text-small text-ink-muted">
-          {qualifications.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-        <ul aria-label="Treats" className="flex flex-wrap justify-center gap-1.5">
-          {treats.map((item) => (
-            <li
-              key={item}
-              className="rounded-full bg-sunken px-2.5 py-1 text-caption font-medium text-ink-muted"
-            >
-              {item}
-            </li>
-          ))}
-          {more > 0 ? (
-            <li className="rounded-full bg-brand-soft px-2.5 py-1 text-caption font-semibold text-on-brand-soft">
-              +{more} more
-            </li>
-          ) : null}
-        </ul>
-        <div className="mt-auto flex flex-col gap-2 pt-1 lg:flex-row">
-          <BookLink className={buttonClass('primary', 'flex-1 whitespace-nowrap')}>
-            Consult {oneLine(shortName(doctor))}
-          </BookLink>
-          <Link
-            to={`/doctors/${doctor.slug}`}
-            viewTransition
-            className={buttonClass('secondary', 'whitespace-nowrap')}
+        {/* Details */}
+        <div className="@container flex flex-1 flex-col gap-4 p-6 pt-5 text-center @md/card:py-7 @md/card:pr-7 @md/card:pl-2 @md/card:text-left">
+          <span className="w-fit self-center rounded-full border border-white/25 bg-white/10 px-3 py-1 text-label font-semibold tracking-wide backdrop-blur-md @md/card:self-start">
+            {doctor.specialty}
+          </span>
+          <div className="flex flex-col gap-1">
+            <h3 className="font-display text-[min(1.75rem,8.6cqi)] leading-tight font-bold whitespace-nowrap">
+              {doctor.name}
+            </h3>
+            <p className="font-display font-semibold" style={{ color: tone.accent }}>
+              {doctor.role}
+            </p>
+          </div>
+          <ul className="flex flex-col gap-1 text-small text-white/80">
+            {qualifications.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <ul
+            aria-label="Treats"
+            className="flex flex-wrap justify-center gap-1.5 @md/card:justify-start"
           >
-            Profile
-            <ArrowUpRightIcon size={16} aria-hidden />
-          </Link>
+            {treats.map((item) => (
+              <li
+                key={item}
+                className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-caption font-medium backdrop-blur-sm"
+              >
+                {item}
+              </li>
+            ))}
+            {more > 0 ? (
+              <li className="rounded-full bg-white px-2.5 py-1 text-caption font-semibold text-ink">
+                +{more} more
+              </li>
+            ) : null}
+          </ul>
+          <div className="mt-auto flex items-center gap-2 pt-1">
+            <BookLink className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 font-semibold whitespace-nowrap text-ink shadow-lg shadow-black/15 transition-[transform,background-color] duration-200 hover:bg-white/90 active:scale-[0.97]">
+              <CalendarPlusIcon size={18} aria-hidden />
+              Book a consult
+            </BookLink>
+            <Link
+              to={`/doctors/${doctor.slug}`}
+              viewTransition
+              aria-label={`View ${doctor.name}'s profile`}
+              className="grid size-11 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 backdrop-blur-md transition-[background-color,rotate] duration-300 hover:rotate-45 hover:bg-white/20"
+            >
+              <ArrowUpRightIcon size={18} aria-hidden />
+            </Link>
+          </div>
         </div>
       </div>
     </article>
@@ -283,7 +328,7 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
 export function DoctorList({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
-      <ul className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
+      <ul className="mx-auto grid max-w-5xl gap-x-6 gap-y-4 md:grid-cols-2">
         {doctors.map((doctor, index) => (
           <li key={doctor.slug}>
             <Reveal step={index} className="h-full">
