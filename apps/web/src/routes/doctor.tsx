@@ -65,7 +65,7 @@ export default function DoctorPage() {
 
           <div className="relative mx-auto w-full max-w-md">
             <div
-              className="relative aspect-4/5 overflow-hidden rounded-4xl shadow-2xl shadow-elevation/25"
+              className="relative aspect-4/5 overflow-hidden rounded-t-full rounded-b-4xl border-4 border-surface shadow-2xl shadow-elevation/25"
               style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
             >
               <DoctorPortrait doctor={doctor} sizes="(min-width: 768px) 28rem, 90vw" priority />

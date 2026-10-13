@@ -420,6 +420,13 @@ export type Doctor = {
   /** Additional training, e.g. a fellowship. */
   fellowship?: string;
   specialty: 'Prosthodontics' | 'Orthodontics';
+  /** Title under the name, e.g. "Orthodontist". */
+  role: string;
+  /**
+   * Further qualifications and memberships, listed under the degree. TODO(clinic): add
+   * each doctor's (university, fellowships, memberships, years of experience).
+   */
+  credentials?: string[];
   focus: string;
   /** Plain-language explanation of the speciality (general information, not a bio). */
   specialtyIntro: string;
@@ -439,6 +446,7 @@ export const doctors: Doctor[] = [
     initials: 'RP',
     degree: 'MDS, Orthodontics & Dentofacial Orthopaedics',
     specialty: 'Orthodontics',
+    role: 'Orthodontist',
     focus: 'Braces and clear aligners',
     specialtyIntro:
       'Orthodontics is the speciality of straightening teeth and correcting the bite. An orthodontist uses braces or clear aligners to move teeth gradually into a healthier, more even position.',
@@ -459,6 +467,7 @@ export const doctors: Doctor[] = [
     degree: 'MDS, Prosthodontics & Implantology',
     fellowship: 'Fellowship in Laser Dentistry',
     specialty: 'Prosthodontics',
+    role: 'Prosthodontist and implantologist',
     focus: 'Implants, crowns, dentures, veneers and laser care',
     specialtyIntro:
       'Prosthodontics is the speciality of restoring and replacing teeth. A prosthodontist plans crowns, bridges, dentures and implant-supported teeth so they look natural, bite comfortably and last.',
