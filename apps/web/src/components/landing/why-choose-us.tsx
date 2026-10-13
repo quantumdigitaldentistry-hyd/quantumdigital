@@ -7,7 +7,7 @@ import {
   ShieldCheckIcon,
   UsersThreeIcon,
 } from '@phosphor-icons/react';
-import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 
 import { Reveal } from '@/components/reveal';
 import { RevealWords } from '@/components/reveal-words';
@@ -24,7 +24,7 @@ const reasons: Reason[] = [
     title: 'Advanced technology',
     body: 'We use the latest technologies like intraoral scanners, digital X-rays and lasers. Digital impressions with intraoral scanners reduce the number of visits needed and make procedures more comfortable, providing faster and more efficient care.',
     Icon: CpuIcon,
-    photo: photos.xrayUnit,
+    photo: photos.xrayUnitWide,
   },
   {
     title: 'Experienced team',
@@ -58,129 +58,97 @@ const reasons: Reason[] = [
   },
 ];
 
+/** Card tints, in turn: background, then the accent for the number and title. */
+const tints = [
+  { card: 'bg-brand-soft', accent: 'text-on-brand-soft' },
+  { card: 'bg-aqua-soft', accent: 'text-on-aqua-soft' },
+  { card: 'bg-highlight-soft', accent: 'text-on-highlight-soft' },
+];
+
 const pad = (value: number) => String(value).padStart(2, '0');
 
 /**
- * Why patients choose the clinic: six photo cards. Three to a row on wide screens, two on
- * tablets; on phones a swipeable row that snaps card by card, with dots to show where you
- * are. The row uses native scrolling and no per-card scroll effects, so it stays smooth.
+ * Why patients choose the clinic, as a stack of cards: each one sticks below the header
+ * and the next slides up over it, a little lower each time so the edges of the earlier
+ * cards show. Plain `position: sticky`, no scroll scripts or per-card effects, so it
+ * scrolls as smoothly as the page on phones. Wide screens put the text beside the photo.
  */
 export function WhyChooseUs() {
-  const row = useRef<HTMLOListElement>(null);
-  const [active, setActive] = useState(0);
-
-  // Which card is centred in the phone row (only scrolls below `sm`).
-  useEffect(() => {
-    const element = row.current;
-    if (!element) return;
-    let frame = 0;
-    const update = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const card = element.firstElementChild as HTMLElement | null;
-        if (!card) return;
-        const step = card.offsetWidth + parseFloat(getComputedStyle(element).columnGap || '0');
-        setActive(Math.min(reasons.length - 1, Math.round(element.scrollLeft / step)));
-      });
-    };
-    element.addEventListener('scroll', update, { passive: true });
-    return () => {
-      element.removeEventListener('scroll', update);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  const goTo = (index: number) => {
-    const card = row.current?.children[index] as HTMLElement | undefined;
-    card?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  };
-
   return (
     <section
       aria-labelledby="why-title"
-      className="relative isolate overflow-clip border-y border-line bg-surface"
+      className="relative isolate overflow-clip border-y border-line bg-canvas"
     >
-      {/* Soft brand glow behind the heading. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 -z-10 size-168 -translate-x-1/2"
-        style={{
-          backgroundImage: 'radial-gradient(closest-side, var(--color-brand-soft), transparent)',
-        }}
-      />
-      <Container className="flex flex-col gap-10 py-14 md:gap-12 md:py-24">
-        <Reveal className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-          <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
-            02 · Why choose us
-          </p>
-          <h2
-            id="why-title"
-            className="heading-3d font-display text-title font-bold text-balance md:text-display"
-          >
-            <RevealWords text={'Why patients choose us.'} />
-          </h2>
-          <p className="text-ink-muted">
+      <Container className="flex flex-col gap-10 py-14 md:gap-14 md:py-24">
+        <Reveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
+          <div className="flex max-w-xl flex-col gap-3">
+            <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
+              02 · Why choose us
+            </p>
+            <h2
+              id="why-title"
+              className="heading-3d font-display text-title font-bold text-balance md:text-display"
+            >
+              <RevealWords text={'Why patients choose us.'} />
+            </h2>
+          </div>
+          <p className="max-w-sm text-ink-muted">
             Modern technology, an experienced team and care built around you, at a fair cost.
           </p>
         </Reveal>
 
-        <Reveal>
-          <ol
-            ref={row}
-            aria-label="Reasons to choose us"
-            className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-4 px-4 pb-2 scrollbar-none sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 lg:gap-6 [&::-webkit-scrollbar]:hidden"
-          >
-            {reasons.map(({ title, body, Icon, photo }, index) => (
-              <li key={title} className="w-[84%] shrink-0 snap-center sm:w-auto">
-                <article className="group flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-canvas shadow-lg shadow-elevation/10 transition-[translate,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-aqua hover:shadow-xl">
-                  <div className="relative aspect-16/10 overflow-hidden">
+        <ol aria-label="Reasons to choose us" className="flex flex-col gap-6 md:gap-10">
+          {reasons.map(({ title, body, Icon, photo }, index) => {
+            const tint = tints[index % tints.length]!;
+            return (
+              <li
+                key={title}
+                // Sticky only where a whole card fits below the header, so no text is hidden.
+                className="top-(--stack-top) md:top-(--stack-top-md) [@media(min-height:40rem)]:sticky"
+                style={
+                  {
+                    '--stack-top': `${4.5 + index * 0.5}rem`,
+                    '--stack-top-md': `${5 + index * 0.75}rem`,
+                  } as CSSProperties
+                }
+              >
+                <article
+                  className={cx(
+                    'grid gap-3 overflow-hidden rounded-4xl border border-line p-3 shadow-xl shadow-elevation/10 md:min-h-88 md:grid-cols-[1.05fr_1fr] md:gap-4 md:p-4',
+                    tint.card,
+                  )}
+                >
+                  <div className="relative aspect-video overflow-hidden rounded-3xl md:order-2 md:aspect-auto">
                     <Photo
                       photo={photo}
-                      sizes="(min-width: 1024px) 23rem, (min-width: 640px) 46vw, 84vw"
-                      className="block size-full"
-                      imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+                      sizes="(min-width: 768px) 34rem, 92vw"
+                      className="block size-full md:absolute md:inset-0"
                     />
-                    <div
-                      aria-hidden
-                      className="absolute inset-0 bg-linear-to-t from-scrim/55 via-scrim/0 to-scrim/0"
-                    />
-                    <span className="absolute top-4 right-4 rounded-full bg-surface/85 px-3 py-1 font-mono text-caption font-medium backdrop-blur-sm">
-                      {pad(index + 1)}
-                    </span>
-                    <span className="absolute bottom-4 left-4 grid size-12 place-items-center rounded-2xl bg-brand text-on-brand shadow-lg shadow-elevation/25 transition-transform duration-300 ease-out group-hover:-rotate-6">
-                      <Icon size={24} weight="duotone" aria-hidden />
-                    </span>
                   </div>
-                  <div className="flex flex-1 flex-col gap-2 p-5 md:p-6">
-                    <h3 className="font-display text-heading font-bold">{title}</h3>
-                    <p className="text-small text-ink-muted">{body}</p>
+                  <div className="flex flex-col justify-center gap-3 px-2 pt-1 pb-3 md:gap-4 md:px-6 md:py-6">
+                    <div className="flex items-center gap-3">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand text-on-brand shadow-md shadow-elevation/20 md:size-12">
+                        <Icon size={22} weight="duotone" aria-hidden />
+                      </span>
+                      <span className={cx('font-mono text-small font-medium', tint.accent)}>
+                        {pad(index + 1)} / {pad(reasons.length)}
+                      </span>
+                    </div>
+                    <h3
+                      className={cx(
+                        'font-display text-heading font-bold text-balance md:text-title',
+                        tint.accent,
+                      )}
+                    >
+                      {title}
+                    </h3>
+                    <p className="text-small text-ink md:text-body">{body}</p>
                   </div>
                 </article>
               </li>
-            ))}
-          </ol>
-        </Reveal>
-
-        {/* Phones: where you are in the row; tap a dot to jump to that card. */}
-        <div className="-mt-4 flex justify-center gap-2 sm:hidden">
-          {reasons.map(({ title }, index) => (
-            <button
-              key={title}
-              type="button"
-              onClick={() => goTo(index)}
-              aria-label={`Show ${title}`}
-              aria-current={index === active || undefined}
-              className="grid h-6 place-items-center"
-            >
-              <span
-                className={cx(
-                  'block h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out',
-                  index === active ? 'w-6 bg-brand' : 'w-1.5 bg-line-strong',
-                )}
-              />
-            </button>
-          ))}
-        </div>
+            );
+          })}
+        </ol>
       </Container>
     </section>
   );

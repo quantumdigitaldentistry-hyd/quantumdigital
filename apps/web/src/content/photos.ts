@@ -151,6 +151,13 @@ export const photos = {
     'Treatment room with a purple dental chair and a magenta wall',
   ),
   xrayUnit: photo('xray-unit', [480, 960], [960, 1280], 'The clinic’s Rayscan digital X-ray unit'),
+  /** Landscape crop of the same photo, framed on the scanner head. */
+  xrayUnitWide: photo(
+    'xray-unit-wide',
+    [640, 1200],
+    [1200, 900],
+    'The clinic’s Rayscan digital X-ray unit',
+  ),
   // Treatments.
   dentures: photo('dentures', [480, 800], [800, 1000], 'Model of a full upper denture'),
   crownModel: photo(
