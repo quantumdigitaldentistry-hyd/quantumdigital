@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import {
   AdditiveBlending,
-  NormalBlending,
   AmbientLight,
   BufferAttribute,
   BufferGeometry,
@@ -13,6 +12,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
+  NormalBlending,
   PerspectiveCamera,
   PlaneGeometry,
   PointLight,
@@ -93,7 +93,7 @@ export default function LogoScene({
     const { reducedMotion: reduce } = settings.current;
 
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = SRGBColorSpace;
     // Shader compile logs are for development; in production they only cost time and
     // surface harmless driver notes as console warnings.

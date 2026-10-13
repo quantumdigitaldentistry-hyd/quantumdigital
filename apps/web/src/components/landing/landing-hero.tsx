@@ -13,12 +13,16 @@ import { vtNames } from '@/lib/transition-names';
 
 const HEADLINE = 'Your Dream Smile Designed Digitally & Delivered Affordably';
 
-/** Where each treatment chip sits around the 3D logo (md and up). */
-const chipPlacement: Record<string, string> = {
-  braces: '-left-4 top-[10%]',
-  implants: '-right-2 top-[30%]',
-  aligners: 'left-[2%] bottom-[22%]',
-  'smile-design': 'right-[6%] bottom-[8%]',
+/**
+ * Where each treatment chip sits around the 3D logo (md and up): one at each corner of the
+ * logo, mirrored left and right, on the orbit ring. Each floats gently, a little out of
+ * step with the others (`delay`).
+ */
+const chipPlacement: Record<string, { className: string; delay: string }> = {
+  braces: { className: 'left-[4%] top-[20%]', delay: '0s' },
+  implants: { className: 'right-[4%] top-[20%]', delay: '-1.5s' },
+  aligners: { className: 'left-[4%] bottom-[24%]', delay: '-3s' },
+  'smile-design': { className: 'right-[4%] bottom-[24%]', delay: '-4.5s' },
 };
 
 const chipClass =
@@ -100,8 +104,16 @@ export function LandingHero() {
           <HeroVisual />
           {/* Desktop: chips around the logo. */}
           {featuredTreatments.map(({ slug, name }) => (
-            <div key={slug} className={cx('absolute hidden md:block', chipPlacement[slug])}>
-              <TreatmentChip slug={slug} name={name} />
+            <div
+              key={slug}
+              className={cx('absolute hidden md:block', chipPlacement[slug]?.className)}
+            >
+              <div
+                className="float-y motion-reduce:animate-none"
+                style={{ animationDelay: chipPlacement[slug]?.delay }}
+              >
+                <TreatmentChip slug={slug} name={name} />
+              </div>
             </div>
           ))}
         </div>
