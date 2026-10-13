@@ -56,7 +56,7 @@ export function VisitJourney() {
             </div>
             <div className="photo-reveal mt-10 aspect-3/4 overflow-hidden rounded-container">
               <Photo
-                photo={photos.xray}
+                photo={photos.xrayUnit}
                 sizes="(min-width: 1024px) 18vw, 40vw"
                 className="block size-full"
                 imgClassName="parallax-img"

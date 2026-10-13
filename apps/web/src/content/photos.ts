@@ -1,9 +1,11 @@
 /**
  * Photos and illustrations used on the site, as responsive AVIF + WebP sets
- * (src/assets/photos, src/assets/illustrations). All from Unsplash under the Unsplash
- * License (free for commercial use, no permission or credit required); photographers are
- * listed in photoCredits for the record. Replace with the clinic's own photos when ready: keep the names, re-run the
- * conversion, done.
+ * (src/assets/photos, src/assets/illustrations). Photos of the clinic itself (rooms,
+ * reception, X-ray unit) are the clinic's own, from src/assets/clinicImages, cropped to the
+ * size given here. The rest are from Unsplash under the Unsplash License (free for
+ * commercial use, no permission or credit required); photographers are listed in
+ * photoCredits for the record. Replace with the clinic's own photos when ready: keep the
+ * names, re-run the conversion, done.
  */
 
 const files = import.meta.glob('../assets/{photos,illustrations}/*.{avif,webp}', {
@@ -77,7 +79,12 @@ export const photos = {
     'Dentist talking with a patient in the chair',
   ),
   xray: photo('xray', [640, 1200], [1200, 900], 'Dentist reading dental scans on a light box'),
-  clinic: photo('clinic', [960, 1600], [1600, 900], 'Bright dental treatment room'),
+  clinic: photo(
+    'clinic',
+    [960, 1600],
+    [1600, 900],
+    'Treatment room at the clinic with a blue dental chair by the window',
+  ),
   alignerFit: photo(
     'aligner-fit',
     [640, 1200],
@@ -118,25 +125,32 @@ export const photos = {
     [960, 640],
     'Gloved hand pointing at a digital dental scan on a tablet',
   ),
-  // Studio (Unsplash stand-ins until the clinic's own photos are added).
+  // The clinic's own rooms (src/assets/clinicImages).
   waitingArea: photo(
     'waiting-area',
     [640, 1200],
     [1200, 900],
-    'Waiting area with red chairs by a window',
+    'Waiting area with leather sofas and wood-panelled consultation rooms',
   ),
   receptionLounge: photo(
     'reception-lounge',
     [640, 1200],
     [1200, 900],
-    'Reception and lounge with teal sofas',
+    'Reception desk and lounge with leather sofas by a window',
   ),
   treatmentRoom: photo(
     'treatment-room',
     [640, 1200],
     [1200, 900],
-    'Treatment room with a dental chair and monitor',
+    'Treatment room with a blue dental chair by the window',
   ),
+  treatmentRoom2: photo(
+    'treatment-room-2',
+    [640, 1200],
+    [1200, 900],
+    'Treatment room with a purple dental chair and a magenta wall',
+  ),
+  xrayUnit: photo('xray-unit', [480, 960], [960, 1280], 'The clinic’s Rayscan digital X-ray unit'),
   // Treatments.
   dentures: photo('dentures', [480, 800], [800, 1000], 'Model of a full upper denture'),
   crownModel: photo(
@@ -261,21 +275,21 @@ export const studioPhotos: Photo[] = [
   photos.receptionLounge,
   photos.waitingArea,
   photos.treatmentRoom,
-  photos.clinic,
+  photos.treatmentRoom2,
+  photos.xrayUnit,
   photos.scan,
-  photos.consult,
 ];
 
-/** Gallery photos; the tile grid crops them to fit. */
+/** Gallery photos; the tile grid crops them to fit. The clinic's own rooms come first. */
 export const galleryPhotos: Photo[] = [
-  photo('room-white', [480, 960], [960, 1440], 'White dental chair beside a bright window'),
-  photos.scan,
-  photo('room-art', [480, 960], [960, 640], 'Treatment room with a blue chair and artwork'),
+  photos.treatmentRoom,
+  photos.receptionLounge,
+  photos.xrayUnit,
+  photos.treatmentRoom2,
+  photos.waitingArea,
   photos.smileJoy,
-  photo('room-orange', [480, 960], [960, 640], 'Treatment room with an orange dental chair'),
+  photos.scan,
   photos.bracesClose,
-  photo('room-blue', [480, 960], [960, 1440], 'Dental chair with blue upholstery and instruments'),
-  photo('room-wide', [480, 960], [960, 640], 'Wide view of a modern treatment room'),
 ];
 
 const illustration = (name: string, alt: string) =>
