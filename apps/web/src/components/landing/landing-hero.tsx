@@ -67,7 +67,7 @@ export function LandingHero() {
             Quantum Digital Dentistry
           </p>
           <h1
-            className="word-reveal font-display text-[clamp(2.4rem,9vw,4rem)] leading-[1.02] font-bold tracking-[-0.035em] text-balance"
+            className="word-reveal font-display text-[clamp(2rem,7.5vw,3.25rem)] leading-[1.05] font-bold tracking-[-0.035em] text-balance"
             aria-label={HEADLINE}
           >
             {HEADLINE.split(' ').map((word, index) => (
