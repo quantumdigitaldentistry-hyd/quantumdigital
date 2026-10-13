@@ -67,9 +67,9 @@ export default function ArticlePage() {
       </section>
       <Container className="py-10 md:py-16">
         <article className="mx-auto flex max-w-3xl flex-col gap-8">
-          {data.cover_path ? (
+          {data.cover_url ? (
             <Photo
-              photo={storedPhoto(data.cover_path, data.cover_alt)}
+              photo={storedPhoto(data.cover_url, data.cover_alt)}
               sizes="(min-width: 768px) 48rem, 92vw"
               priority
               className="block aspect-video overflow-hidden rounded-4xl"

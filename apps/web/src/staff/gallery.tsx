@@ -22,7 +22,8 @@ import {
 import { useStaffDocument } from './document';
 import { backend, errorMessage } from './session';
 import { Empty, Notice, Panel, Pill, StaffPage } from './ui';
-import { mediaUrl, removeImage, uploadImage } from './upload';
+import { MediaImg } from './media-img';
+import { removeImage, uploadImage } from './upload';
 
 type GalleryItem = Database['public']['Tables']['gallery_items']['Row'];
 
@@ -95,8 +96,8 @@ function ItemRow({ item, onChange }: { item: GalleryItem; onChange: () => void }
           <VideoStill video={video} className="w-full rounded-2xl" />
         </a>
       ) : item.image_path ? (
-        <img
-          src={mediaUrl(item.image_path)}
+        <MediaImg
+          path={item.image_path}
           alt={item.alt}
           className="aspect-4/3 w-full rounded-2xl object-cover"
         />

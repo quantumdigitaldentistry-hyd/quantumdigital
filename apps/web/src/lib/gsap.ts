@@ -1,5 +1,9 @@
 import { useEffect, type DependencyList, type RefObject } from 'react';
 
+import { prefersReducedMotion } from '@/lib/motion';
+
+export { prefersReducedMotion };
+
 /**
  * GSAP + ScrollTrigger, loaded on demand so they never weigh on the first paint. Pages
  * render complete without them; scroll scenes are an enhancement layered on top.
@@ -20,9 +24,6 @@ export function loadGsap() {
   );
   return loading;
 }
-
-export const prefersReducedMotion = () =>
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 type Gsap = Awaited<ReturnType<typeof loadGsap>>;
 

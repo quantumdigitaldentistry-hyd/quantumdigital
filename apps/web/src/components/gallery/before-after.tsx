@@ -53,6 +53,10 @@ export function BeforeAfter({
   return (
     <div
       onPointerMove={follow}
+      // A deterrent against casual saving of patient photos (no "Save image" menu, no
+      // dragging the photo out); the real protection is private, expiring media links.
+      onContextMenu={(event) => event.preventDefault()}
+      onDragStart={(event) => event.preventDefault()}
       className={cx(
         'group relative aspect-4/5 touch-pan-y overflow-hidden rounded-4xl select-none md:aspect-4/3',
         glide && '[&_.ba-move]:duration-300',

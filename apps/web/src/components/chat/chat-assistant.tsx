@@ -18,6 +18,7 @@ import { CallbackNotConnectedError, requestAppointment, requestCallback } from '
 import { useClinicHours } from '@/lib/clinic-hours';
 import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
+import { prefersReducedMotion } from '@/lib/motion';
 
 type Message = BotMessage & {
   id: number;
@@ -50,8 +51,6 @@ const save = (saved: Saved) => {
 /** A short "thinking" pause before a reply starts to stream. */
 const thinkingTime = (text: string) => Math.min(900, 320 + text.length * 1.5);
 
-const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 /**
  * Writes a reply out a few words at a time, like a live answer: about 40 words a second,
  * faster for long replies so none takes more than about 1.6 seconds. Lists and paragraphs
@@ -67,7 +66,7 @@ function StreamingText({
   onDone: () => void;
 }) {
   const tokens = text.split(/(\s+)/);
-  const [shown, setShown] = useState(() => (reducedMotion() ? tokens.length : 0));
+  const [shown, setShown] = useState(() => (prefersReducedMotion() ? tokens.length : 0));
   const done = useRef({ onProgress, onDone });
   useEffect(() => {
     done.current = { onProgress, onDone };

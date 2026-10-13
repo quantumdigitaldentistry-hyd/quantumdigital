@@ -5,6 +5,7 @@ import { doctors, leadDoctor, oneLine, treatments, type Treatment } from '@/cont
 import { googleRating } from '@/content/reviews';
 import { treatmentDetails } from '@/content/treatment-details';
 import { bookingPath } from '@/lib/booking';
+import { describeHours, formatClock } from '@/lib/clinic-hours';
 import type { QuickAction } from '@/lib/quick-actions';
 
 /*
@@ -309,19 +310,6 @@ const byslug = (slug?: string) => treatments.find((treatment) => treatment.slug 
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const clock = (value: string) => {
-  const [h = 0, m = 0] = value.split(':').map(Number);
-  const suffix = h >= 12 ? 'pm' : 'am';
-  const hour = h % 12 || 12;
-  return m ? `${hour}:${String(m).padStart(2, '0')} ${suffix}` : `${hour} ${suffix}`;
-};
-const describeHours = (hours: DayHours | undefined) =>
-  hours === 'closed'
-    ? 'closed'
-    : hours
-      ? `${clock(hours.open)} – ${clock(hours.close)}`
-      : 'call to confirm';
-
 const minutes = (value: string) => {
   const [h = 0, m = 0] = value.split(':').map(Number);
   return h * 60 + m;
@@ -332,8 +320,8 @@ function openNow(env: Environment) {
   const today = env.hours[env.now.getDay()];
   if (!today || today === 'closed') return null;
   const now = env.now.getHours() * 60 + env.now.getMinutes();
-  if (now < minutes(today.open)) return `Opens today at ${clock(today.open)}.`;
-  if (now < minutes(today.close)) return `Open now, until ${clock(today.close)}.`;
+  if (now < minutes(today.open)) return `Opens today at ${formatClock(today.open)}.`;
+  if (now < minutes(today.close)) return `Open now, until ${formatClock(today.close)}.`;
   return 'Closed for today.';
 }
 
@@ -406,7 +394,7 @@ const call: ChatAction = clinicTelHref
 const whatsapp: ChatAction = { label: 'WhatsApp us', href: clinic.whatsapp };
 const directions: ChatAction = {
   label: 'Directions',
-  href: `https://www.google.com/maps/dir/?api=1&destination=${clinic.address.lat},${clinic.address.lng}`,
+  href: clinic.directionsUrl,
 };
 
 const STOPWORDS = new Set(
@@ -492,7 +480,9 @@ function steps(treatment: Treatment): BotMessage {
 }
 
 function hoursReply(env: Environment): BotMessage {
-  const week = DAYS.map((day, index) => `• ${day}: ${describeHours(env.hours[index])}`).join('\n');
+  const week = DAYS.map(
+    (day, index) => `• ${day}: ${describeHours(env.hours[index]).toLowerCase()}`,
+  ).join('\n');
   const now = openNow(env);
   return {
     text: `${now ? `${now}\n\n` : ''}Our timings:\n${week}\n\nTimings can change on festivals and holidays, so do call if you are travelling far.`,

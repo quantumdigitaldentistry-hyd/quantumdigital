@@ -5,8 +5,8 @@ import { BeforeAfter } from '@/components/gallery/before-after';
 import { PageHero } from '@/components/sections/page-hero';
 import { Container } from '@/components/ui/container';
 import { casesForEveryTreatment, treatments } from '@/content/clinic';
-import { cx } from '@/lib/cx';
 import { useLiveResults } from '@/lib/live-content';
+import { TreatmentFilter } from '@/components/gallery/treatment-filter';
 
 /**
  * Every before/after case, for every treatment, as a grid of comparisons. Pills filter by
@@ -54,39 +54,7 @@ export default function ResultsPage() {
           </p>
         ) : null}
 
-        <div
-          role="group"
-          aria-label="Filter by treatment"
-          className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden"
-        >
-          {pills.map((pill) => {
-            const active = filter === pill.slug;
-            return (
-              <button
-                key={pill.slug}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setFilter(pill.slug)}
-                className={cx(
-                  'inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-small font-medium whitespace-nowrap transition-colors',
-                  active
-                    ? 'border-brand bg-brand text-on-brand'
-                    : 'border-line bg-surface text-ink-muted hover:border-brand hover:text-ink',
-                )}
-              >
-                {pill.label}
-                <span
-                  className={cx(
-                    'rounded-full px-1.5 font-mono text-caption',
-                    active ? 'bg-on-brand/20' : 'bg-sunken',
-                  )}
-                >
-                  {pill.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <TreatmentFilter pills={pills} value={filter} onChange={setFilter} />
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((item) => {

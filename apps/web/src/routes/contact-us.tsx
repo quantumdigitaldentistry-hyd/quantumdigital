@@ -15,7 +15,9 @@ import { PageHero } from '@/components/sections/page-hero';
 import { Section } from '@/components/sections/section';
 import { buttonClass } from '@/components/ui/button-class';
 import { Card } from '@/components/ui/card';
+import { Photo } from '@/components/ui/photo';
 import { clinic } from '@/config/site';
+import { photos } from '@/content/photos';
 import { BookLink } from '@/components/contact/book-link';
 
 function ContactCard({
@@ -45,6 +47,23 @@ export default function ContactUsPage() {
         eyebrow="Contact us"
         title="Talk to the clinic"
         description="Call, request a call back, or book a visit."
+        aside={
+          // The same doctor as the call-back panel, standing on the band's lower edge.
+          <>
+            <span
+              aria-hidden
+              className="absolute bottom-0 left-1/2 size-80 -translate-x-1/2 translate-y-1/3 rounded-full bg-surface/40 blur-2xl"
+            />
+            <Photo
+              photo={photos.callbackDoctor}
+              sizes="20rem"
+              fit="contain"
+              priority
+              className="absolute inset-x-0 top-6 bottom-0 mx-auto block w-full"
+              imgClassName="object-bottom drop-shadow-[0_18px_24px_rgb(7_13_40/0.25)]"
+            />
+          </>
+        }
       >
         <ContactOptions />
       </PageHero>

@@ -296,8 +296,15 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
               </li>
             ))}
             {more > 0 ? (
-              <li className="rounded-full bg-white px-2.5 py-1 text-caption font-semibold text-ink">
-                +{more} more
+              <li>
+                <Link
+                  to={`/doctors/${doctor.slug}`}
+                  viewTransition
+                  aria-label={`${more} more treatments: see ${doctor.name}'s profile`}
+                  className="inline-block rounded-full bg-white px-2.5 py-1 text-caption font-semibold text-ink transition-[background-color,scale] duration-200 hover:scale-105 hover:bg-white/90"
+                >
+                  +{more} more
+                </Link>
               </li>
             ) : null}
           </ul>

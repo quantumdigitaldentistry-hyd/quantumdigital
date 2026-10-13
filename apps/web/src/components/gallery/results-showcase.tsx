@@ -6,11 +6,10 @@ import { treatments, type ResultCase } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 
 import { BeforeAfter } from './before-after';
+import { prefersReducedMotion } from '@/lib/motion';
 
 const treatmentName = (slug: string) =>
   treatments.find((treatment) => treatment.slug === slug)?.name ?? '';
-
-const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * Several before/after cases: thumbnail tabs choose the case, the comparison cross-fades
@@ -34,7 +33,7 @@ export function ResultsShowcase({
   const [active, setActive] = useState(0);
   const [held, setHeld] = useState(false);
   const [hidden, setHidden] = useState(() => document.hidden);
-  const [canPlay] = useState(() => !!autoPlay && !reducedMotion());
+  const [canPlay] = useState(() => !!autoPlay && !prefersReducedMotion());
   const strip = useRef<HTMLDivElement>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const moved = useRef(false);
@@ -53,7 +52,7 @@ export function ResultsShowcase({
     const tab = tabs.current[active];
     if (!container || !tab || !moved.current) return;
     const left = tab.offsetLeft - (container.clientWidth - tab.offsetWidth) / 2;
-    container.scrollTo({ left, behavior: reducedMotion() ? 'auto' : 'smooth' });
+    container.scrollTo({ left, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
   }, [active]);
 
   const current = cases[active] ?? cases[0];

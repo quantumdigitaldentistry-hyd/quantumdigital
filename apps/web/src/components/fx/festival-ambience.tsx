@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import type { FestivalEffect } from '@/lib/festival-packs';
+import { prefersReducedMotion } from '@/lib/motion';
 
 type Particle = {
   x: number; // 0..1 of width
@@ -154,7 +155,7 @@ export function FestivalAmbience({ effect }: { effect: FestivalEffect }) {
     const context = canvas?.getContext('2d');
     if (!canvas || !context) return;
     const ctx = context;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
 
     const palette = PALETTES[effect];
     const motion = MOTION[effect];

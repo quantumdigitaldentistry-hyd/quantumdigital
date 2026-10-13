@@ -45,7 +45,20 @@ export async function removeImage(path: string | null | undefined) {
   await backend.storage.from('media').remove([path]);
 }
 
-/** Public URL for a stored media path. */
-export function mediaUrl(path: string) {
-  return backend ? backend.storage.from('media').getPublicUrl(path).data.publicUrl : '';
+/** Signed links already fetched, with when they expire, so previews don't re-sign. */
+const signed = new Map<string, { url: string; expires: number }>();
+
+/**
+ * A signed, expiring link for a stored media path (the bucket is private; signed-in
+ * team members may read every file). Resolves to '' when it can't be signed.
+ */
+export async function mediaUrl(path: string) {
+  if (!backend || !path) return '';
+  const cached = signed.get(path);
+  if (cached && cached.expires > Date.now() + 60_000) return cached.url;
+  const seconds = 60 * 60;
+  const { data } = await backend.storage.from('media').createSignedUrl(path, seconds);
+  if (!data?.signedUrl) return '';
+  signed.set(path, { url: data.signedUrl, expires: Date.now() + seconds * 1000 });
+  return data.signedUrl;
 }

@@ -17,6 +17,5 @@ export function getSupabase() {
   return client;
 }
 
-/** Public URL of a file in the `media` bucket, built without loading the client. */
-export const publicMediaUrl = (path: string) =>
-  url ? `${url.replace(/\/$/, '')}/storage/v1/object/public/media/${path}` : '';
+/** How long a signed media link stays valid, in seconds. */
+export const MEDIA_LINK_SECONDS = 60 * 60;
