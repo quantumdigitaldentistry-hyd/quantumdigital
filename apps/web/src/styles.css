@@ -385,30 +385,12 @@ html:has(dialog[open]) {
 }
 
 /*
- * Home hero (components/landing/landing-hero.tsx, components/three/hero-visual.tsx).
- * On load the 3D logo settles in from slightly below and tilted back. As the hero
- * scrolls away the text lifts and fades first, and the logo drifts back more slowly,
- * tilting away, so the two separate in depth. Static with reduced motion; the scroll
- * part needs scroll-driven animations (browsers without them simply keep it in place).
+ * Home hero (components/landing/landing-hero.tsx). As the hero scrolls away the text
+ * lifts and fades. Static with reduced motion; needs scroll-driven animations (browsers
+ * without them simply keep it in place).
  */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-logo-in {
-    animation: hero-logo-in 1100ms var(--ease-out) 150ms both;
-  }
-}
-@keyframes hero-logo-in {
-  from {
-    opacity: 0;
-    transform: perspective(1000px) translateY(28px) rotateX(14deg) scale(0.92);
-  }
-}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .hero-logo-scroll {
-      animation: hero-logo-scroll linear both;
-      animation-timeline: view();
-      animation-range: exit -10% exit 100%;
-    }
     .hero-text-scroll {
       animation: hero-text-scroll linear both;
       animation-timeline: view();
@@ -429,12 +411,6 @@ html:has(dialog[open]) {
         entry var(--reveal-start, 0%) entry calc(var(--reveal-start, 0%) + 60%),
         exit 35% exit 100%;
     }
-  }
-}
-@keyframes hero-logo-scroll {
-  to {
-    opacity: 0.15;
-    transform: perspective(1000px) translateY(22%) rotateX(22deg) scale(0.86);
   }
 }
 @keyframes hero-text-scroll {
