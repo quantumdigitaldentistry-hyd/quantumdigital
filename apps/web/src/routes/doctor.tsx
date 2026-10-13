@@ -54,7 +54,7 @@ export default function DoctorPage() {
                 {doctor.fellowship}
               </p>
             ) : null}
-            <p className="max-w-[46ch] text-on-hero-muted">{doctor.focus}.</p>
+            <p className="max-w-[60ch] text-on-hero-muted">{doctor.bio ?? `${doctor.focus}.`}</p>
             <div className="flex flex-wrap gap-3">
               <BookLink className={buttonClass()}>
                 <CalendarPlusIcon size={20} aria-hidden />

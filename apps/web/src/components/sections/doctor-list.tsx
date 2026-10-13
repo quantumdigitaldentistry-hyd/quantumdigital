@@ -131,6 +131,12 @@ function DoctorFeature({ doctor, flip }: { doctor: Doctor; flip: boolean }) {
           <p className="font-display text-heading font-semibold text-brand">{doctor.role}</p>
         </div>
 
+        {doctor.bio ? (
+          <p className="mx-auto max-w-prose text-left text-small text-ink-muted sm:text-center md:text-body">
+            {doctor.bio}
+          </p>
+        ) : null}
+
         <ul className="mx-auto flex max-w-md flex-col gap-2 text-left">
           {qualifications.map((item) => (
             <li key={item} className="flex items-start gap-2.5 text-small font-medium">
@@ -218,6 +224,8 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
   );
   const treats = doctor.treats.slice(0, 3);
   const more = doctor.treats.length - treats.length;
+  // The full list is on the About page and the profile; the card keeps to three lines.
+  const shown = qualifications.slice(0, 3);
   return (
     <article data-doctor className="group @container/card h-full">
       <div
@@ -279,7 +287,7 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
             </p>
           </div>
           <ul className="flex flex-col gap-1 text-small text-white/80">
-            {qualifications.map((item) => (
+            {shown.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>

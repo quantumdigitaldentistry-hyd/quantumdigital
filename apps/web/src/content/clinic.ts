@@ -436,11 +436,10 @@ export type Doctor = {
   specialty: 'Prosthodontics' | 'Orthodontics';
   /** Title under the name, e.g. "Orthodontist". */
   role: string;
-  /**
-   * Further qualifications and memberships, listed under the degree. TODO(clinic): add
-   * each doctor's (university, fellowships, memberships, years of experience).
-   */
+  /** Further qualifications, ranks and experience, listed under the degree. */
   credentials?: string[];
+  /** The doctor's profile in the clinic's own words (from its signage). */
+  bio?: string;
   focus: string;
   /** Plain-language explanation of the speciality (general information, not a bio). */
   specialtyIntro: string;
@@ -458,17 +457,27 @@ export const doctors: Doctor[] = [
     slug: 'dr-d-reddy-pradeep',
     name: 'Dr D Reddy Pradeep',
     initials: 'RP',
-    degree: 'MDS, Orthodontics & Dentofacial Orthopaedics',
+    degree: 'BDS, MDS (Orthodontics & Dentofacial Orthopaedics)',
     specialty: 'Orthodontics',
     role: 'Orthodontist',
+    credentials: [
+      'Govt. Dental College and Hospital, Hyderabad (Osmania)',
+      'State 2nd rank, APPG entrance',
+      'Certified Invisalign and Spark Aligners provider',
+      'Over 10 years of clinical experience',
+      'Over 700 orthodontic patients treated',
+    ],
+    bio: 'Highly accomplished and dedicated orthodontist with over 10 years of clinical experience, specialising in the diagnosis, prevention and treatment of dental and facial irregularities. Having successfully treated over 700 orthodontic patients, employing a wide range of treatment modalities including traditional braces, clear aligners, growth modulation procedures and surgical orthodontics, he shows a strong commitment to delivering high-quality, patient-centric care.',
     focus: 'Braces and clear aligners',
     specialtyIntro:
       'Orthodontics is the speciality of straightening teeth and correcting the bite. An orthodontist uses braces or clear aligners to move teeth gradually into a healthier, more even position.',
     treats: [
       'Metal and ceramic braces',
-      'Clear aligners, including Invisalign',
+      'Clear aligners, including Invisalign and Spark',
       'Crowded, gapped or crooked teeth',
       'Overbite, underbite and crossbite',
+      'Growth modulation for growing jaws',
+      'Surgical orthodontics',
       'Retainers after treatment',
     ],
     portrait: photos.doctorPradeep,
@@ -478,10 +487,16 @@ export const doctors: Doctor[] = [
     slug: 'dr-mohana-bindu',
     name: 'Dr B Mohana Bindu',
     initials: 'MB',
-    degree: 'MDS, Prosthodontics & Implantology',
+    degree: 'BDS, MDS (Prosthodontics & Implantology)',
     fellowship: 'Fellowship in Laser Dentistry',
     specialty: 'Prosthodontics',
     role: 'Prosthodontist and implantologist',
+    credentials: [
+      'Govt. Dental College and Hospital, Hyderabad (Osmania)',
+      'State 6th rank, APPG entrance',
+      '10 years of experience',
+    ],
+    bio: 'Highly skilled prosthodontist and implantologist with 10 years of experience in restoring and enhancing patients’ oral function and aesthetics. Proficient in diagnosing and treating complex dental cases, with expertise in dental implant placement and restoration, fixed and removable prosthodontics, and full-mouth rehabilitation. Well-versed in new technologies and techniques in digital dentistry (intraoral scanners, CAD/CAM).',
     focus: 'Implants, crowns, dentures, veneers and laser care',
     specialtyIntro:
       'Prosthodontics is the speciality of restoring and replacing teeth. A prosthodontist plans crowns, bridges, dentures and implant-supported teeth so they look natural, bite comfortably and last.',
