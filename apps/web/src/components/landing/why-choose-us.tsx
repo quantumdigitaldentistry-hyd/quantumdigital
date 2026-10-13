@@ -8,13 +8,21 @@ import {
   ShieldCheckIcon,
   UsersThreeIcon,
 } from '@phosphor-icons/react';
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
 
 import { LogoMark } from '@/components/brand/logo';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { photos, type Photo as PhotoData } from '@/content/photos';
 import { cx } from '@/lib/cx';
+import { jumpBy, scrollToElement } from '@/lib/scroll';
 
 type Reason = { title: string; body: string; Icon: Icon; photo: PhotoData };
 
@@ -60,6 +68,8 @@ const reasons: Reason[] = [
 
 const pad = (value: number) => String(value).padStart(2, '0');
 const ADVANCE_MS = 5000;
+/** Phones: how long one view takes to fade out before the other fades in. */
+const FADE_MS = 260;
 
 /** Position on a ring: `radius` in % of the square, `degrees` clockwise from the right. */
 const onRing = (degrees: number, radius: number): CSSProperties => {
@@ -125,18 +135,39 @@ function HubTitle({ size, children }: { size: 'wide' | 'compact'; children?: Rea
  *
  * Wide screens: six round buttons on a ring; the centre shows the focused reason's title
  * and text, so there are no side cards and no empty space. Phones: small icons on the ring
- * and the focused reason in a card underneath; tapping the centre opens all six, with a
- * smooth height change and a staggered fade, and tapping again (or "Show less") closes
- * them. Steps through the reasons on its own while on screen, until the visitor picks
- * one (never with reduced motion).
+ * and the focused reason in a card underneath. Tapping the centre fades the circle out and
+ * the six cards in, one after another, in its place; "Back to circle", or leaving the
+ * section, brings the circle back, fading in when the section is next on screen. When it
+ * swaps while the visitor is below it, the page is held still so nothing jumps. Steps through the reasons on its own every few seconds while on screen (never with
+ * reduced motion). Hovering a reason shows it and holds there while the pointer stays;
+ * picking one starts the count again from that reason, so hover and auto-play work
+ * together.
  */
 export function WhyChooseUs() {
   const section = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  /** Most of the section is on screen: auto-play runs. */
   const [inView, setInView] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const [chosen, setChosen] = useState(false);
-  const [showAll, setShowAll] = useState(false);
+  /** Phones: the circle, or all six cards in its place. */
+  const [view, setViewState] = useState<'circle' | 'cards'>('circle');
+  /** Phones: the current view is faded in. */
+  const [shown, setShownState] = useState(true);
+  // Mirrors of the two above, for the scroll observer's callback.
+  const viewNow = useRef<'circle' | 'cards'>('circle');
+  const shownNow = useRef(true);
+  const setView = (next: 'circle' | 'cards') => {
+    viewNow.current = next;
+    setViewState(next);
+  };
+  const setShown = (next: boolean) => {
+    shownNow.current = next;
+    setShownState(next);
+  };
+  const swapping = useRef(false);
+  const swapTimer = useRef(0);
+  /** Section height before an off-screen swap, to hold the page still afterwards. */
+  const holdFrom = useRef<number | null>(null);
   const [reducedMotion] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
@@ -144,32 +175,90 @@ export function WhyChooseUs() {
   useEffect(() => {
     const element = section.current;
     if (!element) return;
-    const observer = new IntersectionObserver(([entry]) => setInView(!!entry?.isIntersecting), {
-      threshold: 0.35,
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        setInView(entry.intersectionRatio >= 0.35);
+        if (!entry.isIntersecting && viewNow.current === 'cards') {
+          // Left the section with the cards open: back to the circle while it's off
+          // screen, faded out, ready to fade in on return.
+          clearTimeout(swapTimer.current);
+          swapping.current = false;
+          if (element.getBoundingClientRect().bottom <= 0) {
+            // The section is above the screen and about to get shorter: switch off the
+            // browser's own scroll anchoring for this swap and hold the page ourselves
+            // (in the layout effect below).
+            holdFrom.current = element.offsetHeight;
+            document.documentElement.style.overflowAnchor = 'none';
+          }
+          viewNow.current = 'circle';
+          setViewState('circle');
+          shownNow.current = false;
+          setShownState(false);
+        } else if (entry.isIntersecting && !shownNow.current && !swapping.current) {
+          // Back on screen after leaving: fade the circle in.
+          shownNow.current = true;
+          setShownState(true);
+        }
+      },
+      { threshold: [0, 0.35] },
+    );
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(swapTimer.current);
+    };
   }, []);
 
+  // One step at a time: any change of reason (auto or picked) restarts the count.
   useEffect(() => {
-    if (!inView || hovering || chosen || showAll || reducedMotion) return;
-    const timer = setInterval(() => setActive((i) => (i + 1) % reasons.length), ADVANCE_MS);
-    return () => clearInterval(timer);
-  }, [inView, hovering, chosen, showAll, reducedMotion]);
+    if (!inView || hovering || view === 'cards' || reducedMotion) return;
+    const timer = setTimeout(() => setActive((i) => (i + 1) % reasons.length), ADVANCE_MS);
+    return () => clearTimeout(timer);
+  }, [active, inView, hovering, view, reducedMotion]);
 
-  const pick = (index: number) => {
-    setActive(index);
-    setChosen(true);
+  const pick = (index: number) => setActive(index);
+
+  /** Phones: fade the current view out, switch, then fade the new one in. */
+  const swapTo = (next: 'circle' | 'cards', afterSwitch?: () => void) => {
+    clearTimeout(swapTimer.current);
+    if (reducedMotion) {
+      setView(next);
+      afterSwitch?.();
+      return;
+    }
+    swapping.current = true;
+    setShown(false);
+    swapTimer.current = window.setTimeout(() => {
+      setView(next);
+      afterSwitch?.();
+      // Two frames: the new view paints faded out first, so its fade-in runs.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          swapping.current = false;
+          setShown(true);
+        }),
+      );
+    }, FADE_MS);
   };
 
-  const closeAll = () => {
-    setShowAll(false);
-    // The list collapses from below; bring the hub back into view.
-    section.current?.scrollIntoView({
-      behavior: reducedMotion ? 'auto' : 'smooth',
-      block: 'start',
+  const backToCircle = () =>
+    swapTo('circle', () => {
+      // The cards were taller: glide back to the top of the section.
+      requestAnimationFrame(() => {
+        if (section.current) scrollToElement(section.current, 64);
+      });
     });
-  };
+
+  // After an off-screen swap, before paint: move the page by however much the section
+  // shrank, so what's on screen stays exactly where it was.
+  useLayoutEffect(() => {
+    const element = section.current;
+    if (holdFrom.current === null || !element) return;
+    jumpBy(element.offsetHeight - holdFrom.current);
+    holdFrom.current = null;
+    requestAnimationFrame(() => document.documentElement.style.removeProperty('overflow-anchor'));
+  }, [view]);
 
   return (
     <section
@@ -182,11 +271,7 @@ export function WhyChooseUs() {
       </h2>
       <Container className="flex flex-col items-center py-14 md:py-24">
         {/* ── Wide screens: six round reasons on a ring around the centre. ── */}
-        <div
-          className="relative hidden aspect-square w-[min(100%,46rem)] lg:block"
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-        >
+        <div className="relative hidden aspect-square w-[min(100%,42rem)] lg:block">
           <div
             aria-hidden
             className="absolute inset-[2%] rounded-full"
@@ -237,12 +322,16 @@ export function WhyChooseUs() {
                 >
                   <button
                     type="button"
-                    onMouseEnter={() => setActive(index)}
+                    onMouseEnter={() => {
+                      setActive(index);
+                      setHovering(true);
+                    }}
+                    onMouseLeave={() => setHovering(false)}
                     onFocus={() => setActive(index)}
                     onClick={() => pick(index)}
                     aria-pressed={on}
                     className={cx(
-                      'flex size-34 flex-col items-center justify-center gap-2 rounded-full border-2 p-3 text-center shadow-xl transition-[background-color,color,border-color,scale,box-shadow] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand',
+                      'flex size-28 flex-col items-center justify-center gap-1.5 rounded-full border-2 p-2.5 text-center shadow-xl transition-[background-color,color,border-color,scale,box-shadow] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand',
                       on
                         ? 'scale-108 border-brand bg-brand text-on-brand shadow-brand/30'
                         : 'border-line bg-surface text-ink shadow-elevation/10 hover:border-brand',
@@ -250,13 +339,13 @@ export function WhyChooseUs() {
                   >
                     <span
                       className={cx(
-                        'grid size-11 place-items-center rounded-full transition-colors duration-300',
+                        'grid size-9 place-items-center rounded-full transition-colors duration-300',
                         on ? 'bg-on-brand/15' : 'bg-aqua-soft text-on-aqua-soft',
                       )}
                     >
-                      <Icon size={22} weight="duotone" aria-hidden />
+                      <Icon size={19} weight="duotone" aria-hidden />
                     </span>
-                    <span className="font-display text-small leading-tight font-bold text-balance">
+                    <span className="font-display text-caption leading-tight font-bold text-balance">
                       {title}
                     </span>
                   </button>
@@ -266,160 +355,162 @@ export function WhyChooseUs() {
           </ul>
         </div>
 
-        {/* ── Phones and tablets: small hub, the focused reason (or all six) below. ── */}
-        <div className="flex w-full flex-col items-center gap-6 lg:hidden">
-          <div className="relative aspect-square w-[min(100%,22rem)] md:w-[26rem]">
+        {/* ── Phones and tablets: the circle, or all six cards in its place. ── */}
+        <div className="w-full lg:hidden">
+          {view === 'circle' ? (
             <div
-              aria-hidden
-              className="absolute -inset-[6%] rounded-full"
-              style={{
-                backgroundImage:
-                  'radial-gradient(closest-side, var(--color-brand-soft), transparent)',
-              }}
-            />
-            <div
-              aria-hidden
-              className="absolute inset-[8%] animate-[spin_60s_linear_infinite] rounded-full border-2 border-dashed border-brand/30 motion-reduce:animate-none"
-            />
-
-            {/* Centre: tap to see all six. */}
-            <button
-              type="button"
-              onClick={() => (showAll ? closeAll() : setShowAll(true))}
-              aria-expanded={showAll}
-              aria-controls="why-all"
-              className="group absolute inset-[21%] overflow-hidden rounded-full border-4 border-surface text-on-scrim shadow-2xl shadow-elevation/25 transition-transform duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand active:scale-97"
-            >
-              <PhotoStack active={active} sizes="(min-width: 768px) 15rem, 13rem" />
-              <span aria-hidden className="absolute inset-0 bg-scrim/60" />
-              <span className="absolute inset-0 grid place-items-center px-4">
-                <HubTitle size="compact">
-                  <span className="mt-1.5 rounded-full bg-surface/90 px-2.5 py-0.5 text-caption font-semibold text-ink">
-                    {showAll ? 'Tap to close' : 'Tap to see all 6'}
-                  </span>
-                </HubTitle>
-              </span>
-            </button>
-
-            <ul aria-label="Reasons to choose us">
-              {reasons.map(({ title, Icon }, index) => {
-                const on = index === active;
-                return (
-                  <li
-                    key={title}
-                    className="absolute -translate-1/2"
-                    style={onRing(compactAngles[index]!, 42)}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        pick(index);
-                        setShowAll(false);
-                      }}
-                      aria-label={title}
-                      aria-pressed={on}
-                      className={cx(
-                        'grid size-12 place-items-center rounded-full border-2 shadow-lg shadow-elevation/15 transition-[background-color,color,border-color,scale] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:size-14',
-                        on
-                          ? 'scale-115 border-brand bg-brand text-on-brand'
-                          : 'border-line bg-surface text-brand hover:border-brand',
-                      )}
-                    >
-                      <Icon size={22} weight="duotone" aria-hidden />
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div className="w-full max-w-xl">
-            {/* The focused reason. All six share one cell, so the height never jumps. */}
-            <div
-              inert={showAll}
               className={cx(
-                'grid transition-[grid-template-rows,opacity] duration-500 ease-out',
-                showAll ? 'grid-rows-[0fr] opacity-0' : 'grid-rows-[1fr] opacity-100',
+                'flex flex-col items-center gap-6 transition-opacity ease-out',
+                shown ? 'opacity-100' : 'opacity-0',
               )}
+              style={{ transitionDuration: `${FADE_MS}ms` }}
             >
-              <div className="min-h-0 overflow-hidden">
-                <div className="grid p-1" aria-live="polite">
-                  {reasons.map(({ title, body, Icon }, index) => {
+              <div className="relative aspect-square w-[min(100%,22rem)] md:w-[26rem]">
+                <div
+                  aria-hidden
+                  className="absolute -inset-[6%] rounded-full"
+                  style={{
+                    backgroundImage:
+                      'radial-gradient(closest-side, var(--color-brand-soft), transparent)',
+                  }}
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-[8%] animate-[spin_60s_linear_infinite] rounded-full border-2 border-dashed border-brand/30 motion-reduce:animate-none"
+                />
+
+                {/* Centre: tap to see all six. */}
+                <button
+                  type="button"
+                  onClick={() => swapTo('cards')}
+                  aria-expanded={false}
+                  className="group absolute inset-[21%] overflow-hidden rounded-full border-4 border-surface text-on-scrim shadow-2xl shadow-elevation/25 transition-transform duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand active:scale-97"
+                >
+                  <PhotoStack active={active} sizes="(min-width: 768px) 15rem, 13rem" />
+                  <span aria-hidden className="absolute inset-0 bg-scrim/60" />
+                  <span className="absolute inset-0 grid place-items-center px-4">
+                    <HubTitle size="compact">
+                      <span className="mt-1.5 rounded-full bg-surface/90 px-2.5 py-0.5 text-caption font-semibold text-ink">
+                        Tap to see all 6
+                      </span>
+                    </HubTitle>
+                  </span>
+                </button>
+
+                <ul aria-label="Reasons to choose us">
+                  {reasons.map(({ title, Icon }, index) => {
                     const on = index === active;
                     return (
-                      <article
+                      <li
                         key={title}
-                        aria-hidden={!on}
-                        className={cx(
-                          'col-start-1 row-start-1 flex flex-col gap-2 rounded-3xl border border-line bg-surface p-5 text-center shadow-lg shadow-elevation/10 transition-[opacity,translate] duration-500 ease-out',
-                          on ? 'opacity-100' : 'pointer-events-none translate-y-2 opacity-0',
-                        )}
+                        className="absolute -translate-1/2"
+                        style={onRing(compactAngles[index]!, 42)}
                       >
-                        <p className="flex items-center justify-center gap-2 font-mono text-caption font-medium text-brand">
-                          <Icon size={16} weight="duotone" aria-hidden />
-                          {pad(index + 1)} / {pad(reasons.length)}
-                        </p>
-                        <h3 className="font-display text-heading font-bold">{title}</h3>
-                        <p className="text-small text-ink-muted">{body}</p>
-                      </article>
+                        <button
+                          type="button"
+                          onClick={() => pick(index)}
+                          aria-label={title}
+                          aria-pressed={on}
+                          className={cx(
+                            'grid size-12 place-items-center rounded-full border-2 shadow-lg shadow-elevation/15 transition-[background-color,color,border-color,scale] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:size-14',
+                            on
+                              ? 'scale-115 border-brand bg-brand text-on-brand'
+                              : 'border-line bg-surface text-brand hover:border-brand',
+                          )}
+                        >
+                          <Icon size={22} weight="duotone" aria-hidden />
+                        </button>
+                      </li>
                     );
                   })}
-                </div>
+                </ul>
               </div>
-            </div>
 
-            {/* All six, opened from the centre of the hub. */}
-            <div
-              id="why-all"
-              inert={!showAll}
-              className={cx(
-                'grid transition-[grid-template-rows] duration-500 ease-out',
-                showAll ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-              )}
-            >
-              <div className="min-h-0 overflow-hidden">
-                <ol className="flex flex-col gap-3 p-1">
-                  {reasons.map(({ title, body, Icon }, index) => (
-                    <li
+              {/* The focused reason. All six share one cell, so the height never jumps. */}
+              <div className="grid w-full max-w-xl" aria-live="polite">
+                {reasons.map(({ title, body, Icon }, index) => {
+                  const on = index === active;
+                  return (
+                    <article
                       key={title}
+                      aria-hidden={!on}
                       className={cx(
-                        'transition-[opacity,translate] duration-500 ease-out',
-                        showAll ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0',
+                        'col-start-1 row-start-1 flex flex-col gap-2 rounded-3xl border border-line bg-surface p-5 text-center shadow-lg shadow-elevation/10 transition-[opacity,translate] duration-500 ease-out',
+                        on ? 'opacity-100' : 'pointer-events-none translate-y-2 opacity-0',
                       )}
-                      // Open: one after another. Close: all together.
-                      style={{ transitionDelay: showAll ? `${120 + index * 70}ms` : '0ms' }}
                     >
-                      <article className="flex items-start gap-4 rounded-3xl border border-line bg-surface p-4 shadow-md shadow-elevation/10">
-                        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand text-on-brand">
-                          <Icon size={22} weight="duotone" aria-hidden />
-                        </span>
-                        <div className="flex flex-col gap-1">
-                          <h3 className="font-display text-heading font-bold">{title}</h3>
-                          <p className="text-small text-ink-muted">{body}</p>
-                        </div>
-                      </article>
-                    </li>
-                  ))}
-                  <li
-                    className={cx(
-                      'flex justify-center pt-1 transition-opacity duration-500 ease-out',
-                      showAll ? 'opacity-100' : 'opacity-0',
-                    )}
-                    style={{ transitionDelay: showAll ? `${120 + reasons.length * 70}ms` : '0ms' }}
-                  >
-                    <button
-                      type="button"
-                      onClick={closeAll}
-                      className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-small font-medium transition-colors hover:border-brand hover:text-brand"
-                    >
-                      <CaretUpIcon size={16} aria-hidden />
-                      Show less
-                    </button>
-                  </li>
-                </ol>
+                      <p className="flex items-center justify-center gap-2 font-mono text-caption font-medium text-brand">
+                        <Icon size={16} weight="duotone" aria-hidden />
+                        {pad(index + 1)} / {pad(reasons.length)}
+                      </p>
+                      <h3 className="font-display text-heading font-bold">{title}</h3>
+                      <p className="text-small text-ink-muted">{body}</p>
+                    </article>
+                  );
+                })}
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="mx-auto flex w-full max-w-xl flex-col gap-3">
+              <div
+                className={cx(
+                  'mb-2 flex flex-col items-center gap-1 text-center transition-opacity ease-out',
+                  shown ? 'opacity-100' : 'opacity-0',
+                )}
+                style={{ transitionDuration: `${FADE_MS}ms` }}
+              >
+                <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
+                  Why choose us
+                </p>
+                <p className="font-display text-title font-bold">Quantum Digital Dentistry</p>
+              </div>
+              <ol className="flex flex-col gap-3">
+                {reasons.map(({ title, body, Icon }, index) => (
+                  <li
+                    key={title}
+                    className={cx(
+                      'transition-[opacity,translate] duration-500 ease-out',
+                      shown ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0',
+                    )}
+                    // In: one after another. Out: all together, quickly.
+                    style={{
+                      transitionDelay: shown ? `${60 + index * 60}ms` : '0ms',
+                      transitionDuration: shown ? undefined : `${FADE_MS}ms`,
+                    }}
+                  >
+                    <article className="flex items-start gap-4 rounded-3xl border border-line bg-surface p-4 shadow-md shadow-elevation/10">
+                      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand text-on-brand">
+                        <Icon size={22} weight="duotone" aria-hidden />
+                      </span>
+                      <div className="flex flex-col gap-1">
+                        <h3 className="font-display text-heading font-bold">{title}</h3>
+                        <p className="text-small text-ink-muted">{body}</p>
+                      </div>
+                    </article>
+                  </li>
+                ))}
+              </ol>
+              <div
+                className={cx(
+                  'flex justify-center pt-2 transition-opacity ease-out',
+                  shown ? 'opacity-100' : 'opacity-0',
+                )}
+                style={{
+                  transitionDuration: `${FADE_MS}ms`,
+                  transitionDelay: shown ? `${60 + reasons.length * 60}ms` : '0ms',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={backToCircle}
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-small font-medium transition-colors hover:border-brand hover:text-brand"
+                >
+                  <CaretUpIcon size={16} aria-hidden />
+                  Back to circle
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </Container>
     </section>
