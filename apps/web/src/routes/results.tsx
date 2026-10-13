@@ -1,6 +1,5 @@
 import { ArrowUpRightIcon, InfoIcon } from '@phosphor-icons/react';
-import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 
 import { BeforeAfter } from '@/components/gallery/before-after';
 import { PageHero } from '@/components/sections/page-hero';
@@ -11,12 +10,21 @@ import { useLiveResults } from '@/lib/live-content';
 
 /**
  * Every before/after case, for every treatment, as a grid of comparisons. Pills filter by
- * treatment. Real, consented cases where the clinic has them; labelled demos elsewhere.
+ * treatment, and the filter lives in the address (`?treatment=implants`), so treatment
+ * pages can link straight to their own results and a filtered view can be shared. Real,
+ * consented cases where the clinic has them; labelled demos elsewhere.
  */
 export default function ResultsPage() {
   const live = useLiveResults().data ?? [];
   const cases = casesForEveryTreatment(live);
-  const [filter, setFilter] = useState('all');
+  const [params, setParams] = useSearchParams();
+  const requested = params.get('treatment');
+  const filter = treatments.some((treatment) => treatment.slug === requested) ? requested! : 'all';
+  const setFilter = (slug: string) =>
+    setParams(slug === 'all' ? {} : { treatment: slug }, {
+      replace: true,
+      preventScrollReset: true,
+    });
   const shown = filter === 'all' ? cases : cases.filter((item) => item.treatment === filter);
   const anyDemo = cases.some((item) => item.demo !== false);
 
@@ -91,7 +99,7 @@ export default function ResultsPage() {
                   beforeClassName={item.before ? undefined : item.beforeFilter}
                   label={`Compare before and after: ${item.title}${item.demo === false ? '' : ' (demo)'}`}
                   sizes="(min-width: 1024px) 23rem, (min-width: 640px) 46vw, 92vw"
-                  className="aspect-4/5! rounded-3xl shadow-lg shadow-elevation/15"
+                  className="aspect-4/3! rounded-3xl shadow-lg shadow-elevation/15"
                 />
                 <div className="flex items-start justify-between gap-3 px-1">
                   <div className="flex flex-col">

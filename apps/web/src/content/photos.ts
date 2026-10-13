@@ -196,6 +196,12 @@ export const photos = {
     [800, 1000],
     'Close-up of a bright, white smile',
   ),
+  bracesClose: photo(
+    'braces-close',
+    [480, 960],
+    [960, 720],
+    'Close-up of a dental model with braces',
+  ),
   smileDesign: photo(
     'smile-design',
     [480, 800],
@@ -254,14 +260,14 @@ export const studioPhotos: Photo[] = [
   photos.consult,
 ];
 
-/** Gallery photos keep their natural shape for the masonry grid. */
+/** Gallery photos; the tile grid crops them to fit. */
 export const galleryPhotos: Photo[] = [
   photo('room-white', [480, 960], [960, 1440], 'White dental chair beside a bright window'),
   photos.scan,
   photo('room-art', [480, 960], [960, 640], 'Treatment room with a blue chair and artwork'),
   photos.smileJoy,
   photo('room-orange', [480, 960], [960, 640], 'Treatment room with an orange dental chair'),
-  photo('braces-close', [480, 960], [960, 720], 'Close-up of a dental model with braces'),
+  photos.bracesClose,
   photo('room-blue', [480, 960], [960, 1440], 'Dental chair with blue upholstery and instruments'),
   photo('room-wide', [480, 960], [960, 640], 'Wide view of a modern treatment room'),
 ];

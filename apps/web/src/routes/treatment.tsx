@@ -227,6 +227,23 @@ export default function TreatmentPage() {
                   Demo cases until the clinic adds real ones, shared with patient consent.
                 </p>
               )}
+              <p className="text-small text-ink-muted">
+                {cases.length} {cases.length === 1 ? 'case' : 'cases'}. Pick one below the photo,
+                then move over it or drag the handle to compare.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to={`/results?treatment=${treatment.slug}`}
+                  viewTransition
+                  className={buttonClass('primary')}
+                >
+                  All {label.toLowerCase()} results
+                  <ArrowUpRightIcon size={18} aria-hidden />
+                </Link>
+                <Link to="/results" viewTransition className={buttonClass('secondary')}>
+                  Results for every treatment
+                </Link>
+              </div>
             </Reveal>
             <Reveal step={1}>
               <ResultsShowcase cases={cases} />
