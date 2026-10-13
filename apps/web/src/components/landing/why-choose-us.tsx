@@ -7,10 +7,9 @@ import {
   ShieldCheckIcon,
   UsersThreeIcon,
 } from '@phosphor-icons/react';
-import type { CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
-import { Reveal } from '@/components/reveal';
-import { RevealWords } from '@/components/reveal-words';
+import { LogoMark } from '@/components/brand/logo';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { photos, type Photo as PhotoData } from '@/content/photos';
@@ -58,97 +57,217 @@ const reasons: Reason[] = [
   },
 ];
 
-/** Card tints, in turn: background, then the accent for the number and title. */
-const tints = [
-  { card: 'bg-brand-soft', accent: 'text-on-brand-soft' },
-  { card: 'bg-aqua-soft', accent: 'text-on-aqua-soft' },
-  { card: 'bg-highlight-soft', accent: 'text-on-highlight-soft' },
-];
+/**
+ * Where each reason's icon sits on the ring, in degrees clockwise from the right. The
+ * first three run down the left side and the last three down the right, so on wide
+ * screens each icon lines up with its card in the column beside the hub.
+ */
+const angles = [210, 180, 150, 330, 0, 30];
+const ringRadius = 42; // % of the hub, matching the ring at inset 8%.
 
 const pad = (value: number) => String(value).padStart(2, '0');
+const ADVANCE_MS = 5000;
 
 /**
- * Why patients choose the clinic, as a stack of cards: each one sticks below the header
- * and the next slides up over it, a little lower each time so the edges of the earlier
- * cards show. Plain `position: sticky`, no scroll scripts or per-card effects, so it
- * scrolls as smoothly as the page on phones. Wide screens put the text beside the photo.
+ * Why patients choose the clinic, as a hub: "Why choose us" in a circle at the centre,
+ * showing the photo for the reason in focus, with the six reasons as icons on a ring
+ * around it. Wide screens list the reasons in two columns either side of the hub; phones
+ * show one reason at a time under the hub, picked by tapping its icon, so the section
+ * stays short. Steps through the reasons on its own while on screen, until the visitor
+ * picks one (never with reduced motion).
  */
 export function WhyChooseUs() {
+  const section = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const [inView, setInView] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [chosen, setChosen] = useState(false);
+  const [reducedMotion] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+
+  useEffect(() => {
+    const element = section.current;
+    if (!element) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(!!entry?.isIntersecting), {
+      threshold: 0.35,
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView || hovering || chosen || reducedMotion) return;
+    const timer = setInterval(() => setActive((i) => (i + 1) % reasons.length), ADVANCE_MS);
+    return () => clearInterval(timer);
+  }, [inView, hovering, chosen, reducedMotion]);
+
+  const pick = (index: number) => {
+    setActive(index);
+    setChosen(true);
+  };
+
+  const column = (from: number, side: 'left' | 'right') => (
+    <ul
+      className="hidden flex-col gap-4 lg:flex"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
+      {reasons.slice(from, from + 3).map(({ title, body, Icon }, offset) => {
+        const index = from + offset;
+        const on = index === active;
+        return (
+          <li key={title}>
+            <button
+              type="button"
+              onMouseEnter={() => setActive(index)}
+              onFocus={() => setActive(index)}
+              onClick={() => pick(index)}
+              aria-pressed={on}
+              className={cx(
+                'flex w-full items-start gap-4 rounded-3xl border p-5 text-left transition-[background-color,border-color,box-shadow,translate] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-brand',
+                side === 'left' && 'flex-row-reverse',
+                on
+                  ? 'border-brand bg-brand-soft shadow-lg shadow-elevation/10'
+                  : 'border-line bg-surface hover:border-aqua',
+                on && (side === 'left' ? '-translate-x-1' : 'translate-x-1'),
+              )}
+            >
+              <span
+                className={cx(
+                  'grid size-11 shrink-0 place-items-center rounded-2xl transition-colors duration-300',
+                  on ? 'bg-brand text-on-brand' : 'bg-aqua-soft text-on-aqua-soft',
+                )}
+              >
+                <Icon size={22} weight="duotone" aria-hidden />
+              </span>
+              <span className="flex flex-col gap-1">
+                <span className="font-display text-heading font-bold">{title}</span>
+                <span className="text-small text-ink-muted">{body}</span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
   return (
     <section
+      ref={section}
       aria-labelledby="why-title"
       className="relative isolate overflow-clip border-y border-line bg-canvas"
     >
-      <Container className="flex flex-col gap-10 py-14 md:gap-14 md:py-24">
-        <Reveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
-          <div className="flex max-w-xl flex-col gap-3">
-            <p className="text-label font-semibold tracking-[0.14em] text-brand uppercase">
-              02 · Why choose us
-            </p>
-            <h2
-              id="why-title"
-              className="heading-3d font-display text-title font-bold text-balance md:text-display"
-            >
-              <RevealWords text={'Why patients choose us.'} />
-            </h2>
-          </div>
-          <p className="max-w-sm text-ink-muted">
-            Modern technology, an experienced team and care built around you, at a fair cost.
-          </p>
-        </Reveal>
+      <Container className="flex flex-col items-center gap-6 py-14 md:py-24 lg:grid lg:max-w-7xl lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-8">
+        {column(0, 'left')}
 
-        <ol aria-label="Reasons to choose us" className="flex flex-col gap-6 md:gap-10">
-          {reasons.map(({ title, body, Icon, photo }, index) => {
-            const tint = tints[index % tints.length]!;
-            return (
-              <li
+        {/* The hub. */}
+        <div className="relative aspect-square w-[min(100%,22rem)] shrink-0 md:w-[26rem] lg:w-[22rem] xl:w-[26rem]">
+          {/* Soft glow, and a slowly turning dashed ring (decoration only). */}
+          <div
+            aria-hidden
+            className="absolute -inset-[6%] rounded-full"
+            style={{
+              backgroundImage:
+                'radial-gradient(closest-side, var(--color-brand-soft), transparent)',
+            }}
+          />
+          <div
+            aria-hidden
+            className="absolute inset-[8%] animate-[spin_60s_linear_infinite] rounded-full border-2 border-dashed border-brand/30 motion-reduce:animate-none"
+          />
+
+          {/* Centre: the photo for the reason in focus, under the title. */}
+          <div className="absolute inset-[21%] overflow-hidden rounded-full border-4 border-surface shadow-2xl shadow-elevation/25">
+            {reasons.map(({ title, photo }, index) => (
+              <Photo
                 key={title}
-                // Sticky only where a whole card fits below the header, so no text is hidden.
-                className="top-(--stack-top) md:top-(--stack-top-md) [@media(min-height:40rem)]:sticky"
-                style={
-                  {
-                    '--stack-top': `${4.5 + index * 0.5}rem`,
-                    '--stack-top-md': `${5 + index * 0.75}rem`,
-                  } as CSSProperties
-                }
+                photo={photo}
+                sizes="(min-width: 1280px) 16rem, (min-width: 768px) 15rem, 13rem"
+                className={cx(
+                  'absolute inset-0 block size-full transition-opacity duration-700 ease-out',
+                  index === active ? 'opacity-100' : 'opacity-0',
+                )}
+              />
+            ))}
+            <div aria-hidden className="absolute inset-0 bg-scrim/60" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 text-center text-on-scrim">
+              <LogoMark className="mb-1 h-auto w-9 md:w-11" />
+              <h2
+                id="why-title"
+                className="font-display text-heading leading-tight font-bold md:text-title"
               >
-                <article
-                  className={cx(
-                    'grid gap-3 overflow-hidden rounded-4xl border border-line p-3 shadow-xl shadow-elevation/10 md:min-h-88 md:grid-cols-[1.05fr_1fr] md:gap-4 md:p-4',
-                    tint.card,
-                  )}
+                Why choose us
+              </h2>
+              <p className="text-caption font-medium tracking-wide opacity-90 md:text-small">
+                Quantum Digital Dentistry
+              </p>
+            </div>
+          </div>
+
+          {/* The six reasons on the ring. */}
+          <ul aria-label="Reasons to choose us">
+            {reasons.map(({ title, Icon }, index) => {
+              const angle = (angles[index]! * Math.PI) / 180;
+              const on = index === active;
+              return (
+                <li
+                  key={title}
+                  className="absolute -translate-1/2"
+                  style={
+                    {
+                      left: `${50 + ringRadius * Math.cos(angle)}%`,
+                      top: `${50 + ringRadius * Math.sin(angle)}%`,
+                    } as CSSProperties
+                  }
                 >
-                  <div className="relative aspect-video overflow-hidden rounded-3xl md:order-2 md:aspect-auto">
-                    <Photo
-                      photo={photo}
-                      sizes="(min-width: 768px) 34rem, 92vw"
-                      className="block size-full md:absolute md:inset-0"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center gap-3 px-2 pt-1 pb-3 md:gap-4 md:px-6 md:py-6">
-                    <div className="flex items-center gap-3">
-                      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand text-on-brand shadow-md shadow-elevation/20 md:size-12">
-                        <Icon size={22} weight="duotone" aria-hidden />
-                      </span>
-                      <span className={cx('font-mono text-small font-medium', tint.accent)}>
-                        {pad(index + 1)} / {pad(reasons.length)}
-                      </span>
-                    </div>
-                    <h3
-                      className={cx(
-                        'font-display text-heading font-bold text-balance md:text-title',
-                        tint.accent,
-                      )}
-                    >
-                      {title}
-                    </h3>
-                    <p className="text-small text-ink md:text-body">{body}</p>
-                  </div>
-                </article>
-              </li>
+                  <button
+                    type="button"
+                    onClick={() => pick(index)}
+                    onMouseEnter={() => setActive(index)}
+                    aria-label={title}
+                    aria-pressed={on}
+                    className={cx(
+                      'grid size-12 place-items-center rounded-full border-2 shadow-lg shadow-elevation/15 transition-[background-color,color,border-color,scale] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand md:size-14',
+                      on
+                        ? 'scale-115 border-brand bg-brand text-on-brand'
+                        : 'border-line bg-surface text-brand hover:border-brand',
+                    )}
+                  >
+                    <Icon size={22} weight="duotone" aria-hidden />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        {column(3, 'right')}
+
+        {/* Phones and tablets: the reason in focus, under the hub. All six share one grid
+            cell, so the panel keeps the height of the longest and nothing jumps. */}
+        <div className="grid w-full max-w-xl lg:hidden" aria-live="polite">
+          {reasons.map(({ title, body, Icon }, index) => {
+            const on = index === active;
+            return (
+              <article
+                key={title}
+                aria-hidden={!on}
+                className={cx(
+                  'col-start-1 row-start-1 flex flex-col gap-2 rounded-3xl border border-line bg-surface p-5 text-center shadow-lg shadow-elevation/10 transition-[opacity,translate] duration-500 ease-out',
+                  on ? 'opacity-100' : 'pointer-events-none translate-y-2 opacity-0',
+                )}
+              >
+                <p className="flex items-center justify-center gap-2 font-mono text-caption font-medium text-brand">
+                  <Icon size={16} weight="duotone" aria-hidden />
+                  {pad(index + 1)} / {pad(reasons.length)}
+                </p>
+                <h3 className="font-display text-heading font-bold">{title}</h3>
+                <p className="text-small text-ink-muted">{body}</p>
+              </article>
             );
           })}
-        </ol>
+        </div>
       </Container>
     </section>
   );
