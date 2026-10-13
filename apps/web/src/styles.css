@@ -30,6 +30,7 @@
   --color-ink: #0d1b2a;
   --color-ink-muted: #46586a;
   --color-ink-subtle: #5d6e7e; /* 4.5:1 even on sunken */
+  --color-ink-placeholder: #9aa9b6; /* light grey example text in inputs, never a real value */
 
   /* Brand blue (the tooth mark): actions, links, focus, selection */
   --color-brand: #1a5bc4;
@@ -126,6 +127,7 @@
   --color-ink: #e6eef4;
   --color-ink-muted: #9db0c0;
   --color-ink-subtle: #7f93a5;
+  --color-ink-placeholder: #5a6d7e;
 
   --color-brand: #7fb2ff;
   --color-brand-strong: #a3c8ff;

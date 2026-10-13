@@ -690,7 +690,7 @@ function continueBooking(
       if (!e164)
         return next('phone', [
           {
-            text: "That number doesn't look right. Please type a 10-digit Indian mobile number, for example 98480 21573.",
+            text: "That number doesn't look right. Please type your 10-digit Indian mobile number.",
           },
         ]);
       draft.phone = e164;
@@ -786,7 +786,7 @@ function continueCallback(
     const e164 = toIndianE164(raw);
     if (!e164)
       return next('phone', [
-        { text: 'Please type a 10-digit Indian mobile number, for example 98480 21573.' },
+        { text: 'Please type your 10-digit Indian mobile number.' },
       ]);
     draft.phone = e164;
     return next(
