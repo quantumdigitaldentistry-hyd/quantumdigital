@@ -196,6 +196,12 @@ export const photos = {
     [800, 1000],
     'Close-up of a bright, white smile',
   ),
+  golconda: photo(
+    'golconda',
+    [960, 1920],
+    [1920, 960],
+    'Golconda Fort in Hyderabad under a golden evening sky',
+  ),
   bracesClose: photo(
     'braces-close',
     [480, 960],
@@ -314,6 +320,7 @@ export const photoCredits = [
   'Caroline LM',
   'Swipe',
   'Tony Litvyak',
+  'Prasanth Dasari (Golconda Fort)',
   'Vigneshwar Rajkumar',
   'Fotos (call-back doctor)',
   'Round Icons (illustrations)',

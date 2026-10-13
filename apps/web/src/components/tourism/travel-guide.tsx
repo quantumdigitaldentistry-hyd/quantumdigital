@@ -14,8 +14,10 @@ import {
 import { Reveal } from '@/components/reveal';
 import { Section } from '@/components/sections/section';
 import { Container } from '@/components/ui/container';
+import { Photo } from '@/components/ui/photo';
 import { clinic } from '@/config/site';
 import { doctors } from '@/content/clinic';
+import { photos } from '@/content/photos';
 
 /*
  * The travel guide on the dental tourism page: why Hyderabad, the cost advantage,
@@ -323,32 +325,63 @@ export function ExploreHyderabad() {
     'Necklace Road',
   ];
   return (
-    <Section
-      eyebrow="Explore Hyderabad"
-      title="Combine treatment with a memorable visit."
-      intro="Many patients fit sightseeing around their appointments in one of India’s most historic and vibrant cities. Tap a place to see it on Google."
+    <section
+      aria-labelledby="explore-title"
+      className="relative isolate overflow-clip bg-scrim text-on-scrim"
     >
-      <ul className="flex flex-wrap gap-2">
-        {places.map((place) => (
-          <li key={place}>
-            {/* Google's page for the place: photos, timings, reviews and directions. */}
-            <a
-              href={`https://www.google.com/search?q=${encodeURIComponent(`${place}, Hyderabad`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-surface px-4 text-small font-medium transition-[border-color,color,translate] duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand"
-            >
-              {place}
-              <ArrowUpRightIcon
-                size={14}
-                aria-hidden
-                className="text-ink-subtle transition-[color,rotate] duration-200 group-hover:rotate-45 group-hover:text-brand"
-              />
-              <span className="sr-only"> (opens Google in a new tab)</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </Section>
+      {/* Golconda Fort behind, drifting gently as the section scrolls past. */}
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <Photo
+          photo={photos.golconda}
+          sizes="100vw"
+          className="block size-full"
+          imgClassName="parallax-img scale-110 object-[center_70%]"
+        />
+        {/* Dark on the text side, opening up to the fort; a little at the bottom too. */}
+        <div className="absolute inset-0 bg-linear-to-r from-scrim/90 via-scrim/60 to-scrim/10" />
+        <div className="absolute inset-0 bg-linear-to-t from-scrim/70 via-transparent to-transparent" />
+      </div>
+      <Container className="flex min-h-[32rem] flex-col justify-center gap-8 py-16 md:min-h-[36rem] md:py-24">
+        <Reveal className="flex max-w-xl flex-col gap-3">
+          <p className="text-label font-semibold tracking-[0.14em] text-highlight uppercase">
+            Explore Hyderabad
+          </p>
+          <h2
+            id="explore-title"
+            className="font-display text-title font-bold text-balance drop-shadow-[0_2px_12px_rgb(0_0_0/0.35)] md:text-display"
+          >
+            Combine treatment with a memorable visit.
+          </h2>
+          <p className="opacity-90 md:text-heading md:font-normal">
+            Many patients fit sightseeing around their appointments in one of India’s most historic
+            and vibrant cities. Tap a place to see it on Google.
+          </p>
+        </Reveal>
+        <Reveal step={1}>
+          <ul className="flex max-w-3xl flex-wrap gap-2">
+            {places.map((place) => (
+              <li key={place}>
+                {/* Google's page for the place: photos, timings, reviews and directions. */}
+                <a
+                  href={`https://www.google.com/search?q=${encodeURIComponent(`${place}, Hyderabad`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-4 text-small font-medium text-white backdrop-blur-md transition-[background-color,color,translate] duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-ink"
+                >
+                  {place}
+                  <ArrowUpRightIcon
+                    size={14}
+                    aria-hidden
+                    className="opacity-80 transition-[rotate] duration-200 group-hover:rotate-45"
+                  />
+                  <span className="sr-only"> (opens Google in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+        <p className="text-caption opacity-70">Golconda Fort, Hyderabad</p>
+      </Container>
+    </section>
   );
 }
