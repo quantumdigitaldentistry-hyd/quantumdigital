@@ -714,16 +714,6 @@ html:has(dialog[open]) {
       animation-timeline: view();
       animation-range: cover 0% cover 100%;
     }
-    /* Vertical progress line that fills while its section scrolls through. */
-    .line-fill {
-      transform-origin: top;
-      animation: line-fill linear both;
-      animation-timeline: --journey;
-      animation-range: cover 15% cover 75%;
-    }
-    .journey-timeline {
-      view-timeline: --journey block;
-    }
   }
 }
 /*
