@@ -11,7 +11,7 @@ import { cx } from '@/lib/cx';
 import { useQuickActions } from '@/lib/quick-actions';
 import { vtNames } from '@/lib/transition-names';
 
-const HEADLINE = 'Implants, aligners and smile design, planned digitally.';
+const HEADLINE = 'Your Dream Smile Designed Digitally & Delivered Affordably';
 
 /** Where each treatment chip sits around the 3D logo (md and up). */
 const chipPlacement: Record<string, string> = {
