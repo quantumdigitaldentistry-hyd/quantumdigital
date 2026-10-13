@@ -1,6 +1,5 @@
 import {
   BooksIcon,
-  CaretUpIcon,
   CpuIcon,
   HandHeartIcon,
   type Icon,
@@ -22,7 +21,7 @@ import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { photos, type Photo as PhotoData } from '@/content/photos';
 import { cx } from '@/lib/cx';
-import { jumpBy, scrollToElement } from '@/lib/scroll';
+import { jumpBy } from '@/lib/scroll';
 
 type Reason = { title: string; body: string; Icon: Icon; photo: PhotoData };
 
@@ -136,8 +135,8 @@ function HubTitle({ size, children }: { size: 'wide' | 'compact'; children?: Rea
  * Wide screens: six round buttons on a ring; the centre shows the focused reason's title
  * and text, so there are no side cards and no empty space. Phones: small icons on the ring
  * and the focused reason in a card underneath. Tapping the centre fades the circle out and
- * the six cards in, one after another, in its place; "Back to circle", or leaving the
- * section, brings the circle back, fading in when the section is next on screen. When it
+ * the six cards in, one after another, in its place; leaving the section brings the
+ * circle back, fading in when the section is next on screen. When it
  * swaps while the visitor is below it, the page is held still so nothing jumps. Steps through the reasons on its own every few seconds while on screen (never with
  * reduced motion). Hovering a reason shows it and holds there while the pointer stays;
  * picking one starts the count again from that reason, so hover and auto-play work
@@ -219,20 +218,18 @@ export function WhyChooseUs() {
 
   const pick = (index: number) => setActive(index);
 
-  /** Phones: fade the current view out, switch, then fade the new one in. */
-  const swapTo = (next: 'circle' | 'cards', afterSwitch?: () => void) => {
+  /** Phones: fade the circle out, switch to the cards, then fade them in. */
+  const openCards = () => {
     clearTimeout(swapTimer.current);
     if (reducedMotion) {
-      setView(next);
-      afterSwitch?.();
+      setView('cards');
       return;
     }
     swapping.current = true;
     setShown(false);
     swapTimer.current = window.setTimeout(() => {
-      setView(next);
-      afterSwitch?.();
-      // Two frames: the new view paints faded out first, so its fade-in runs.
+      setView('cards');
+      // Two frames: the cards paint faded out first, so their fade-in runs.
       requestAnimationFrame(() =>
         requestAnimationFrame(() => {
           swapping.current = false;
@@ -241,14 +238,6 @@ export function WhyChooseUs() {
       );
     }, FADE_MS);
   };
-
-  const backToCircle = () =>
-    swapTo('circle', () => {
-      // The cards were taller: glide back to the top of the section.
-      requestAnimationFrame(() => {
-        if (section.current) scrollToElement(section.current, 64);
-      });
-    });
 
   // After an off-screen swap, before paint: move the page by however much the section
   // shrank, so what's on screen stays exactly where it was.
@@ -382,7 +371,7 @@ export function WhyChooseUs() {
                 {/* Centre: tap to see all six. */}
                 <button
                   type="button"
-                  onClick={() => swapTo('cards')}
+                  onClick={openCards}
                   aria-expanded={false}
                   className="group absolute inset-[21%] overflow-hidden rounded-full border-4 border-surface text-on-scrim shadow-2xl shadow-elevation/25 transition-transform duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand active:scale-97"
                 >
@@ -490,25 +479,6 @@ export function WhyChooseUs() {
                   </li>
                 ))}
               </ol>
-              <div
-                className={cx(
-                  'flex justify-center pt-2 transition-opacity ease-out',
-                  shown ? 'opacity-100' : 'opacity-0',
-                )}
-                style={{
-                  transitionDuration: `${FADE_MS}ms`,
-                  transitionDelay: shown ? `${60 + reasons.length * 60}ms` : '0ms',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={backToCircle}
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-small font-medium transition-colors hover:border-brand hover:text-brand"
-                >
-                  <CaretUpIcon size={16} aria-hidden />
-                  Back to circle
-                </button>
-              </div>
             </div>
           )}
         </div>
