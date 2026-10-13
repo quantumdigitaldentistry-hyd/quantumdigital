@@ -1,7 +1,7 @@
 import { toIndianE164 } from '@quantam/shared';
 
 import { clinic, clinicTelHref, type DayHours } from '@/config/site';
-import { doctors, leadDoctor, treatments, type Treatment } from '@/content/clinic';
+import { doctors, leadDoctor, oneLine, treatments, type Treatment } from '@/content/clinic';
 import { googleRating } from '@/content/reviews';
 import { treatmentDetails } from '@/content/treatment-details';
 import { bookingPath } from '@/lib/booking';
@@ -464,7 +464,9 @@ function aboutTreatment(treatment: Treatment): BotMessage[] {
     `${treatment.name}: ${treatment.summary}`,
     treatment.intro,
     treatment.highlights.length ? treatment.highlights.map((item) => `• ${item}`).join('\n') : '',
-    doctor ? `It is led by ${doctor.name}, our ${doctor.specialty.toLowerCase()} specialist.` : '',
+    doctor
+      ? `It is led by ${oneLine(doctor.name)}, our ${doctor.specialty.toLowerCase()} specialist.`
+      : '',
   ].filter(Boolean);
   return [
     {
@@ -534,7 +536,7 @@ function doctorsReply(): BotMessage {
     text: doctors
       .map(
         (doctor) =>
-          `• ${doctor.name}, ${doctor.degree}${doctor.fellowship ? ` (${doctor.fellowship})` : ''}: ${doctor.focus}.`,
+          `• ${oneLine(doctor.name)}, ${doctor.degree}${doctor.fellowship ? ` (${doctor.fellowship})` : ''}: ${doctor.focus}.`,
       )
       .join('\n'),
     actions: doctors.map((doctor) => ({ label: doctor.name, to: `/doctors/${doctor.slug}` })),
@@ -920,8 +922,10 @@ function continueStraighten(text: string, context: ChatContext): Turn {
     return {
       replies: [
         {
-          text: `That's fine. ${orthodontist.name}, our orthodontist, will look at your teeth and bite and tell you which suits you. Aligners are nearly invisible and removable; braces suit complex cases and need no daily discipline. We're an Invisalign provider.`,
-          actions: [{ label: `Meet ${orthodontist.name}`, to: `/doctors/${orthodontist.slug}` }],
+          text: `That's fine. ${oneLine(orthodontist.name)}, our orthodontist, will look at your teeth and bite and tell you which suits you. Aligners are nearly invisible and removable; braces suit complex cases and need no daily discipline. We're an Invisalign provider.`,
+          actions: [
+            { label: `Meet ${oneLine(orthodontist.name)}`, to: `/doctors/${orthodontist.slug}` },
+          ],
         },
       ],
       suggestions: ['Compare aligners and braces', 'Book a consultation'],
@@ -970,7 +974,7 @@ function continueMissing(text: string, context: ChatContext): Turn {
   return {
     replies: [
       {
-        text: `${text_}\n\n${prosthodontist.name}, our prosthodontist, will check your bone and gums and recommend what suits you.`,
+        text: `${text_}\n\n${oneLine(prosthodontist.name)}, our prosthodontist, will check your bone and gums and recommend what suits you.`,
         actions: slugs.map((slug) => ({
           label: byslug(slug)!.shortName ?? byslug(slug)!.name,
           to: `/treatments/${slug}`,
@@ -1299,8 +1303,8 @@ export function respond(raw: string, context: ChatContext, env: Environment): Tu
         return reply(
           [
             {
-              text: `${doctor.name} (${doctor.degree}) leads ${subject.name.toLowerCase()} at the clinic.`,
-              actions: [{ label: `Meet ${doctor.name}`, to: `/doctors/${doctor.slug}` }],
+              text: `${oneLine(doctor.name)} (${doctor.degree}) leads ${subject.name.toLowerCase()} at the clinic.`,
+              actions: [{ label: `Meet ${oneLine(doctor.name)}`, to: `/doctors/${doctor.slug}` }],
             },
           ],
           treatmentFollowUps,

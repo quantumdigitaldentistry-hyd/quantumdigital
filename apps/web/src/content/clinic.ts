@@ -484,6 +484,12 @@ export const doctors: Doctor[] = [
   },
 ];
 
+/**
+ * A doctor's name with non-breaking spaces, so it never splits across two lines when it
+ * sits inside a sentence ("…with Dr B Mohana Bindu").
+ */
+export const oneLine = (name: string) => name.replace(/ /g, '\u00a0');
+
 /** Treatments shown on the home page. */
 export const featuredTreatments = treatments.filter((treatment) => treatment.featured);
 

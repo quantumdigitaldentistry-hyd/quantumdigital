@@ -5,7 +5,7 @@ import { BookLink } from '@/components/contact/book-link';
 import { Reveal } from '@/components/reveal';
 import { buttonClass } from '@/components/ui/button-class';
 import { Photo } from '@/components/ui/photo';
-import { doctors, specialtyIllustration, type Doctor } from '@/content/clinic';
+import { doctors, oneLine, specialtyIllustration, type Doctor } from '@/content/clinic';
 import { cx } from '@/lib/cx';
 import { vtNames } from '@/lib/transition-names';
 
@@ -118,7 +118,8 @@ function DoctorFeature({ doctor, flip }: { doctor: Doctor; flip: boolean }) {
           <p className="text-label font-semibold tracking-[0.18em] text-ink-subtle uppercase">
             Meet the doctor
           </p>
-          <h3 className="font-display text-title font-bold text-balance md:text-display">
+          {/* Always one line: the size scales with the screen so the name fits. */}
+          <h3 className="font-display text-[clamp(1.5rem,6.4vw,2.75rem)] leading-tight font-bold whitespace-nowrap">
             {doctor.name}
           </h3>
           <p className="font-display text-heading font-semibold text-brand">{doctor.role}</p>
@@ -166,7 +167,7 @@ function DoctorFeature({ doctor, flip }: { doctor: Doctor; flip: boolean }) {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <BookLink className={buttonClass('primary', 'sm:min-w-56')}>
-            Consult {doctor.name.replace(/^Dr\.? (?:[A-Z] )*/, 'Dr ')}
+            Consult {oneLine(shortName(doctor))}
             <ArrowUpRightIcon size={18} aria-hidden />
           </BookLink>
           <Link to={`/doctors/${doctor.slug}`} viewTransition className={buttonClass('secondary')}>
@@ -178,8 +179,121 @@ function DoctorFeature({ doctor, flip }: { doctor: Doctor; flip: boolean }) {
   );
 }
 
-/** The doctors as alternating features (Dr Pradeep first, then Dr Mohana Bindu). */
-export function DoctorList() {
+/** First name for buttons: "Dr D Reddy Pradeep" → "Dr Reddy Pradeep". */
+const shortName = (doctor: Doctor) => doctor.name.replace(/^Dr\.? (?:[A-Z] )*/, 'Dr ');
+
+/**
+ * Compact doctor card for the home page, two side by side: an arch portrait on a soft
+ * tinted panel, then the name (one line), title, qualifications, a few treatments and
+ * the two actions. Cards in a row share a height.
+ */
+function DoctorCard({ doctor }: { doctor: Doctor }) {
+  const qualifications = [doctor.degree, doctor.fellowship, ...(doctor.credentials ?? [])].filter(
+    (item): item is string => !!item,
+  );
+  const treats = doctor.treats.slice(0, 3);
+  const more = doctor.treats.length - treats.length;
+  return (
+    <article
+      data-doctor
+      className="flex h-full flex-col overflow-hidden rounded-4xl border border-line bg-surface shadow-lg shadow-elevation/10 transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-xl"
+    >
+      {/* Portrait panel */}
+      <div className="relative overflow-clip bg-linear-to-br from-aqua-soft via-surface to-brand-soft px-6 pt-8">
+        <span
+          aria-hidden
+          className="absolute top-4 right-4 size-20 opacity-50 [background-image:radial-gradient(var(--color-brand)_1.5px,transparent_1.5px)] [background-size:12px_12px]"
+        />
+        <Link
+          to={`/doctors/${doctor.slug}`}
+          viewTransition
+          aria-label={`${doctor.name}, view profile`}
+          className="group relative mx-auto block aspect-4/5 w-44 overflow-hidden rounded-t-full border-4 border-b-0 border-surface bg-surface sm:w-48"
+          style={{ viewTransitionName: vtNames.doctorPhoto(doctor.slug) }}
+        >
+          <DoctorPortrait
+            doctor={doctor}
+            sizes="12rem"
+            imgClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        </Link>
+        <span className="absolute bottom-4 left-4 rounded-full bg-surface/90 px-3 py-1 text-label font-semibold text-brand shadow-sm backdrop-blur-sm">
+          {doctor.specialty}
+        </span>
+        <span className="absolute right-4 bottom-4 grid size-14 place-items-center rounded-full bg-surface shadow-md shadow-elevation/15">
+          <Photo
+            photo={specialtyIllustration(doctor)}
+            sizes="56px"
+            fit="contain"
+            className="block size-[66%]"
+          />
+        </span>
+      </div>
+
+      {/* Details */}
+      <div className="flex flex-1 flex-col gap-4 p-5 text-center sm:p-6">
+        <div className="flex flex-col gap-1">
+          <h3 className="font-display text-[clamp(1.35rem,5.6vw,1.75rem)] leading-tight font-bold whitespace-nowrap">
+            {doctor.name}
+          </h3>
+          <p className="font-display font-semibold text-brand">{doctor.role}</p>
+        </div>
+        <ul className="flex flex-col gap-1.5 text-small text-ink-muted">
+          {qualifications.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <ul aria-label="Treats" className="flex flex-wrap justify-center gap-1.5">
+          {treats.map((item) => (
+            <li
+              key={item}
+              className="rounded-full bg-sunken px-2.5 py-1 text-caption font-medium text-ink-muted"
+            >
+              {item}
+            </li>
+          ))}
+          {more > 0 ? (
+            <li className="rounded-full bg-brand-soft px-2.5 py-1 text-caption font-semibold text-on-brand-soft">
+              +{more} more
+            </li>
+          ) : null}
+        </ul>
+        <div className="mt-auto flex flex-col gap-2 pt-1 lg:flex-row">
+          <BookLink className={buttonClass('primary', 'flex-1 whitespace-nowrap')}>
+            Consult {oneLine(shortName(doctor))}
+          </BookLink>
+          <Link
+            to={`/doctors/${doctor.slug}`}
+            viewTransition
+            className={buttonClass('secondary', 'whitespace-nowrap')}
+          >
+            Profile
+            <ArrowUpRightIcon size={16} aria-hidden />
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/**
+ * The doctors. `compact` (home page): two cards side by side from md, stacked on phones.
+ * Otherwise (About us) as large alternating features.
+ */
+export function DoctorList({ compact = false }: { compact?: boolean }) {
+  if (compact) {
+    return (
+      <ul className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
+        {doctors.map((doctor, index) => (
+          <li key={doctor.slug}>
+            <Reveal step={index} className="h-full">
+              <DoctorCard doctor={doctor} />
+            </Reveal>
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
     // Clipped sideways, so the decorative shapes never widen the page on phones.
     <ul className="flex flex-col gap-16 overflow-x-clip py-4 md:gap-24">

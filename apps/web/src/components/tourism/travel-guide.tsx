@@ -16,7 +16,7 @@ import { Section } from '@/components/sections/section';
 import { Container } from '@/components/ui/container';
 import { Photo } from '@/components/ui/photo';
 import { clinic } from '@/config/site';
-import { doctors } from '@/content/clinic';
+import { doctors, oneLine } from '@/content/clinic';
 import { photos } from '@/content/photos';
 
 /*
@@ -268,8 +268,8 @@ export function PatientSupport() {
     {
       title: 'During treatment',
       items: [
-        `Implants, crowns and veneers with ${prosthodontist.name}`,
-        `Braces and aligners with ${orthodontist.name}`,
+        `Implants, crowns and veneers with ${oneLine(prosthodontist.name)}`,
+        `Braces and aligners with ${oneLine(orthodontist.name)}`,
         'Each step explained, with a written plan',
         'Appointments grouped to make the most of your stay',
       ],

@@ -158,7 +158,7 @@ export default function TreatmentPage() {
                   <span className="text-caption text-ink-muted">
                     Led by our {doctor.specialty.toLowerCase()} specialist
                   </span>
-                  <span className="font-medium">{doctor.name}</span>
+                  <span className="font-medium whitespace-nowrap">{doctor.name}</span>
                 </span>
                 <ArrowUpRightIcon
                   size={16}

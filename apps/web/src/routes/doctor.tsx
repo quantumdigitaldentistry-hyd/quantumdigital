@@ -45,7 +45,7 @@ export default function DoctorPage() {
             <p className="text-label font-semibold tracking-[0.14em] text-on-hero-muted uppercase">
               {role}
             </p>
-            <h1 className="font-display text-[clamp(2.4rem,8vw,4rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance">
+            <h1 className="font-display text-[clamp(1.75rem,7.2vw,4rem)] leading-[1.04] font-bold tracking-[-0.03em] whitespace-nowrap">
               {doctor.name}
             </h1>
             <p className="text-heading font-semibold">{doctor.degree}</p>
